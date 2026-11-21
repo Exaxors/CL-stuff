@@ -292,6 +292,7 @@ const EXTRA_LINKS = [
 ];
 
 const GATEWAY_FINDER_URL = "https://wayfinder.ar.io/?q=cyberleek";
+const CONFIRMED_GATEWAY_URL = "https://cyberleek.arj.innostack.xyz"; // WORKING GATEWAY HERE
 const GITHUB_VIEWER_URL = "https://github.com/Exaxors/cyberleek-viewer";
 
 let gatewayAttemptCount = 0;
@@ -356,6 +357,9 @@ function renderBottomEntries() {
         <button type="button" class="btn primary" id="findGatewayBtn">
           FIND GATEWAY →
         </button>
+        <a class="btn" id="confirmedGatewayBtn" href="${CONFIRMED_GATEWAY_URL}" target="_blank" rel="noopener noreferrer">
+          confirmed working gateway (checked by me)
+        </a>
       </div>
     </div>
   `;
@@ -370,6 +374,11 @@ function mountHub() {
     const extraEl = document.getElementById("extraGrid");
     extraEl.style.display = "grid";
     extraEl.innerHTML = EXTRA_LINKS.map(renderExtraCard).join("");
+  }
+
+  const confirmedBtn = document.getElementById("confirmedGatewayBtn");
+  if (confirmedBtn) {
+    confirmedBtn.href = CONFIRMED_GATEWAY_URL;
   }
 
   const btn = document.getElementById("findGatewayBtn");

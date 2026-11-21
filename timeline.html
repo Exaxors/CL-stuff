@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBERLEEK · TIMELINE</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #00050d;
+      --card: #00102b;
+      --border: #003299;
+      --neon: #0064ec;
+      --green: #60c33a;
+      --red: #ff3355;
+      --gold: #f5c542;
+      --cyan: #34d6d6;
+      --text: #a0b0c8;
+      --text-bright: #d6efc1;
+      --text-dim: #6a7a90;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Courier New", "Lucida Console", monospace;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0,0,0,0.04) 4px, rgba(0,0,0,0.04) 8px);
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .wrapper {
+      max-width: 1700px;
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.3rem;
+      box-shadow: 0 0 40px rgba(0,100,236,0.08);
+    }
+
+    .header {
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--neon);
+      text-shadow: 0 0 30px rgba(0,100,236,0.2);
+    }
+
+    .header .sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 0 1.2rem;
+    }
+
+    .col {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .col-head {
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 4px 0 5px;
+      border-bottom: 1px dashed var(--border);
+      margin-bottom: 4px;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.79rem;
+      line-height: 1.45;
+    }
+
+    .entry {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      padding: 2px 0;
+    }
+
+    .entry.wrap {
+      flex-wrap: wrap;
+    }
+    .entry.wrap .note {
+      flex: 1 1 100%;
+      text-align: left;
+      white-space: normal;
+      padding-left: 0;
+      margin-top: 1px;
+    }
+
+    .entry .date {
+      color: var(--neon);
+      white-space: nowrap;
+      font-size: 0.7rem;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .entry .file {
+      color: var(--text-bright);
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .entry .file .poll {
+      color: var(--red);
+      font-weight: 400;
+      font-size: 0.67rem;
+      margin-left: 4px;
+    }
+
+    .entry .file .winner {
+      color: var(--green);
+      font-weight: 400;
+      font-size: 0.67rem;
+      margin-left: 4px;
+    }
+
+    .entry .file .ann {
+      color: var(--cyan);
+      font-weight: 400;
+      font-size: 0.67rem;
+      margin-left: 4px;
+    }
+
+    .entry .file .spoiler {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.67rem;
+      margin-left: 5px;
+      padding: 0px 4px;
+      border: 1px solid var(--gold);
+      border-radius: 3px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(245,197,66,0.4);
+    }
+
+    .entry .note {
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      white-space: nowrap;
+      text-align: right;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .entry .note .highlight { color: var(--green); }
+    .entry .note .tease { color: var(--red); }
+    .entry .note .win {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .divider {
+      height: 1px;
+      background: transparent;
+      border-top: 1px dashed var(--border);
+      margin: 2px 0;
+    }
+
+    .day-sep {
+      height: 1px;
+      background: var(--border);
+      margin: 3px 0;
+    }
+
+    .runtime-footer {
+      text-align: center;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.76rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .runtime-footer .label { color: var(--text-dim); }
+
+    .runtime-footer .value {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      margin-left: 6px;
+      text-shadow: 0 0 10px rgba(96,195,58,0.35);
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 0.58rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      border-top: 1px solid var(--border);
+      padding-top: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 1100px) {
+      .columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 1.2rem; }
+      .col:nth-child(3) { grid-column: 1 / -1; margin-top: 8px; }
+      .col:nth-child(3) .col-head { margin-top: 6px; }
+    }
+
+    @media (max-width: 900px) {
+      .columns { grid-template-columns: 1fr; gap: 0; }
+      .col-head { margin-top: 10px; }
+      .timeline { font-size: 0.72rem; }
+      .entry { flex-wrap: wrap; }
+      .entry .date { font-size: 0.63rem; }
+      .entry .note { font-size: 0.63rem; white-space: normal; text-align: left; }
+      .header h1 { font-size: 1.2rem; }
+    }
+  
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px dashed var(--border);
+    }
+    .nav-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+    }
+    .nav-btn {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 4px 9px;
+      font-family: inherit;
+      font-size: 0.7rem;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .nav-btn:hover {
+      border-color: var(--neon);
+      color: var(--text-bright);
+      background: var(--card-2);
+    }
+    .nav-btn.accent {
+      color: var(--cyan);
+      border-color: rgba(52, 214, 214, 0.45);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+        <nav class="top-nav" aria-label="Primary Navigation">
+      <div class="nav-group">
+        <a href="index.html" class="nav-btn accent">← HUB (index.html)</a>
+        <a href="market.html" class="nav-btn">MARKET ANALYZER (market.html)</a>
+      </div>
+      <div class="nav-group">
+        <a href="https://github.com/Exaxors/cyberleek-viewer" target="_blank" rel="noopener noreferrer" class="nav-btn">GITHUB VIEWER</a>
+        <a href="https://wayfinder.ar.io/?q=cyberleek" target="_blank" rel="noopener noreferrer" class="nav-btn">GATEWAY FINDER</a>
+      </div>
+    </nav>
+    <div class="header">
+      <h1>CYBERLEEK</h1>
+      <div class="sub">LEAK TIMELINE · AUGUST – NOVEMBER 2026</div>
+    </div>
+
+    <div class="columns">
+
+      <!-- ══════════════ LEFT COLUMN — AUGUST ══════════════ -->
+      <div class="col">
+        <div class="col-head">· · ·  A U G U S T  · · ·</div>
+        <div class="timeline">
+
+          <div class="entry">
+            <span class="date">15.08 22:08</span>
+            <span class="file">map sneak peek 1</span>
+            <span class="note">arweave mirror</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">15.08 22:17</span>
+            <span class="file">map sneak peek 1</span>
+            <span class="note"><span class="tease">duplicate account</span></span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">16.08 15:11</span>
+            <span class="file">map sneak peek 2</span>
+            <span class="note">arweave mirror</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">17.08 21:07</span>
+            <span class="file">Basketball.mp4</span>
+            <span class="note">—</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">18.08 17:26</span>
+            <span class="file">full_map.png</span>
+            <span class="note">—</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">18.08 19:05</span>
+            <span class="file">delivery driver.mp4</span>
+            <span class="note">"random video" · Dread post</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">19.08 13:27</span>
+            <span class="file">taser.mp4</span>
+            <span class="note"><span class="tease">"i use a vpn"</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">19.08 16:54</span>
+            <span class="file">Junkies.mp4</span>
+            <span class="note"><span class="tease">"i use a vpn"</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">19.08 19:26</span>
+            <span class="file">"Cinematic drive by?" <span class="poll">(poll)</span></span>
+            <span class="note">Car DAY / Car NIGHT / Motorcycle NIGHT / <span class="win">* Plane DAY</span></span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">20.08 09:43</span>
+            <span class="file">plane.mp4 <span class="winner">(poll_winner)</span></span>
+            <span class="note"><span class="highlight">"leek" shooting</span></span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">21.08 12:39</span>
+            <span class="file">hypercar1.mp4</span>
+            <span class="note">—</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">22.08 11:16</span>
+            <span class="file">hypercar2.mp4</span>
+            <span class="note"><span class="highlight">stripclub Goal</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">22.08 11:17</span>
+            <span class="file">hypercar2.mp4</span>
+            <span class="note"><span class="tease">duplicate account</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">22.08 18:28</span>
+            <span class="file">stripclub1.mp4</span>
+            <span class="note"><span class="highlight">Goal reached</span> · <span class="tease">"i gotta take a leak"</span></span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">23.08 12:59</span>
+            <span class="file">gas.mp4</span>
+            <span class="note"><span class="highlight">Lucia teaser</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">23.08 16:56</span>
+            <span class="file">plane2.mp4</span>
+            <span class="note">—</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">23.08 17:36</span>
+            <span class="file">"Next GTA 6 Video?" <span class="poll">(poll)</span></span>
+            <span class="note">Beach / <span class="win">* Nudist Town</span> / Strip Club 2</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">24.08 13:08</span>
+            <span class="file">nudist_town.mp4 <span class="winner">(poll_winner)</span></span>
+            <span class="note"><span class="tease">STRONG NUDITY</span> · Lucia poll (48h)</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">24.08 13:23</span>
+            <span class="file">"Prologue with Lucia?" <span class="poll">(poll)</span></span>
+            <span class="note"><span class="win">* Yes Please</span> / Fuck No</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">25.08 09:46</span>
+            <span class="file">nine1nine.mp4</span>
+            <span class="note">—</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">25.08 10:43</span>
+            <span class="file">beach.mp4</span>
+            <span class="note">—</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">25.08 13:31</span>
+            <span class="file">gamestore.mp4</span>
+            <span class="note">—</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">26.08 11:18</span>
+            <span class="file">rideout_customs.mp4</span>
+            <span class="note"><span class="highlight">Goal: 50M MC</span> — bus drive with cops</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">26.08 15:17</span>
+            <span class="file">prologue_1.mp4 <span class="winner">(poll_winner)</span> <span class="spoiler">STORY SPOILER</span></span>
+            <span class="note"><span class="tease">"this build is very recent"</span> · stop without support</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════════ MIDDLE COLUMN — OCTOBER ══════════════ -->
+      <div class="col">
+        <div class="col-head">· · ·  O C T O B E R  · · ·</div>
+        <div class="timeline">
+
+          <div class="entry">
+            <span class="date">05.10 13:27</span>
+            <span class="file">lifesign <span class="poll">(poll)</span></span>
+            <span class="note"><span class="tease">"???"</span> as both options · 3d runtime</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">08.10 10:45</span>
+            <span class="file">24min video.mp4</span>
+            <span class="note">"An Extended Leek" · zip: <span class="highlight">cyberleek</span></span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">09.10 11:03</span>
+            <span class="file">"Next GTA 6 Leek?" <span class="poll">(poll)</span></span>
+            <span class="note">FREEROAM JASON / <span class="win">* FREEROAM LUCIA</span> / SIDE MISSION JASON / SIDE MISSION LUCIA</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">10.10 12:01</span>
+            <span class="file">"LUCIA LEEK – MCAP LEVELS" <span class="ann">(announcement)</span></span>
+            <span class="note">2M bikini / 3M topless / 4M naked / 6M 4K closeups</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">10.10 13:54</span>
+            <span class="file">"The Offer" <span class="ann">(announcement)</span></span>
+            <span class="note"><span class="highlight">30M MC</span> → full story build · or T2 apologizes + disks = CL stops</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">11.10 10:42</span>
+            <span class="file">Stunt.mp4 <span class="winner">(poll_winner)</span></span>
+            <span class="note">zip: <span class="highlight">pumpit</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">11.10 11:05</span>
+            <span class="file">"Lucia closeup 4k" <span class="poll">(poll)</span></span>
+            <span class="note">1d · <span class="tease">bait vote</span> — "i love you" / "thanks daddy"</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry">
+            <span class="date">12.10 09:54</span>
+            <span class="file">"CYBERLEEK MILESTONE ROADMAP" <span class="ann">(announcement)</span></span>
+            <span class="note">obsolete</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">12.10 10:34</span>
+            <span class="file">"MILESTONE ROADMAP v2k" <span class="ann">(announcement)</span></span>
+            <span class="note">5M Mini Tank / 7M Jumbo Jet / 9M Tank / 11M Lap Dance / 13M Police Shootout / 17M Beach Massacre / 21M Fighter Jet / 25M Train vs Train / <span class="highlight">30M 200+GB playable build</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry">
+            <span class="date">12.10 10:47</span>
+            <span class="file">jump.mp4 (4K)</span>
+            <span class="note">zip: <span class="highlight">jump</span> · <span class="tease">gooner bait</span> — 50s clip · first 4K</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">12.10 12:12</span>
+            <span class="file">"Next GTA 6 Freeroam Lucia Leek?" <span class="poll">(poll)</span></span>
+            <span class="note">Barbershop / Clothing store / Tuning shop / Race track / Pool minigame</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry wrap">
+            <span class="date">14.10 11:49</span>
+            <span class="file">THE END OF THE ROAD.mp4</span>
+            <span class="note">zip: <span class="highlight">end</span> — includes barbershop, pool, clothing store, and out-of-context cuts from the final mission "The End of the Road"</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">14.10 12:08</span>
+            <span class="file">"THE END OF THE ROAD (1/3)" <span class="ann">(announcement)</span></span>
+            <span class="note">Defending token sales (sold twice for fees only, public chain, token was always a donation not an investment, "rugpull" talk comes from misinformed YouTubers).</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">14.10 12:08</span>
+            <span class="file">"THE END OF THE ROAD (2/3)" <span class="ann">(announcement)</span></span>
+            <span class="note">Withholding the ending (has a game ending that would punish Take-Two but ruin it for innocent gamers. Dead man's switch active—releases story spoilers only if CL is removed).</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">14.10 12:08</span>
+            <span class="file">"THE END OF THE ROAD (3/3)" <span class="ann">(announcement)</span></span>
+            <span class="note">Failed project (30M milestone not reached, so no 200+GB build. Sad about the negativity. Edict stands, leaks stop "for now").</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════════ RIGHT COLUMN — NOVEMBER ══════════════ -->
+      <div class="col">
+        <div class="col-head">· · ·  N O V E M B E R  · · ·</div>
+        <div class="timeline">
+
+          <div class="entry wrap">
+            <span class="date">19.11 18:41</span>
+            <span class="file">XBOX BUILD 1.0.2.1 (NOV 2026) <span class="ann">(torrent)</span></span>
+            <span class="note"><span class="highlight">magnet:?xt=urn:btih:465d6a0eac381e68ca77115f44f19f0c968b9590</span></span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">19.11 18:41</span>
+            <span class="file">"THE BUILD GOES OUT (2/2)" <span class="ann">(announcement)</span></span>
+            <span class="note">Countdown timer for final file (the EXE). Zero = executable drops, no conditions. Unless CYBERLEEK hits <span class="highlight">15M marketcap</span> first (dropped from 30M). If Xbox build fails and support holds, CL will work on PS5 build.</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">19.11 18:42</span>
+            <span class="file">"THE BUILD GOES OUT (1/2)" <span class="ann">(announcement)</span></span>
+            <span class="note">Full November 2026 GTA VI build going out by torrent. Every file except the main executable (held on countdown). <span class="tease">Xbox build, not PC</span>. "CL told you not to preorder for a reason."</span>
+          </div>
+          <div class="divider"></div>
+
+          <div class="entry wrap">
+            <span class="date">19.11 18:43</span>
+            <span class="file">"The EXE is on a timer. What will happen?" <span class="poll">(poll)</span></span>
+            <span class="note">30fps on console is fine. I can wait. / <span class="win">* EMULATION WEEK. DROP THE FILE.</span> · <span class="highlight">OPEN</span> (live at report time)</span>
+          </div>
+          <div class="day-sep"></div>
+
+          <div class="entry wrap">
+            <span class="date">21.11 07:43</span>
+            <span class="file">"MILESTONE CHANGES AND INFO" <span class="ann">(announcement)</span></span>
+            <span class="note">Early .exe release milestone dropped to <span class="highlight">6M marketcap</span>. EXE will be provided in ZIP with SHA-256 hashes. Virus concerns addressed ("you do NOT need to run the exe, and it won't run anyway" — meant for Xbox emulator developers). Beware of fake websites — CL is not selling anything, only way to support is trading CYBERLEEK token.</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RUNTIME FOOTER — centered across full width -->
+    <div class="runtime-footer">
+      <span class="label">Current runtime of raw footage</span>
+      <span class="value">01:11:42</span>
+    </div>
+
+    <div class="footer">LEAK TIMELINE · AUGUST – NOVEMBER 2026</div>
+
+  </div>
+</body>
+</html>

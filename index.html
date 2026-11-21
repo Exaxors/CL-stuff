@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CYBERLEEK · Market Impact & On-Chain Event Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #00050d;
+      --card: #00102b;
+      --card-2: #00173d;
+      --border: #003299;
+      --neon: #0064ec;
+      --green: #60c33a;
+      --red: #ff3355;
+      --gold: #f5c542;
+      --cyan: #34d6d6;
+      --text: #a0b0c8;
+      --text-bright: #d6efc1;
+      --text-dim: #6a7a90;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Courier New", "Lucida Console", monospace;
+      min-height: 100vh;
+      padding: 1rem;
+      line-height: 1.45;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 4px,
+        rgba(0, 0, 0, 0.04) 4px,
+        rgba(0, 0, 0, 0.04) 8px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .wrapper {
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.3rem;
+      box-shadow: 0 0 40px rgba(0, 100, 236, 0.08);
+    }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.55rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .header-left {
+      text-align: left;
+    }
+
+    .header h1 {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--neon);
+      text-shadow: 0 0 30px rgba(0, 100, 236, 0.25);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-program {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: none;
+      color: var(--cyan);
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      padding: 2px 7px;
+    }
+
+    .sub {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 1.5px;
+      margin-top: 3px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      font-family: inherit;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    button:hover {
+      border-color: var(--neon);
+      color: var(--text-bright);
+      background: var(--card-2);
+    }
+
+    button.active {
+      background: rgba(0, 100, 236, 0.22);
+      border-color: var(--neon);
+      color: var(--text-bright);
+      font-weight: 700;
+    }
+
+    .notice-banner {
+      display: none;
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 51, 85, 0.12);
+      border: 1px solid var(--red);
+      color: #ffd0d8;
+      font-size: 0.72rem;
+      line-height: 1.5;
+    }
+
+    .notice-banner code {
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      padding: 1px 5px;
+      color: var(--cyan);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-bottom: 0.9rem;
+    }
+
+    .kpi-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+    }
+
+    .kpi-label {
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-sub {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+
+    .panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 11px 13px;
+      margin-bottom: 0.9rem;
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 6px;
+      margin-bottom: 9px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .panel-title {
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-align: left;
+    }
+
+    .panel-sub {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 340px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 12px;
+      margin-bottom: 0.9rem;
+    }
+
+    .rank-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .rank-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border-bottom: 1px dashed var(--border);
+      padding: 6px 9px;
+      font-size: 0.76rem;
+    }
+
+    .rank-item:last-child {
+      border-bottom: none;
+    }
+
+    .rank-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .rank-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .rank-meta {
+      font-size: 0.68rem;
+      color: var(--neon);
+    }
+
+    .cat-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0 4px;
+      border: 1px solid currentColor;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .cat-Leak { color: var(--cyan); }
+    .cat-Poll { color: var(--red); }
+    .cat-Announcement { color: var(--gold); }
+
+    .pct-pos { color: var(--green); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .pct-neg { color: var(--red); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .pct-zero { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    input[type="search"] {
+      background: var(--card);
+      color: var(--text-bright);
+      border: 1px solid var(--border);
+      padding: 5px 9px;
+      font-family: inherit;
+      font-size: 0.72rem;
+      min-width: 200px;
+    }
+
+    input[type="search"]:focus {
+      outline: none;
+      border-color: var(--neon);
+    }
+
+    .toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      color: var(--text);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th, td {
+      padding: 7px 10px;
+      border-bottom: 1px dashed var(--border);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: var(--card);
+      color: var(--neon);
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th:hover {
+      color: var(--text-bright);
+      background: var(--card-2);
+    }
+
+    td:first-child {
+      color: var(--neon);
+      font-size: 0.7rem;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover td {
+      background: rgba(0, 100, 236, 0.07);
+    }
+
+    .num { text-align: right; }
+
+    .dup-tag {
+      font-size: 0.64rem;
+      color: var(--red);
+      margin-left: 6px;
+    }
+
+    .tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: var(--card);
+      border: 1px solid var(--neon);
+      color: var(--text);
+      padding: 7px 9px;
+      font-size: 0.7rem;
+      z-index: 50;
+      display: none;
+      max-width: 320px;
+      box-shadow: 0 6px 20px rgba(0, 5, 13, 0.85);
+    }
+
+    .runtime-footer {
+      text-align: center;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.76rem;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .runtime-footer .value {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      margin-left: 6px;
+      text-shadow: 0 0 10px rgba(96, 195, 58, 0.35);
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 0.58rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      border-top: 1px solid var(--border);
+      padding-top: 0.45rem;
+      margin-top: 0.55rem;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <header class="header">
+    <div class="header-left">
+      <h1>
+        <span>CYBERLEEK · MARKET IMPACT</span>
+        <span class="badge-program">7rAgHPLDc9NryZmNdeEzyDui6D9PHkvTxMjKhNSa7w3a</span>
+      </h1>
+      <div class="sub" id="statusLine">FETCHING DATASET FILES...</div>
+      <div class="notice-banner" id="serverNotice"></div>
+    </div>
+    <div class="toolbar">
+      <button id="reloadAllBtn" title="Fetch ./cyberleek_events_2.json and ./cyberleek_mcap_history_2.json">Fetch Latest Data</button>
+      <button id="pickEventsBtn" title="Select a local events JSON file">Load Events JSON</button>
+      <button id="pickMcapBtn" title="Select a local market cap JSON file">Load Mcap JSON</button>
+      <button id="exportCsvBtn">Export Computed CSV</button>
+      <input type="file" id="eventsFileInput" accept=".json,application/json" style="display:none" />
+      <input type="file" id="mcapFileInput" accept=".json,application/json" style="display:none" />
+    </div>
+  </header>
+
+  <section class="kpi-grid" id="kpiGrid"></section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Market Cap Timeline</div>
+        <div class="panel-sub">Market cap history (USD) plotted with event markers · hover points for details</div>
+      </div>
+      <div class="toolbar" id="chartCatFilters">
+        <button data-cat="ALL" class="active">All Events</button>
+        <button data-cat="Leak">Leaks</button>
+        <button data-cat="Poll">Polls</button>
+        <button data-cat="Announcement">Announcements</button>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="mcapChart"></canvas>
+    </div>
+  </section>
+
+  <section class="two-col">
+    <div class="panel" style="margin-bottom:0">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Top 5 — 12h Peak</div>
+          <div class="panel-sub">Deduplicated events (&lt;1h + same title)</div>
+        </div>
+      </div>
+      <ul class="rank-list" id="top5List"></ul>
+    </div>
+    <div class="panel" style="margin-bottom:0">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Bottom 5 — 12h Peak</div>
+          <div class="panel-sub">Deduplicated events (&lt;1h + same title)</div>
+        </div>
+      </div>
+      <ul class="rank-list" id="bottom5List"></ul>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:0.9rem">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">All Analyzed Events</div>
+        <div class="panel-sub">Click column headers to sort · toggle deduplication to match summary stats</div>
+      </div>
+      <div class="controls-bar">
+        <input type="search" id="searchInput" placeholder="Filter by title or date..." />
+        <button class="cat-filter active" data-filter-cat="ALL">All</button>
+        <button class="cat-filter" data-filter-cat="Leak">Leak</button>
+        <button class="cat-filter" data-filter-cat="Poll">Poll</button>
+        <button class="cat-filter" data-filter-cat="Announcement">Announcement</button>
+        <label class="toggle-label">
+          <input type="checkbox" id="dedupToggle" checked /> Deduplicate (&lt;1h)
+        </label>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-sort="timestamp_utc">Timestamp (UTC)</th>
+            <th data-sort="category">Category</th>
+            <th data-sort="title">Event</th>
+            <th class="num" data-sort="mcap_before_1h">Mcap -1h</th>
+            <th class="num" data-sort="delta_12h_peak_pct">Peak 12h %</th>
+            <th class="num" data-sort="delta_12h_pct">Net 12h %</th>
+            <th class="num" data-sort="delta_24h_pct">Net 24h %</th>
+            <th class="num" data-sort="delta_current_pct">vs Latest %</th>
+          </tr>
+        </thead>
+        <tbody id="eventsTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="runtime-footer">
+    <span class="label">Current runtime of raw footage</span>
+    <span class="value">01:11:42</span>
+  </div>
+
+  <div class="footer">CYBERLEEK · MARKET IMPACT &amp; TIMELINE · DYNAMIC FETCH</div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const EVENT_CANDIDATES = ["./cyberleek_events_2.json", "./cyberleek_events.json"];
+const MCAP_CANDIDATES = ["./cyberleek_mcap_history_2.json", "./cyberleek_mcap_history.json"];
+
+const BASELINE_MAX_DIFF_SECONDS = 12 * 3600;
+const OFFSET_MAX_DIFF_SECONDS = 2 * 3600;
+const OFFSETS = {
+  "1h": 3600,
+  "6h": 6 * 3600,
+  "12h": 12 * 3600,
+  "24h": 24 * 3600,
+  "48h": 48 * 3600,
+  "7d": 7 * 86400,
+};
+
+let rawEvents = [];
+let mcapSeries = [];
+let rows = [];
+let activeCat = "ALL";
+let activeChartCat = "ALL";
+let searchQuery = "";
+let dedupEnabled = true;
+let sortKey = "timestamp_utc";
+let sortAsc = true;
+let loadedSources = { events: "", mcap: "" };
+
+function showServerNotice(msg) {
+  const box = document.getElementById("serverNotice");
+  const isFileProto = window.location.protocol === "file:";
+  const serverHint = isFileProto
+    ? "<br><b>Browser <code>file://</code> block detected:</b> Browsers block <code>fetch()</code> on local files unless served over HTTP. Start a local server in this folder (e.g. <code>python -m http.server 8000</code>) or use <b>Load Events JSON</b> / <b>Load Mcap JSON</b> above."
+    : "<br>Ensure <code>cyberleek_events_2.json</code> and <code>cyberleek_mcap_history_2.json</code> exist next to this HTML file, or pick them manually via <b>Load Events JSON</b> / <b>Load Mcap JSON</b>.";
+  box.innerHTML = "<b>Could not fetch dataset file:</b> " + msg + serverHint;
+  box.style.display = "block";
+}
+
+function clearServerNotice() {
+  const box = document.getElementById("serverNotice");
+  box.style.display = "none";
+  box.innerHTML = "";
+}
+
+async function tryFetchFirstAvailable(candidates) {
+  let lastErr = null;
+  for (const path of candidates) {
+    try {
+      const resp = await fetch(path, { cache: "no-store" });
+      if (!resp.ok) {
+        lastErr = new Error("HTTP " + resp.status + " (" + resp.statusText + ") for " + path);
+        continue;
+      }
+      const data = await resp.json();
+      return { path, data };
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr || new Error("No candidate file could be fetched.");
+}
+
+function normalizeEvents(data) {
+  if (!Array.isArray(data)) throw new Error("Events JSON must be an array.");
+  return data
+    .map((e, idx) => {
+      const ts = Number(e.created ?? e.timestamp ?? e.ts ?? 0);
+      return {
+        _idx: idx,
+        type: String(e.type || "Unknown"),
+        pubkey: String(e.pubkey || ""),
+        title: String(e.content ?? e.title ?? ""),
+        urls: Array.isArray(e.urls) ? e.urls : [],
+        created: ts,
+        closed: e.closed ?? null,
+      };
+    })
+    .filter((e) => Number.isFinite(e.created) && e.created > 0);
+}
+
+function normalizeMcap(data) {
+  if (!data || typeof data !== "object") throw new Error("Market cap JSON must be a timestamp-to-value object.");
+  return Object.entries(data)
+    .map(([k, v]) => [Number(k), Number(v)])
+    .filter(([ts, mc]) => Number.isFinite(ts) && Number.isFinite(mc) && ts > 0 && mc > 0)
+    .sort((a, b) => a[0] - b[0]);
+}
+
+function findClosestValue(timestamps, values, targetTs, maxDiff = null) {
+  if (!timestamps.length) return null;
+  let lo = 0;
+  let hi = timestamps.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (timestamps[mid] < targetTs) lo = mid + 1;
+    else hi = mid;
+  }
+  let bestIdx = null;
+  if (lo === 0) bestIdx = 0;
+  else if (lo === timestamps.length) bestIdx = timestamps.length - 1;
+  else {
+    const beforeIdx = lo - 1;
+    const afterIdx = lo;
+    bestIdx = Math.abs(timestamps[afterIdx] - targetTs) < Math.abs(timestamps[beforeIdx] - targetTs)
+      ? afterIdx
+      : beforeIdx;
+  }
+  if (maxDiff !== null && Math.abs(timestamps[bestIdx] - targetTs) > maxDiff) {
+    return null;
+  }
+  return values[bestIdx];
+}
+
+function maxInWindow(timestamps, values, startTs, endTs) {
+  if (!timestamps.length || endTs < startTs) return null;
+  let lo = 0;
+  let hi = timestamps.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (timestamps[mid] < startTs) lo = mid + 1;
+    else hi = mid;
+  }
+  let left = lo;
+
+  lo = 0;
+  hi = timestamps.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (timestamps[mid] <= endTs) lo = mid + 1;
+    else hi = mid;
+  }
+  let right = lo;
+
+  if (left >= right) return null;
+  let maxVal = -Infinity;
+  for (let i = left; i < right; i++) {
+    if (values[i] > maxVal) maxVal = values[i];
+  }
+  return Number.isFinite(maxVal) ? maxVal : null;
+}
+
+function pctChange(newVal, baseVal) {
+  if (newVal === null || baseVal === null || !Number.isFinite(newVal) || !Number.isFinite(baseVal) || baseVal <= 0) {
+    return "";
+  }
+  return (((newVal - baseVal) / baseVal) * 100.0).toFixed(4);
+}
+
+function computeEventRows(evList, series) {
+  const timestamps = series.map((p) => p[0]);
+  const values = series.map((p) => p[1]);
+  const latestMc = values.length ? values[values.length - 1] : null;
+
+  return evList.map((e, idx) => {
+    const baseTs = e.created;
+    const dtIso = new Date(baseTs * 1000).toISOString();
+    const dtFull = dtIso.replace("T", " ").slice(0, 19);
+    const mcapBefore = timestamps.length
+      ? findClosestValue(timestamps, values, baseTs - 3600, BASELINE_MAX_DIFF_SECONDS)
+      : null;
+
+    const row = {
+      _idx: idx,
+      _ts: baseTs,
+      timestamp_utc: dtFull,
+      category: e.type,
+      title: e.title,
+      pubkey: e.pubkey,
+      mcap_before_1h: mcapBefore !== null ? mcapBefore : "",
+      mcap_now: latestMc !== null ? latestMc : "",
+      delta_12h_pct: "",
+      delta_24h_pct: "",
+      delta_12h_peak_pct: "",
+      delta_current_pct: "",
+      urls: e.urls.join(" "),
+    };
+
+    if (timestamps.length) {
+      for (const [label, secs] of Object.entries(OFFSETS)) {
+        const mcAt = findClosestValue(timestamps, values, baseTs + secs, OFFSET_MAX_DIFF_SECONDS);
+        const delta = pctChange(mcAt, mcapBefore);
+        if (label === "12h") row.delta_12h_pct = delta;
+        if (label === "24h") row.delta_24h_pct = delta;
+      }
+      const peak12h = maxInWindow(timestamps, values, baseTs, baseTs + 12 * 3600);
+      row.delta_12h_peak_pct = pctChange(peak12h, mcapBefore);
+      row.delta_current_pct = pctChange(latestMc, mcapBefore);
+    }
+
+    return row;
+  });
+}
+
+async function fetchAllDatasets() {
+  clearServerNotice();
+  document.getElementById("statusLine").textContent = "FETCHING EVENTS & MARKET CAP JSON...";
+  const errors = [];
+
+  try {
+    const evRes = await tryFetchFirstAvailable(EVENT_CANDIDATES);
+    rawEvents = normalizeEvents(evRes.data);
+    loadedSources.events = evRes.path;
+  } catch (err) {
+    errors.push("Events: " + (err && err.message ? err.message : String(err)));
+  }
+
+  try {
+    const mcRes = await tryFetchFirstAvailable(MCAP_CANDIDATES);
+    mcapSeries = normalizeMcap(mcRes.data);
+    loadedSources.mcap = mcRes.path;
+  } catch (err) {
+    errors.push("Mcap: " + (err && err.message ? err.message : String(err)));
+  }
+
+  rows = computeEventRows(rawEvents, mcapSeries);
+  refreshAll();
+
+  if (errors.length) {
+    showServerNotice(errors.join(" | "));
+  }
+}
+
+function fmtUsd(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n) || v === "") return "—";
+  if (n >= 1e6) return "$" + (n / 1e6).toFixed(2) + "M";
+  if (n >= 1e3) return "$" + (n / 1e3).toFixed(1) + "K";
+  return "$" + n.toFixed(2);
+}
+
+function fmtPct(v) {
+  if (v === "" || v === null || v === undefined) return '<span class="pct-zero">—</span>';
+  const n = Number(v);
+  if (!Number.isFinite(n)) return '<span class="pct-zero">—</span>';
+  const sign = n > 0 ? "+" : "";
+  const cls = n > 0 ? "pct-pos" : n < 0 ? "pct-neg" : "pct-zero";
+  return `<span class="${cls}">${sign}${n.toFixed(2)}%</span>`;
+}
+
+function markDuplicates(list) {
+  const kept = [];
+  return list.map((r) => {
+    const isDup = kept.some(
+      (u) => u.title.trim() === r.title.trim() && Math.abs((r._ts || 0) - (u._ts || 0)) < 3600
+    );
+    if (!isDup) kept.push(r);
+    return { ...r, _isDup: isDup };
+  });
+}
+
+function renderKpis() {
+  const marked = markDuplicates(rows);
+  const uniq = marked.filter((r) => !r._isDup);
+  const peakVals = uniq
+    .filter((r) => r.delta_12h_peak_pct !== "" && r.delta_12h_peak_pct !== null && r.delta_12h_peak_pct !== undefined)
+    .map((r) => Number(r.delta_12h_peak_pct))
+    .filter((n) => Number.isFinite(n));
+  const avgPeak = peakVals.length ? peakVals.reduce((a, b) => a + b, 0) / peakVals.length : null;
+  const latestMc = mcapSeries.length ? mcapSeries[mcapSeries.length - 1][1] : "";
+  const maxMc = mcapSeries.length ? Math.max(...mcapSeries.map((p) => p[1])) : null;
+
+  document.getElementById("kpiGrid").innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Total On-Chain Events</div>
+      <div class="kpi-value">${rows.length} <span style="font-size:0.82rem;color:var(--text-dim)">(${uniq.length} unique)</span></div>
+      <div class="kpi-sub">Leaks, Polls &amp; Announcements</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg 12h Peak Impact</div>
+      <div class="kpi-value">${avgPeak !== null ? fmtPct(avgPeak) : "—"}</div>
+      <div class="kpi-sub">Across ${peakVals.length} matched unique events</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Peak Recorded Mcap</div>
+      <div class="kpi-value">${maxMc !== null ? fmtUsd(maxMc) : "—"}</div>
+      <div class="kpi-sub">In fetched market history</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Latest Cached Mcap</div>
+      <div class="kpi-value">${fmtUsd(latestMc)}</div>
+      <div class="kpi-sub">${mcapSeries.length ? new Date(mcapSeries[mcapSeries.length - 1][0] * 1000).toISOString().replace("T", " ").slice(0, 16) + " UTC" : ""}</div>
+    </div>
+  `;
+}
+
+function renderTopBottom() {
+  const uniq = markDuplicates(rows).filter((r) => !r._isDup && r.delta_12h_peak_pct !== "");
+  const top5 = [...uniq].sort((a, b) => Number(b.delta_12h_peak_pct) - Number(a.delta_12h_peak_pct)).slice(0, 5);
+  const bot5 = [...uniq].sort((a, b) => Number(a.delta_12h_peak_pct) - Number(b.delta_12h_peak_pct)).slice(0, 5);
+
+  const makeItem = (r) => `
+    <li class="rank-item">
+      <div class="rank-left">
+        <span class="cat-pill cat-${r.category}">${r.category}</span>
+        <div style="min-width:0">
+          <div class="rank-title" title="${r.title}">${r.title}</div>
+          <div class="rank-meta">${r.timestamp_utc}</div>
+        </div>
+      </div>
+      <div>${fmtPct(r.delta_12h_peak_pct)}</div>
+    </li>
+  `;
+
+  document.getElementById("top5List").innerHTML = top5.map(makeItem).join("") || '<li class="rank-item">No matched 12h peak data</li>';
+  document.getElementById("bottom5List").innerHTML = bot5.map(makeItem).join("") || '<li class="rank-item">No matched 12h peak data</li>';
+}
+
+function getFilteredRows() {
+  let list = markDuplicates(rows);
+  if (dedupEnabled) list = list.filter((r) => !r._isDup);
+  if (activeCat !== "ALL") list = list.filter((r) => r.category === activeCat);
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(
+      (r) =>
+        (r.title || "").toLowerCase().includes(q) ||
+        (r.timestamp_utc || "").toLowerCase().includes(q)
+    );
+  }
+  const numCols = new Set(["mcap_before_1h", "delta_12h_peak_pct", "delta_12h_pct", "delta_24h_pct", "delta_current_pct"]);
+  list.sort((a, b) => {
+    const va = a[sortKey] ?? "";
+    const vb = b[sortKey] ?? "";
+    if (numCols.has(sortKey)) {
+      const na = va === "" ? -Infinity : Number(va);
+      const nb = vb === "" ? -Infinity : Number(vb);
+      return sortAsc ? na - nb : nb - na;
+    }
+    return sortAsc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+  });
+  return list;
+}
+
+function renderTable() {
+  const list = getFilteredRows();
+  document.getElementById("eventsTbody").innerHTML =
+    list
+      .map(
+        (r) => `
+    <tr>
+      <td>${r.timestamp_utc || "—"}</td>
+      <td><span class="cat-pill cat-${r.category}">${r.category}</span></td>
+      <td style="color:var(--text-bright);font-weight:700">${r.title || "—"}${r._isDup ? '<span class="dup-tag">(dup)</span>' : ""}</td>
+      <td class="num">${fmtUsd(r.mcap_before_1h)}</td>
+      <td class="num">${fmtPct(r.delta_12h_peak_pct)}</td>
+      <td class="num">${fmtPct(r.delta_12h_pct)}</td>
+      <td class="num">${fmtPct(r.delta_24h_pct)}</td>
+      <td class="num">${fmtPct(r.delta_current_pct)}</td>
+    </tr>
+  `
+      )
+      .join("") || '<tr><td colspan="8" style="text-align:center;color:var(--text-dim)">No matching events</td></tr>';
+}
+
+let eventMarkers = [];
+
+function drawChart() {
+  const canvas = document.getElementById("mcapChart");
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.max(300, Math.floor(rect.width * dpr));
+  canvas.height = Math.max(200, Math.floor(rect.height * dpr));
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  ctx.clearRect(0, 0, w, h);
+
+  if (!mcapSeries.length) {
+    ctx.fillStyle = "#6a7a90";
+    ctx.font = '13px "Courier New", monospace';
+    ctx.fillText("No market cap history fetched yet.", 20, 40);
+    return;
+  }
+
+  const pad = { top: 20, right: 20, bottom: 34, left: 68 };
+  const plotW = Math.max(10, w - pad.left - pad.right);
+  const plotH = Math.max(10, h - pad.top - pad.bottom);
+
+  const minTs = mcapSeries[0][0];
+  const maxTs = mcapSeries[mcapSeries.length - 1][0];
+  const vals = mcapSeries.map((p) => p[1]);
+  const minVal = Math.min(...vals) * 0.9;
+  const maxVal = Math.max(...vals) * 1.05;
+
+  const xOf = (ts) => pad.left + ((ts - minTs) / Math.max(1, maxTs - minTs)) * plotW;
+  const yOf = (val) => pad.top + (1 - (val - minVal) / Math.max(1e-9, maxVal - minVal)) * plotH;
+
+  ctx.strokeStyle = "#003299";
+  ctx.lineWidth = 1;
+  ctx.fillStyle = "#6a7a90";
+  ctx.font = '11px "Courier New", monospace';
+  for (let i = 0; i <= 4; i++) {
+    const ratio = i / 4;
+    const val = minVal + (1 - ratio) * (maxVal - minVal);
+    const y = pad.top + ratio * plotH;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + plotW, y);
+    ctx.stroke();
+    ctx.fillText(fmtUsd(val), 8, y + 4);
+  }
+
+  for (let i = 0; i <= 4; i++) {
+    const ts = minTs + (i / 4) * (maxTs - minTs);
+    const x = xOf(ts);
+    const dStr = new Date(ts * 1000).toISOString().slice(5, 16).replace("T", " ");
+    ctx.fillText(dStr, Math.max(pad.left, x - 34), h - 10);
+  }
+
+  ctx.strokeStyle = "#0064ec";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  mcapSeries.forEach(([ts, val], i) => {
+    const x = xOf(ts);
+    const y = yOf(val);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  const colorMap = { Leak: "#34d6d6", Poll: "#ff3355", Announcement: "#f5c542" };
+  eventMarkers = [];
+  rows.forEach((r) => {
+    if (activeChartCat !== "ALL" && r.category !== activeChartCat) return;
+    if (!r._ts || r._ts < minTs || r._ts > maxTs) return;
+    let nearest = mcapSeries[0];
+    let bestDiff = Math.abs(nearest[0] - r._ts);
+    for (const p of mcapSeries) {
+      const diff = Math.abs(p[0] - r._ts);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        nearest = p;
+      }
+    }
+    const cx = xOf(r._ts);
+    const cy = yOf(nearest[1]);
+    const c = colorMap[r.category] || "#d6efc1";
+    ctx.fillStyle = c;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    eventMarkers.push({ x: cx, y: cy, row: r });
+  });
+}
+
+const tooltip = document.getElementById("tooltip");
+document.getElementById("mcapChart").addEventListener("mousemove", (e) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const hit = eventMarkers.find((m) => Math.hypot(m.x - mx, m.y - my) < 9);
+  if (!hit) {
+    tooltip.style.display = "none";
+    return;
+  }
+  const r = hit.row;
+  tooltip.innerHTML = `
+    <div style="font-weight:700;color:var(--text-bright);margin-bottom:3px">[${r.category}] ${r.title}</div>
+    <div style="color:var(--neon)">${r.timestamp_utc}</div>
+    <div>Peak 12h: <b>${r.delta_12h_peak_pct !== "" ? Number(r.delta_12h_peak_pct).toFixed(2) + "%" : "—"}</b></div>
+    <div>Net 12h: <b>${r.delta_12h_pct !== "" ? Number(r.delta_12h_pct).toFixed(2) + "%" : "—"}</b></div>
+  `;
+  tooltip.style.left = e.clientX + 12 + "px";
+  tooltip.style.top = e.clientY + 12 + "px";
+  tooltip.style.display = "block";
+});
+
+document.getElementById("mcapChart").addEventListener("mouseleave", () => {
+  tooltip.style.display = "none";
+});
+
+function refreshAll() {
+  renderKpis();
+  renderTopBottom();
+  renderTable();
+  drawChart();
+  const srcInfo = [loadedSources.events, loadedSources.mcap].filter(Boolean).join(" · ");
+  document.getElementById("statusLine").textContent =
+    `${rows.length} EVENTS · ${mcapSeries.length} MARKET CAP SNAPSHOTS` + (srcInfo ? ` · ${srcInfo}` : "");
+}
+
+document.querySelectorAll(".cat-filter").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".cat-filter").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeCat = btn.dataset.filterCat;
+    renderTable();
+  });
+});
+
+document.querySelectorAll("#chartCatFilters button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#chartCatFilters button").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeChartCat = btn.dataset.cat;
+    drawChart();
+  });
+});
+
+document.querySelectorAll("th[data-sort]").forEach((th) => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) sortAsc = !sortAsc;
+    else {
+      sortKey = key;
+      sortAsc = true;
+    }
+    renderTable();
+  });
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  searchQuery = e.target.value;
+  renderTable();
+});
+
+document.getElementById("dedupToggle").addEventListener("change", (e) => {
+  dedupEnabled = e.target.checked;
+  renderTable();
+});
+
+document.getElementById("reloadAllBtn").addEventListener("click", fetchAllDatasets);
+
+document.getElementById("pickEventsBtn").addEventListener("click", () => {
+  document.getElementById("eventsFileInput").click();
+});
+document.getElementById("pickMcapBtn").addEventListener("click", () => {
+  document.getElementById("mcapFileInput").click();
+});
+
+document.getElementById("eventsFileInput").addEventListener("change", async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  clearServerNotice();
+  try {
+    const text = await file.text();
+    rawEvents = normalizeEvents(JSON.parse(text));
+    loadedSources.events = file.name;
+    rows = computeEventRows(rawEvents, mcapSeries);
+    refreshAll();
+  } catch (err) {
+    showServerNotice("Events file error: " + (err && err.message ? err.message : String(err)));
+  }
+});
+
+document.getElementById("mcapFileInput").addEventListener("change", async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  clearServerNotice();
+  try {
+    const text = await file.text();
+    mcapSeries = normalizeMcap(JSON.parse(text));
+    loadedSources.mcap = file.name;
+    rows = computeEventRows(rawEvents, mcapSeries);
+    refreshAll();
+  } catch (err) {
+    showServerNotice("Mcap file error: " + (err && err.message ? err.message : String(err)));
+  }
+});
+
+document.getElementById("exportCsvBtn").addEventListener("click", () => {
+  const filtered = getFilteredRows();
+  if (!filtered.length) return;
+  const cols = ["timestamp_utc", "category", "title", "mcap_before_1h", "delta_12h_peak_pct", "delta_12h_pct", "delta_24h_pct", "delta_current_pct"];
+  const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const csvOut = [cols.join(","), ...filtered.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");
+  const blob = new Blob([csvOut], { type: "text/csv;charset=utf-8;" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "cyberleek_computed_events.csv";
+  a.click();
+});
+
+window.addEventListener("resize", drawChart);
+
+fetchAllDatasets();
+</script>
+</body>
+</html>

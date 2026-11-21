@@ -126,6 +126,10 @@
     transform: translateY(1px);
   }
 
+  .module-btn-card.full-span {
+    grid-column: 1 / -1;
+  }
+
   .hub-card {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -236,7 +240,7 @@
     <header class="header">
       <div>
         <h1>UNOFFICIAL · CYBERLEEK · HUB</h1>
-        <div class="sub">LANDING PAGE · TIMELINE · MARKET ANALYZER · VIEWER &amp; GATEWAYS</div>
+        <div class="sub">LANDING PAGE · TIMELINE · MARKET ANALYZER · GALLERY &amp; GATEWAYS</div>
       </div>
     </header>
 
@@ -284,6 +288,16 @@ const CORE_MODULES = [
     description: "Market cap chart, 12h/24h/latest impact deltas, top/bottom movers, and CSV export.",
     href: "./market.html",
     external: false
+  },
+  {
+    id: "gallery",
+    badge: "Archive",
+    badgeClass: "tag-internal",
+    title: "Gallery",
+    description: "A collection of all watermarks CL used, debunked fakes, and information on how his polls work and so on.",
+    href: "./gallery.html",
+    external: false,
+    fullSpan: true
   }
 ];
 
@@ -299,8 +313,9 @@ let gatewayAttemptCount = 0;
 
 function renderModuleButton(item) {
   const targetAttrs = item.external ? ' target="_blank" rel="noopener noreferrer"' : "";
+  const spanCls = item.fullSpan ? " full-span" : "";
   return `
-    <a class="module-btn-card" href="${item.href}"${targetAttrs} data-link-id="${item.id}">
+    <a class="module-btn-card${spanCls}" href="${item.href}"${targetAttrs} data-link-id="${item.id}">
       <div>
         <span class="card-tag ${item.badgeClass || "tag-internal"}">${item.badge || "Module"}</span>
         <div class="card-title">${item.title}</div>

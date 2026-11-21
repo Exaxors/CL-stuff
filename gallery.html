@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="./icon.ico" type="image/ico" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CYBERLEEK · Media Gallery</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #00050d;
+    --card: #00102b;
+    --card-2: #00173d;
+    --border: #003299;
+    --neon: #0064ec;
+    --green: #60c33a;
+    --red: #ff3355;
+    --gold: #f5c542;
+    --cyan: #34d6d6;
+    --text: #a0b0c8;
+    --text-bright: #d6efc1;
+    --text-dim: #6a7a90;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Courier New", "Lucida Console", monospace;
+    min-height: 100vh;
+    padding: 1rem;
+    line-height: 1.45;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 4px,
+      rgba(0, 0, 0, 0.04) 4px,
+      rgba(0, 0, 0, 0.04) 8px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .wrapper {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.1rem 1.35rem;
+    box-shadow: 0 0 40px rgba(0, 100, 236, 0.08);
+  }
+
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .header h1 {
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--neon);
+    text-shadow: 0 0 30px rgba(0, 100, 236, 0.25);
+  }
+
+  .sub {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    margin-top: 3px;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .btn:hover {
+    border-color: var(--neon);
+    color: var(--text-bright);
+    background: var(--card-2);
+  }
+
+  .btn.active {
+    background: rgba(0, 100, 236, 0.22);
+    border-color: var(--neon);
+    color: var(--text-bright);
+    font-weight: 700;
+  }
+
+  .btn.accent {
+    color: var(--cyan);
+    border-color: rgba(52, 214, 214, 0.45);
+  }
+
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.65rem 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .cat-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  input[type="search"] {
+    background: var(--card);
+    color: var(--text-bright);
+    border: 1px solid var(--border);
+    padding: 5px 9px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    min-width: 210px;
+  }
+
+  input[type="search"]:focus {
+    outline: none;
+    border-color: var(--neon);
+  }
+
+  .notice {
+    display: none;
+    background: rgba(245, 197, 66, 0.08);
+    border: 1px dashed var(--gold);
+    color: var(--text);
+    padding: 0.75rem 0.9rem;
+    font-size: 0.73rem;
+    margin-bottom: 1rem;
+  }
+
+  .notice code {
+    color: var(--cyan);
+    background: var(--bg);
+    padding: 1px 5px;
+    border: 1px dashed var(--border);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 0.85rem;
+  }
+
+  .media-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .media-card:hover {
+    border-color: var(--neon);
+    background: var(--card-2);
+  }
+
+  .thumb-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: #020814;
+    border-bottom: 1px dashed var(--border);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .thumb-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+
+  .media-card:hover .thumb-wrap img {
+    transform: scale(1.02);
+  }
+
+  .media-body {
+    padding: 0.7rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .media-cat {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    padding: 0 5px;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .media-title {
+    color: var(--text-bright);
+    font-size: 0.82rem;
+    font-weight: 700;
+    word-break: break-word;
+  }
+
+  .media-caption {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+  }
+
+  .media-path {
+    color: var(--neon);
+    font-size: 0.64rem;
+    word-break: break-all;
+    margin-top: 0.2rem;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem 1rem;
+    border: 1px dashed var(--border);
+    background: var(--bg);
+    color: var(--text-dim);
+    font-size: 0.78rem;
+  }
+
+  /* Lightbox modal */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 5, 13, 0.92);
+    z-index: 10000;
+    padding: 1.2rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox.open {
+    display: flex;
+  }
+
+  .lightbox-box {
+    max-width: 1100px;
+    width: 100%;
+    max-height: 92vh;
+    background: var(--card);
+    border: 1px solid var(--neon);
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    box-shadow: 0 0 50px rgba(0, 100, 236, 0.25);
+  }
+
+  .lightbox-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  .lightbox-img-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    overflow: auto;
+    padding: 0.5rem;
+  }
+
+  .lightbox-img-wrap img {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    display: block;
+  }
+
+  .lightbox-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    border-top: 1px solid var(--border);
+    padding-top: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 0.65rem;
+      overflow-x: hidden;
+    }
+    .wrapper {
+      padding: 0.85rem 0.9rem;
+    }
+    .header h1 {
+      font-size: 1.05rem;
+    }
+    input[type="search"] {
+      width: 100%;
+      min-width: 0;
+    }
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="header">
+      <div>
+        <h1>CYBERLEEK · INFO GALLERY</h1>
+        <div class="sub" id="statusSub">CATEGORY FOLDERS UNDER ./media/&lt;category&gt;/</div>
+      </div>
+      <div class="toolbar">
+        <a href="./index.html" class="btn accent">← HUB</a>
+        <a href="./timeline.html" class="btn">TIMELINE</a>
+        <a href="./market.html" class="btn">MARKET ANALYZER</a>
+      </div>
+    </header>
+
+    <div class="notice" id="setupNotice">
+      <strong>How category folders work on static hosting:</strong> Browsers can't list directory contents automatically on static hosts like GitHub Pages, so categories and files are read from <code>./media/manifest.json</code> under <code>./media/&lt;category&gt;/</code>. Images that fail to load are hidden automatically.
+    </div>
+
+    <div class="controls-row">
+      <div class="cat-tabs" id="categoryTabs"></div>
+      <input type="search" id="searchInput" placeholder="Search title, note, or filename..." />
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid"></div>
+
+    <div class="footer">provided by n0ne</div>
+  </div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+    <div class="lightbox-box">
+      <div class="lightbox-top">
+        <div>
+          <span class="media-cat" id="lbCategory"></span>
+          <div class="media-title" id="lbTitle" style="margin-top:4px;"></div>
+          <div class="media-caption" id="lbCaption" style="margin-top:2px;"></div>
+        </div>
+        <button type="button" class="btn" id="lbClose">CLOSE [ESC]</button>
+      </div>
+      <div class="lightbox-img-wrap">
+        <img id="lbImg" src="" alt="" />
+      </div>
+      <div class="lightbox-footer">
+        <span id="lbPath"></span>
+        <a id="lbRawLink" href="#" target="_blank" rel="noopener noreferrer" class="btn">OPEN RAW IMAGE →</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+const MANIFEST_PATH = "./media/manifest.json";
+let manifestError = "";
+let allItems = [];
+let activeCategory = "ALL";
+let searchQuery = "";
+
+function normalizeManifest(manifestObj) {
+  const items = [];
+  if (!manifestObj || typeof manifestObj !== "object") return items;
+
+  Object.entries(manifestObj).forEach(([category, entries]) => {
+    const cleanCat = String(category).trim();
+    if (!cleanCat || !Array.isArray(entries)) return;
+
+    entries.forEach((entry) => {
+      if (typeof entry === "string") {
+        const cleanFile = entry.trim().replace(/^\/+/, "");
+        if (!cleanFile) return;
+        const baseName = cleanFile.split("/").pop().replace(/\.[^.]+$/, "");
+        items.push({
+          category: cleanCat,
+          file: cleanFile,
+          src: `./media/${cleanCat}/${cleanFile}`,
+          title: baseName.replace(/[-_]+/g, " "),
+          caption: ""
+        });
+      } else if (entry && typeof entry === "object" && entry.file) {
+        const cleanFile = String(entry.file).trim().replace(/^\/+/, "");
+        const baseName = cleanFile.split("/").pop().replace(/\.[^.]+$/, "");
+        items.push({
+          category: cleanCat,
+          file: cleanFile,
+          src: `./media/${cleanCat}/${cleanFile}`,
+          title: String(entry.title || baseName.replace(/[-_]+/g, " ")),
+          caption: String(entry.caption || "")
+        });
+      }
+    });
+  });
+
+  return items;
+}
+
+function renderCategoryTabs() {
+  const cats = ["ALL", ...new Set(allItems.map((i) => i.category))];
+  const tabsEl = document.getElementById("categoryTabs");
+  tabsEl.innerHTML = cats
+    .map((cat) => {
+      const count = cat === "ALL" ? allItems.length : allItems.filter((i) => i.category === cat).length;
+      const activeCls = cat === activeCategory ? "btn active" : "btn";
+      const label = cat === "ALL" ? `All (${count})` : `${cat} (${count})`;
+      return `<button type="button" class="${activeCls}" data-cat="${cat}">${label}</button>`;
+    })
+    .join("");
+
+  tabsEl.querySelectorAll("button[data-cat]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      activeCategory = btn.dataset.cat;
+      renderCategoryTabs();
+      renderGallery();
+    });
+  });
+}
+
+function openLightbox(item) {
+  document.getElementById("lbCategory").textContent = item.category;
+  document.getElementById("lbTitle").textContent = item.title;
+  document.getElementById("lbCaption").textContent = item.caption || "";
+  document.getElementById("lbCaption").style.display = item.caption ? "block" : "none";
+  const img = document.getElementById("lbImg");
+  img.src = item.src;
+  img.alt = item.title;
+  document.getElementById("lbPath").textContent = item.src;
+  document.getElementById("lbRawLink").href = item.src;
+  document.getElementById("lightbox").classList.add("open");
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("open");
+  document.getElementById("lbImg").src = "";
+}
+
+function renderGallery() {
+  const grid = document.getElementById("galleryGrid");
+  const q = searchQuery.trim().toLowerCase();
+
+  const filtered = allItems.filter((item) => {
+    const catMatch = activeCategory === "ALL" || item.category === activeCategory;
+    const textMatch =
+      !q ||
+      item.title.toLowerCase().includes(q) ||
+      item.caption.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q) ||
+      item.file.toLowerCase().includes(q);
+    return catMatch && textMatch;
+  });
+
+  if (!filtered.length) {
+    const msg = manifestError
+      ? `Could not load <code>./media/manifest.json</code> (${manifestError}). Make sure <code>manifest.json</code> exists inside <code>./media/</code>.`
+      : `No images match the current filter or exist in <code>./media/&lt;category&gt;/</code> yet.`;
+    grid.innerHTML = `<div class="empty-state">${msg}</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered
+    .map(
+      (item, idx) => `
+      <article class="media-card" data-card-idx="${idx}">
+        <div class="thumb-wrap" title="Click to preview full image">
+          <img src="${item.src}" alt="${item.title}" loading="lazy" />
+        </div>
+        <div class="media-body">
+          <div>
+            <span class="media-cat">${item.category}</span>
+            <div class="media-title" style="margin-top:5px;">${item.title}</div>
+            ${item.caption ? `<div class="media-caption" style="margin-top:3px;">${item.caption}</div>` : ""}
+          </div>
+          <div class="media-path">${item.src}</div>
+        </div>
+      </article>
+    `
+    )
+    .join("");
+
+  grid.querySelectorAll(".media-card").forEach((cardEl, idx) => {
+    const item = filtered[idx];
+    const imgEl = cardEl.querySelector("img");
+    const thumbEl = cardEl.querySelector(".thumb-wrap");
+
+    imgEl.addEventListener("error", () => {
+      cardEl.remove();
+      if (!grid.querySelector(".media-card")) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            No loaded images found in <code>./media/&lt;category&gt;/</code>. Check your image files and <code>./media/manifest.json</code>.
+          </div>
+        `;
+      }
+    });
+
+    thumbEl.addEventListener("click", () => openLightbox(item));
+  });
+}
+
+async function initGallery() {
+  manifestError = "";
+  let manifestData = {};
+  try {
+    const resp = await fetch(MANIFEST_PATH, { cache: "no-store" });
+    if (!resp.ok) {
+      throw new Error(`HTTP ${resp.status} for ${MANIFEST_PATH}`);
+    }
+    const json = await resp.json();
+    if (!json || typeof json !== "object") {
+      throw new Error("Invalid manifest JSON structure.");
+    }
+    manifestData = json;
+  } catch (err) {
+    manifestError = err && err.message ? err.message : String(err);
+  }
+
+  allItems = normalizeManifest(manifestData);
+  renderCategoryTabs();
+  renderGallery();
+
+  const foldersCount = new Set(allItems.map((i) => i.category)).size;
+  document.getElementById("statusSub").textContent = manifestError
+    ? `MANIFEST ERROR (${MANIFEST_PATH}) · ${manifestError}`
+    : `${foldersCount} CATEGORY FOLDERS · ${allItems.length} ENTRIES FROM ./media/manifest.json`;
+}
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  searchQuery = e.target.value;
+  renderGallery();
+});
+
+document.getElementById("lbClose").addEventListener("click", closeLightbox);
+document.getElementById("lightbox").addEventListener("click", (e) => {
+  if (e.target.id === "lightbox") closeLightbox();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeLightbox();
+});
+
+initGallery();
+</script>
+</body>
+</html>

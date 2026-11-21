@@ -31,8 +31,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.85rem;
-    line-height: 1.38;
+    padding: 0.75rem;
+    line-height: 1.35;
+    overflow-x: hidden;
   }
 
   body::before {
@@ -51,11 +52,11 @@
   }
 
   .wrapper {
-    max-width: 1180px;
+    max-width: 1220px;
     width: 100%;
     background: var(--card);
     border: 1px solid var(--border);
-    padding: 0.95rem 1.15rem;
+    padding: 0.85rem 1.05rem;
     box-shadow: 0 0 40px rgba(0, 100, 236, 0.08);
   }
 
@@ -66,12 +67,12 @@
     align-items: center;
     gap: 8px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 0.45rem;
-    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.65rem;
   }
 
   .header h1 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 900;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -80,33 +81,49 @@
   }
 
   .header .sub {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--text-dim);
     letter-spacing: 1.5px;
     margin-top: 2px;
   }
 
   .section-label {
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     letter-spacing: 2.2px;
     text-transform: uppercase;
     color: var(--text-dim);
     border-bottom: 1px dashed var(--border);
     padding-bottom: 3px;
+    margin-bottom: 0.45rem;
+  }
+
+  /* 3-column row for the core modules on desktop/tablet */
+  .core-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-bottom: 0.7rem;
+  }
+
+  /* 2-column grid for viewer & gateway tools */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
     margin-bottom: 0.5rem;
   }
 
-  .cards-grid {
+  .extra-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-    gap: 0.6rem;
-    margin-bottom: 0.8rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0.55rem;
+    margin-bottom: 0.55rem;
   }
 
   .module-btn-card {
     background: var(--bg);
     border: 1px solid var(--border);
-    padding: 0.65rem 0.85rem;
+    padding: 0.6rem 0.75rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -115,6 +132,7 @@
     color: inherit;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    min-width: 0;
   }
 
   .module-btn-card:hover {
@@ -126,19 +144,16 @@
     transform: translateY(1px);
   }
 
-  .module-btn-card.full-span {
-    grid-column: 1 / -1;
-  }
-
   .hub-card {
     background: var(--bg);
     border: 1px solid var(--border);
-    padding: 0.68rem 0.85rem;
+    padding: 0.62rem 0.78rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 0.45rem;
+    gap: 0.4rem;
     transition: border-color 0.15s, background 0.15s;
+    min-width: 0;
   }
 
   .hub-card:hover {
@@ -147,7 +162,7 @@
   }
 
   .card-tag {
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -155,7 +170,7 @@
     padding: 1px 5px;
     border: 1px solid currentColor;
     border-radius: 3px;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
   }
 
   .tag-internal { color: var(--green); }
@@ -164,19 +179,19 @@
 
   .card-title {
     color: var(--text-bright);
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     font-weight: 700;
     margin-bottom: 0.15rem;
   }
 
   .card-desc {
     color: var(--text-dim);
-    font-size: 0.73rem;
+    font-size: 0.71rem;
   }
 
   .card-go {
     color: var(--cyan);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.5px;
     margin-top: 0.1rem;
@@ -185,9 +200,9 @@
   .card-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
+    gap: 0.4rem;
     align-items: center;
-    padding-top: 0.3rem;
+    padding-top: 0.28rem;
     border-top: 1px dashed var(--border);
   }
 
@@ -195,15 +210,15 @@
     background: var(--card);
     color: var(--text-bright);
     border: 1px solid var(--border);
-    padding: 4px 9px;
+    padding: 4px 8px;
     font-family: inherit;
-    font-size: 0.7rem;
-    letter-spacing: 0.5px;
+    font-size: 0.68rem;
+    letter-spacing: 0.4px;
     text-decoration: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
   }
 
@@ -219,19 +234,46 @@
   }
 
   .gateway-status {
-    font-size: 0.66rem;
+    font-size: 0.64rem;
     color: var(--gold);
     margin-top: 0.2rem;
   }
 
   .footer {
     text-align: center;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     color: var(--text-dim);
     letter-spacing: 2px;
     border-top: 1px solid var(--border);
-    padding-top: 0.45rem;
-    margin-top: 0.35rem;
+    padding-top: 0.4rem;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 900px) {
+    .core-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    body {
+      display: block;
+      padding: 0.55rem;
+    }
+
+    .wrapper {
+      padding: 0.7rem 0.75rem;
+    }
+
+    .header h1 {
+      font-size: 1.05rem;
+      word-break: break-word;
+    }
   }
 </style>
 </head>
@@ -245,13 +287,13 @@
     </header>
 
     <div class="section-label">Core Modules</div>
-    <div class="cards-grid" id="coreGrid"></div>
+    <div class="core-grid" id="coreGrid"></div>
 
     <div class="section-label">Blockchain Viewer &amp; Gateway Tools</div>
-    <div class="cards-grid" id="toolsGrid"></div>
+    <div class="tools-grid" id="toolsGrid"></div>
 
     <div class="section-label" id="extraLabel" style="display:none">Additional Links</div>
-    <div class="cards-grid" id="extraGrid" style="display:none"></div>
+    <div class="extra-grid" id="extraGrid" style="display:none"></div>
 
     <div class="footer">provided by n0ne</div>
   </div>
@@ -296,8 +338,7 @@ const CORE_MODULES = [
     title: "Gallery",
     description: "A collection of all watermarks CL used, debunked fakes, and information on how his polls work and so on.",
     href: "./gallery.html",
-    external: false,
-    fullSpan: true
+    external: false
   }
 ];
 
@@ -306,16 +347,15 @@ const EXTRA_LINKS = [
 ];
 
 const GATEWAY_FINDER_URL = "https://wayfinder.ar.io/?q=cyberleek";
-const CONFIRMED_GATEWAY_URL = "https://cyberleek.arj.innostack.xyz"; // WORKING GATEWAY HERE
+const CONFIRMED_GATEWAY_URL = "https://cyberleek.arj.innostack.xyz";
 const GITHUB_VIEWER_URL = "https://github.com/Exaxors/cyberleek-viewer";
 
 let gatewayAttemptCount = 0;
 
 function renderModuleButton(item) {
   const targetAttrs = item.external ? ' target="_blank" rel="noopener noreferrer"' : "";
-  const spanCls = item.fullSpan ? " full-span" : "";
   return `
-    <a class="module-btn-card${spanCls}" href="${item.href}"${targetAttrs} data-link-id="${item.id}">
+    <a class="module-btn-card" href="${item.href}"${targetAttrs} data-link-id="${item.id}">
       <div>
         <span class="card-tag ${item.badgeClass || "tag-internal"}">${item.badge || "Module"}</span>
         <div class="card-title">${item.title}</div>
@@ -381,38 +421,54 @@ function renderBottomEntries() {
 }
 
 function mountHub() {
-  document.getElementById("coreGrid").innerHTML = CORE_MODULES.map(renderModuleButton).join("");
-  document.getElementById("toolsGrid").innerHTML = renderBottomEntries();
+  try {
+    const coreGrid = document.getElementById("coreGrid");
+    const toolsGrid = document.getElementById("toolsGrid");
 
-  if (Array.isArray(EXTRA_LINKS) && EXTRA_LINKS.length > 0) {
-    document.getElementById("extraLabel").style.display = "block";
-    const extraEl = document.getElementById("extraGrid");
-    extraEl.style.display = "grid";
-    extraEl.innerHTML = EXTRA_LINKS.map(renderExtraCard).join("");
-  }
+    if (coreGrid) {
+      coreGrid.innerHTML = CORE_MODULES.map(renderModuleButton).join("");
+    }
+    if (toolsGrid) {
+      toolsGrid.innerHTML = renderBottomEntries();
+    }
 
-  const confirmedBtn = document.getElementById("confirmedGatewayBtn");
-  if (confirmedBtn) {
-    confirmedBtn.href = CONFIRMED_GATEWAY_URL;
-  }
+    if (Array.isArray(EXTRA_LINKS) && EXTRA_LINKS.length > 0) {
+      const extraLabel = document.getElementById("extraLabel");
+      const extraEl = document.getElementById("extraGrid");
+      if (extraLabel) extraLabel.style.display = "block";
+      if (extraEl) {
+        extraEl.style.display = "grid";
+        extraEl.innerHTML = EXTRA_LINKS.map(renderExtraCard).join("");
+      }
+    }
 
-  const btn = document.getElementById("findGatewayBtn");
-  const statusEl = document.getElementById("gatewayStatus");
-  if (btn) {
-    btn.addEventListener("click", () => {
-      gatewayAttemptCount += 1;
-      const cacheBuster = gatewayAttemptCount > 1 ? `&_refresh=${gatewayAttemptCount}` : "";
-      const url = `${GATEWAY_FINDER_URL}${cacheBuster}`;
-      window.open(url, "_blank", "noopener,noreferrer");
-      statusEl.textContent =
-        gatewayAttemptCount === 1
-          ? "Opened gateway finder in a new tab. If you get a blocked one, refresh until you get a free one."
-          : `Opened again (#${gatewayAttemptCount}). Refresh until you get a free gateway.`;
-    });
+    const confirmedBtn = document.getElementById("confirmedGatewayBtn");
+    if (confirmedBtn) {
+      confirmedBtn.href = CONFIRMED_GATEWAY_URL;
+    }
+
+    const btn = document.getElementById("findGatewayBtn");
+    const statusEl = document.getElementById("gatewayStatus");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        gatewayAttemptCount += 1;
+        const cacheBuster = gatewayAttemptCount > 1 ? `&_refresh=${gatewayAttemptCount}` : "";
+        const url = `${GATEWAY_FINDER_URL}${cacheBuster}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+        if (statusEl) {
+          statusEl.textContent =
+            gatewayAttemptCount === 1
+              ? "Opened gateway finder in a new tab. If you get a blocked one, refresh until you get a free one."
+              : `Opened again (#${gatewayAttemptCount}). Refresh until you get a free gateway.`;
+        }
+      });
+    }
+  } catch (err) {
+    console.error("Failed to mount landing hub:", err);
   }
 }
 
-mountHub();
+window.addEventListener("DOMContentLoaded", mountHub);
 </script>
 </body>
 </html>

@@ -102,6 +102,29 @@
     margin-bottom: 1.15rem;
   }
 
+  .module-btn-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  }
+
+  .module-btn-card:hover {
+    border-color: var(--neon);
+    background: var(--card-2);
+  }
+
+  .module-btn-card:active {
+    transform: translateY(1px);
+  }
+
   .hub-card {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -146,6 +169,14 @@
     font-size: 0.75rem;
   }
 
+  .card-go {
+    color: var(--cyan);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-top: 0.25rem;
+  }
+
   .card-actions {
     display: flex;
     flex-wrap: wrap;
@@ -188,34 +219,14 @@
     margin-top: 0.35rem;
   }
 
-  .runtime-footer {
-    text-align: center;
-    margin-top: 0.6rem;
-    padding-top: 0.65rem;
-    border-top: 1px dashed var(--border);
-    font-size: 0.76rem;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-  }
-
-  .runtime-footer .value {
-    color: var(--green);
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 3px;
-    margin-left: 6px;
-    text-shadow: 0 0 10px rgba(96, 195, 58, 0.35);
-  }
-
   .footer {
     text-align: center;
-    font-size: 0.58rem;
+    font-size: 0.68rem;
     color: var(--text-dim);
     letter-spacing: 2px;
     border-top: 1px solid var(--border);
-    padding-top: 0.45rem;
-    margin-top: 0.55rem;
+    padding-top: 0.6rem;
+    margin-top: 0.6rem;
     text-transform: uppercase;
   }
 </style>
@@ -238,12 +249,7 @@
     <div class="section-label" id="extraLabel" style="display:none">Additional Links</div>
     <div class="cards-grid" id="extraGrid" style="display:none"></div>
 
-    <div class="runtime-footer">
-      <span class="label">Current runtime of raw footage</span>
-      <span class="value">01:11:42</span>
-    </div>
-
-    <div class="footer">CYBERLEEK · MODULAR HUB · FUTURE-READY</div>
+    <div class="footer">provided by n0ne</div>
   </div>
 
 <script>
@@ -257,7 +263,6 @@
  *   title: "Discord Server",
  *   description: "Community discussion, updates, and announcements.",
  *   href: "https://discord.gg/YOUR_INVITE",
- *   ctaLabel: "OPEN DISCORD →",
  *   external: true
  * }
  */
@@ -269,7 +274,6 @@ const CORE_MODULES = [
     title: "Current Timeline",
     description: "Three-column chronological leak timeline across August, October, and November 2026.",
     href: "./timeline.html",
-    ctaLabel: "OPEN TIMELINE →",
     external: false
   },
   {
@@ -279,7 +283,6 @@ const CORE_MODULES = [
     title: "Market Analyzer",
     description: "Market cap chart, 12h/24h/latest impact deltas, top/bottom movers, and CSV export.",
     href: "./market.html",
-    ctaLabel: "OPEN MARKET ANALYZER →",
     external: false
   }
 ];
@@ -293,39 +296,65 @@ const GITHUB_VIEWER_URL = "https://github.com/Exaxors/cyberleek-viewer";
 
 let gatewayAttemptCount = 0;
 
-function renderCard(item) {
+function renderModuleButton(item) {
+  const targetAttrs = item.external ? ' target="_blank" rel="noopener noreferrer"' : "";
+  return `
+    <a class="module-btn-card" href="${item.href}"${targetAttrs} data-link-id="${item.id}">
+      <div>
+        <span class="card-tag ${item.badgeClass || "tag-internal"}">${item.badge || "Module"}</span>
+        <div class="card-title">${item.title}</div>
+        <div class="card-desc">${item.description}</div>
+      </div>
+      <div class="card-go">CLICK TO OPEN →</div>
+    </a>
+  `;
+}
+
+function renderExtraCard(item) {
   const targetAttrs = item.external ? ' target="_blank" rel="noopener noreferrer"' : "";
   return `
     <div class="hub-card" data-link-id="${item.id}">
       <div>
-        <span class="card-tag ${item.badgeClass || "tag-internal"}">${item.badge || "Link"}</span>
+        <span class="card-tag ${item.badgeClass || "tag-future"}">${item.badge || "Link"}</span>
         <div class="card-title">${item.title}</div>
         <div class="card-desc">${item.description}</div>
       </div>
       <div class="card-actions">
-        <a class="btn primary" href="${item.href}"${targetAttrs}>${item.ctaLabel || "OPEN →"}</a>
+        <a class="btn primary" href="${item.href}"${targetAttrs}>OPEN →</a>
       </div>
     </div>
   `;
 }
 
-function renderViewerAndGatewayCard() {
+function renderBottomEntries() {
   return `
-    <div class="hub-card" id="viewerGatewayCard">
+    <div class="hub-card" id="viewerForkCard">
       <div>
-        <span class="card-tag tag-external">Blockchain Viewer</span>
-        <div class="card-title">Cyberleek Viewer &amp; Gateway Finder</div>
+        <span class="card-tag tag-external">Fork</span>
+        <div class="card-title">Cyberleek Viewer Fork (GitHub Repo)</div>
         <div class="card-desc">
-          Direct link to the blockchain viewer repository plus a browser gateway finder button (re-opens Wayfinder if a gateway is blocked).
+          GitHub repo of my cyberleek viewer fork — updated to support announcements and stuff.
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn primary" href="${GITHUB_VIEWER_URL}" target="_blank" rel="noopener noreferrer">
+          OPEN GITHUB FORK →
+        </a>
+      </div>
+    </div>
+
+    <div class="hub-card" id="gatewayFinderCard">
+      <div>
+        <span class="card-tag tag-external">Browser Gateway</span>
+        <div class="card-title">Browser Gateway Finder</div>
+        <div class="card-desc">
+          If you prefer using the browser, use this to find a gateway — if you get a blocked one, just refresh until you get a free one, or as a last resort use my viewer or the outdated original repo.
         </div>
         <div class="gateway-status" id="gatewayStatus"></div>
       </div>
       <div class="card-actions">
-        <a class="btn primary" href="${GITHUB_VIEWER_URL}" target="_blank" rel="noopener noreferrer">
-          GITHUB VIEWER REPO →
-        </a>
-        <button type="button" class="btn" id="findGatewayBtn">
-          FIND GATEWAY (RETRY)
+        <button type="button" class="btn primary" id="findGatewayBtn">
+          FIND GATEWAY →
         </button>
       </div>
     </div>
@@ -333,14 +362,14 @@ function renderViewerAndGatewayCard() {
 }
 
 function mountHub() {
-  document.getElementById("coreGrid").innerHTML = CORE_MODULES.map(renderCard).join("");
-  document.getElementById("toolsGrid").innerHTML = renderViewerAndGatewayCard();
+  document.getElementById("coreGrid").innerHTML = CORE_MODULES.map(renderModuleButton).join("");
+  document.getElementById("toolsGrid").innerHTML = renderBottomEntries();
 
   if (Array.isArray(EXTRA_LINKS) && EXTRA_LINKS.length > 0) {
     document.getElementById("extraLabel").style.display = "block";
     const extraEl = document.getElementById("extraGrid");
     extraEl.style.display = "grid";
-    extraEl.innerHTML = EXTRA_LINKS.map(renderCard).join("");
+    extraEl.innerHTML = EXTRA_LINKS.map(renderExtraCard).join("");
   }
 
   const btn = document.getElementById("findGatewayBtn");
@@ -348,13 +377,13 @@ function mountHub() {
   if (btn) {
     btn.addEventListener("click", () => {
       gatewayAttemptCount += 1;
-      const cacheBuster = gatewayAttemptCount > 1 ? `&_retry=${gatewayAttemptCount}` : "";
+      const cacheBuster = gatewayAttemptCount > 1 ? `&_refresh=${gatewayAttemptCount}` : "";
       const url = `${GATEWAY_FINDER_URL}${cacheBuster}`;
       window.open(url, "_blank", "noopener,noreferrer");
       statusEl.textContent =
         gatewayAttemptCount === 1
-          ? "Opened gateway finder in a new tab. If a gateway is blocked, click again to retry."
-          : `Retry #${gatewayAttemptCount}: opened a fresh gateway finder tab.`;
+          ? "Opened gateway finder in a new tab. If you get a blocked one, refresh until you get a free one."
+          : `Opened again (#${gatewayAttemptCount}). Refresh until you get a free gateway.`;
     });
   }
 }

@@ -50,6 +50,50 @@
       box-shadow: 0 0 40px rgba(0,100,236,0.08);
     }
 
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .nav-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 4px 9px;
+      font-family: inherit;
+      font-size: 0.7rem;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--neon);
+      color: var(--text-bright);
+      background: var(--card);
+    }
+
+    .nav-btn.accent {
+      color: var(--cyan);
+      border-color: rgba(52, 214, 214, 0.45);
+    }
+
     .header {
       text-align: center;
       border-bottom: 1px solid var(--border);
@@ -243,53 +287,12 @@
       .entry .note { font-size: 0.63rem; white-space: normal; text-align: left; }
       .header h1 { font-size: 1.2rem; }
     }
-  
-    .top-nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.65rem;
-      padding-bottom: 0.45rem;
-      border-bottom: 1px dashed var(--border);
-    }
-    .nav-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      align-items: center;
-    }
-    .nav-btn {
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 4px 9px;
-      font-family: inherit;
-      font-size: 0.7rem;
-      letter-spacing: 0.5px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
-    }
-    .nav-btn:hover {
-      border-color: var(--neon);
-      color: var(--text-bright);
-      background: var(--card-2);
-    }
-    .nav-btn.accent {
-      color: var(--cyan);
-      border-color: rgba(52, 214, 214, 0.45);
-    }
-
   </style>
 </head>
 <body>
   <div class="wrapper">
 
-        <nav class="top-nav" aria-label="Primary Navigation">
+    <nav class="top-nav" aria-label="Primary Navigation">
       <div class="nav-group">
         <a href="index.html" class="nav-btn accent">← HUB (index.html)</a>
         <a href="market.html" class="nav-btn">MARKET ANALYZER (market.html)</a>
@@ -299,6 +302,7 @@
         <a href="https://wayfinder.ar.io/?q=cyberleek" target="_blank" rel="noopener noreferrer" class="nav-btn">GATEWAY FINDER</a>
       </div>
     </nav>
+
     <div class="header">
       <h1>CYBERLEEK</h1>
       <div class="sub">LEAK TIMELINE · AUGUST – NOVEMBER 2026</div>

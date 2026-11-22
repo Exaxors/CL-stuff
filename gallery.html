@@ -454,24 +454,22 @@ function encodePathSegments(pathStr) {
     .join("/");
 }
 
-function getFallbackCandidates(src) {
-  const clean = String(src).replace(/^\.\/+/, "").replace(/^\/+/, "");
-  const parts = clean.split("/");
-  const candidates = [src, encodePathSegments(src)];
+function toMediaRelativeSrc(rawVal, fallbackFolder = "") {
+  let cleaned = String(rawVal || "").trim().replace(/\\/g, "/");
+  while (cleaned.startsWith("./")) cleaned = cleaned.slice(2);
+  cleaned = cleaned.replace(/^\/+/, "");
+  if (!cleaned) return "";
 
-  // If path is media/_sheets/<group>/<db>/<res>/<file>, also try media/_sheets/<group>/<db>/<file>
-  const sheetMatch = clean.match(/^media\/_sheets\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+)$/);
-  if (sheetMatch) {
-    const [, grp, db, , fname] = sheetMatch;
-    const flatSheet = `./media/_sheets/${grp}/${db}/${fname}`;
-    candidates.push(flatSheet, encodePathSegments(flatSheet));
+  if (cleaned === "media" || cleaned.startsWith("media/")) {
+    return `./${cleaned}`;
   }
-
-  // Also try case-normalized folder/file variants if needed
-  const lower = `./${clean.toLowerCase()}`;
-  candidates.push(lower, encodePathSegments(lower));
-
-  return Array.from(new Set(candidates.filter(Boolean)));
+  if (fallbackFolder) {
+    if (cleaned === fallbackFolder || cleaned.startsWith(`${fallbackFolder}/`)) {
+      return `./media/${cleaned}`;
+    }
+    return `./media/${fallbackFolder}/${cleaned}`;
+  }
+  return `./media/${cleaned}`;
 }
 
 function parseSheetPathMeta(cleanSrc) {
@@ -501,15 +499,8 @@ function normalizeManifest(manifestObj) {
         : String(entry.file || entry.path || entry.src || entry.name || "").trim();
       if (!rawVal) return;
 
-      const cleaned = rawVal.replace(/^\.\/+/, "").replace(/^\/+/, "");
-      const hasMediaPrefix = cleaned === "media" || cleaned.startsWith("media/");
-      const relWithoutMedia = hasMediaPrefix ? cleaned.replace(/^media\/?/, "") : cleaned;
-      const hasCategoryFolder =
-        relWithoutMedia === catKey || relWithoutMedia.startsWith(`${catKey}/`);
-      const finalRel = hasCategoryFolder
-        ? `media/${relWithoutMedia}`
-        : `media/${catKey}/${relWithoutMedia}`;
-      const src = `./${finalRel}`;
+      const src = toMediaRelativeSrc(rawVal, catKey);
+      if (!src) return;
       const displayName = rawVal.split("/").pop();
 
       items.push({
@@ -534,10 +525,11 @@ function normalizeManifest(manifestObj) {
 
   sheetList.forEach((entry) => {
     if (!entry) return;
-    const rawPath = String(entry.path || entry.src || entry.id || "").trim().replace(/^\/+/, "");
+    const rawPath = String(entry.path || entry.src || entry.id || entry.file || "").trim();
     if (!rawPath) return;
-    const normalizedRel = rawPath.startsWith("media/") ? rawPath : `media/${rawPath}`;
-    const src = `./${normalizedRel}`;
+
+    const src = toMediaRelativeSrc(rawPath);
+    if (!src) return;
     const meta = parseSheetPathMeta(src);
     const dbKey = entry.database || (meta ? meta.database : entry.category || "sheets");
     const res = entry.resolution || (meta ? meta.resolution : "");
@@ -633,14 +625,16 @@ function renderFilterControls() {
   });
 }
 
-function attachImageWithRetry(imgEl, thumbEl, src) {
-  const candidates = getFallbackCandidates(src);
-  let attempt = 0;
+function attachImageLoader(imgEl, thumbEl, src) {
+  const safeSrc = encodePathSegments(src);
+  let retried = false;
 
-  const tryNext = () => {
-    if (attempt < candidates.length) {
-      const nextUrl = candidates[attempt++];
-      imgEl.src = nextUrl;
+  imgEl.addEventListener("error", () => {
+    if (!retried) {
+      retried = true;
+      setTimeout(() => {
+        imgEl.src = `${safeSrc}${safeSrc.includes("?") ? "&" : "?"}retry=1`;
+      }, 250);
       return;
     }
     imgEl.style.display = "none";
@@ -650,23 +644,9 @@ function attachImageWithRetry(imgEl, thumbEl, src) {
       badge.textContent = `Missing: ${src}`;
       thumbEl.appendChild(badge);
     }
-  };
-
-  imgEl.addEventListener("error", () => {
-    // Brief retry once for transient 503s before trying fallback candidates
-    if (attempt === 1 && !imgEl.dataset.retried503) {
-      imgEl.dataset.retried503 = "1";
-      const retryUrl = imgEl.src;
-      imgEl.src = "";
-      setTimeout(() => {
-        imgEl.src = retryUrl;
-      }, 250);
-      return;
-    }
-    tryNext();
   });
 
-  tryNext();
+  imgEl.src = safeSrc;
 }
 
 function openLightbox(item) {
@@ -761,7 +741,7 @@ function renderGallery() {
     const imgEl = cardEl.querySelector("img");
     const thumbEl = cardEl.querySelector(".thumb-wrap");
 
-    attachImageWithRetry(imgEl, thumbEl, item.src);
+    attachImageLoader(imgEl, thumbEl, item.src);
     thumbEl.addEventListener("click", () => openLightbox(item));
   });
 }

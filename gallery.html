@@ -475,17 +475,22 @@ function normalizeManifest(manifestObj) {
     if (!Array.isArray(arr)) return;
     arr.forEach((entry) => {
       if (!entry) return;
-      const fname = typeof entry === "string"
+      const rawVal = typeof entry === "string"
         ? entry.trim()
         : String(entry.file || entry.path || entry.src || entry.name || "").trim();
-      if (!fname) return;
-      const cleanRel = fname.startsWith("media/")
-        ? fname
-        : fname.startsWith("./media/")
-        ? fname.slice(2)
-        : `media/${fname.replace(/^\/+/, "")}`;
-      const src = `./${cleanRel}`;
-      const displayName = fname.split("/").pop();
+      if (!rawVal) return;
+
+      const cleaned = rawVal.replace(/^\.\/+/, "").replace(/^\/+/, "");
+      const hasMediaPrefix = cleaned === "media" || cleaned.startsWith("media/");
+      const relWithoutMedia = hasMediaPrefix ? cleaned.replace(/^media\/?/, "") : cleaned;
+      const hasCategoryFolder =
+        relWithoutMedia === catKey || relWithoutMedia.startsWith(`${catKey}/`);
+      const finalRel = hasCategoryFolder
+        ? `media/${relWithoutMedia}`
+        : `media/${catKey}/${relWithoutMedia}`;
+      const src = `./${finalRel}`;
+      const displayName = rawVal.split("/").pop();
+
       items.push({
         category: catKey,
         group: catKey,

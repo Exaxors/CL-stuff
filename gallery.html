@@ -238,6 +238,13 @@
     transform: scale(1.02);
   }
 
+  .missing-badge {
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--red);
+  }
+
   .media-body {
     padding: 0.7rem 0.8rem;
     display: flex;
@@ -385,7 +392,7 @@
     <header class="header">
       <div>
         <h1>CYBERLEEK · INFO GALLERY</h1>
-        <div class="sub" id="statusSub">DATABASE SHEETS UNDER ./media/_sheets/&lt;group&gt;/&lt;database&gt;/&lt;res&gt;/</div>
+        <div class="sub" id="statusSub">MEDIA &amp; DATABASE SHEETS UNDER ./media/</div>
       </div>
       <div class="toolbar">
         <a href="./index.html" class="btn accent">← HUB</a>
@@ -398,7 +405,6 @@
       <div class="filter-cluster">
         <select id="filterSelect" class="filter-select unselected" aria-label="Select a filter">
           <option value="" class="placeholder-opt" selected>select a filter</option>
-          <option value="sheets">sheets</option>
         </select>
         <div class="cat-tabs" id="categoryTabs"></div>
       </div>
@@ -437,6 +443,16 @@ let allItems = [];
 let activeFilter = "";
 let searchQuery = "";
 
+function encodePathSegments(pathStr) {
+  return String(pathStr)
+    .split("/")
+    .map((seg, idx) => {
+      if (idx === 0 && (seg === "." || seg === "")) return seg;
+      return encodeURIComponent(seg);
+    })
+    .join("/");
+}
+
 function parseSheetPathMeta(cleanSrc) {
   const norm = String(cleanSrc).split("\\").join("/");
   const match = norm.match(/(?:^|\/)_sheets\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+)$/);
@@ -453,13 +469,44 @@ function normalizeManifest(manifestObj) {
   const items = [];
   if (!manifestObj || typeof manifestObj !== "object") return items;
 
-  const sourceList = Array.isArray(manifestObj.sheets)
+  const topCategories = ["debunked and fake", "info", "watermarks"];
+  topCategories.forEach((catKey) => {
+    const arr = manifestObj[catKey];
+    if (!Array.isArray(arr)) return;
+    arr.forEach((entry) => {
+      if (!entry) return;
+      const fname = typeof entry === "string"
+        ? entry.trim()
+        : String(entry.file || entry.path || entry.src || entry.name || "").trim();
+      if (!fname) return;
+      const cleanRel = fname.startsWith("media/")
+        ? fname
+        : fname.startsWith("./media/")
+        ? fname.slice(2)
+        : `media/${fname.replace(/^\/+/, "")}`;
+      const src = `./${cleanRel}`;
+      const displayName = fname.split("/").pop();
+      items.push({
+        category: catKey,
+        group: catKey,
+        database: "",
+        resolution: "",
+        isSheet: false,
+        file: displayName,
+        src,
+        title: displayName,
+        caption: `Category: ${catKey} | Path: ${src}`,
+      });
+    });
+  });
+
+  const sheetList = Array.isArray(manifestObj.sheets)
     ? manifestObj.sheets
     : Array.isArray(manifestObj.entries)
     ? manifestObj.entries
     : [];
 
-  sourceList.forEach((entry) => {
+  sheetList.forEach((entry) => {
     if (!entry) return;
     const rawPath = String(entry.path || entry.src || entry.id || "").trim().replace(/^\/+/, "");
     if (!rawPath) return;
@@ -484,8 +531,8 @@ function normalizeManifest(manifestObj) {
   });
 
   items.sort((a, b) => {
-    const dbCmp = (a.database || "").localeCompare(b.database || "");
-    if (dbCmp !== 0) return dbCmp;
+    const cCmp = (a.category || "").localeCompare(b.category || "");
+    if (cCmp !== 0) return cCmp;
     return (a.src || "").localeCompare(b.src || "");
   });
 
@@ -498,30 +545,57 @@ function getSheetDatabases() {
   ).sort((a, b) => a.localeCompare(b));
 }
 
+function getTopCategories() {
+  return Array.from(
+    new Set(allItems.filter((i) => !i.isSheet && i.category).map((i) => i.category))
+  ).sort((a, b) => a.localeCompare(b));
+}
+
 function renderFilterControls() {
   const selectEl = document.getElementById("filterSelect");
   const tabsEl = document.getElementById("categoryTabs");
+  const totalCount = allItems.length;
   const sheetCount = allItems.filter((i) => i.isSheet).length;
+  const topCats = getTopCategories();
   const dbs = getSheetDatabases();
-
   const prevVal = activeFilter;
-  selectEl.innerHTML = [
+
+  const options = [
     `<option value="" class="placeholder-opt"${prevVal === "" ? " selected" : ""}>select a filter</option>`,
+    `<option value="all"${prevVal === "all" ? " selected" : ""}>all (${totalCount})</option>`,
+    ...topCats.map((cat) => {
+      const cnt = allItems.filter((i) => !i.isSheet && i.category === cat).length;
+      return `<option value="cat:${cat}"${prevVal === `cat:${cat}` ? " selected" : ""}>${cat} (${cnt})</option>`;
+    }),
     `<option value="sheets"${prevVal === "sheets" ? " selected" : ""}>sheets (${sheetCount})</option>`,
     ...dbs.map((db) => {
       const cnt = allItems.filter((i) => i.isSheet && i.database === db).length;
-      return `<option value="${db}"${prevVal === db ? " selected" : ""}>${db} (${cnt})</option>`;
+      return `<option value="db:${db}"${prevVal === `db:${db}` ? " selected" : ""}>${db} (${cnt})</option>`;
     }),
-  ].join("");
+  ];
+
+  selectEl.innerHTML = options.join("");
   selectEl.classList.toggle("unselected", activeFilter === "");
 
-  tabsEl.innerHTML = [
-    `<button type="button" class="btn ${activeFilter === "sheets" ? "active" : ""}" data-filter="sheets">sheets (${sheetCount})</button>`,
-    ...dbs.map((db) => {
-      const cnt = allItems.filter((i) => i.isSheet && i.database === db).length;
-      return `<button type="button" class="btn ${activeFilter === db ? "active" : ""}" data-filter="${db}">${db} (${cnt})</button>`;
-    }),
-  ].join("");
+  const tabDefs = [
+    { key: "all", label: `all (${totalCount})` },
+    ...topCats.map((cat) => ({
+      key: `cat:${cat}`,
+      label: `${cat} (${allItems.filter((i) => !i.isSheet && i.category === cat).length})`,
+    })),
+    { key: "sheets", label: `sheets (${sheetCount})` },
+    ...dbs.map((db) => ({
+      key: `db:${db}`,
+      label: `${db} (${allItems.filter((i) => i.isSheet && i.database === db).length})`,
+    })),
+  ];
+
+  tabsEl.innerHTML = tabDefs
+    .map(
+      (t) =>
+        `<button type="button" class="btn ${activeFilter === t.key ? "active" : ""}" data-filter="${t.key}">${t.label}</button>`
+    )
+    .join("");
 
   tabsEl.querySelectorAll("button[data-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -533,21 +607,36 @@ function renderFilterControls() {
 }
 
 function openLightbox(item) {
+  const safeSrc = encodePathSegments(item.src);
   document.getElementById("lbCategory").textContent = item.database || item.category;
   document.getElementById("lbTitle").textContent = item.title;
   document.getElementById("lbCaption").textContent = item.caption || "";
   document.getElementById("lbCaption").style.display = item.caption ? "block" : "none";
   const img = document.getElementById("lbImg");
-  img.src = item.src;
+  img.src = safeSrc;
   img.alt = item.title;
   document.getElementById("lbPath").textContent = item.src;
-  document.getElementById("lbRawLink").href = item.src;
+  document.getElementById("lbRawLink").href = safeSrc;
   document.getElementById("lightbox").classList.add("open");
 }
 
 function closeLightbox() {
   document.getElementById("lightbox").classList.remove("open");
   document.getElementById("lbImg").src = "";
+}
+
+function matchesActiveFilter(item) {
+  if (!activeFilter || activeFilter === "all") return true;
+  if (activeFilter === "sheets") return Boolean(item.isSheet);
+  if (activeFilter.startsWith("cat:")) {
+    const catName = activeFilter.slice(4);
+    return !item.isSheet && item.category === catName;
+  }
+  if (activeFilter.startsWith("db:")) {
+    const dbName = activeFilter.slice(3);
+    return Boolean(item.isSheet && item.database === dbName);
+  }
+  return item.database === activeFilter || item.category === activeFilter;
 }
 
 function renderGallery() {
@@ -565,12 +654,7 @@ function renderGallery() {
   }
 
   const filtered = allItems.filter((item) => {
-    const filterMatch =
-      !activeFilter ||
-      activeFilter === "sheets" ||
-      item.database === activeFilter ||
-      item.category === activeFilter;
-
+    const filterMatch = matchesActiveFilter(item);
     const textMatch =
       !q ||
       item.title.toLowerCase().includes(q) ||
@@ -585,7 +669,7 @@ function renderGallery() {
   });
 
   if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state">No sheets match the selected filter or search query.</div>`;
+    grid.innerHTML = `<div class="empty-state">No media items match the selected filter or search query.</div>`;
     return;
   }
 
@@ -593,8 +677,8 @@ function renderGallery() {
     .map(
       (item, idx) => `
       <article class="media-card" data-card-idx="${idx}">
-        <div class="thumb-wrap" title="Click to preview full sheet">
-          <img src="${item.src}" alt="${item.title}" loading="lazy" />
+        <div class="thumb-wrap" title="Click to preview full image">
+          <img src="${encodePathSegments(item.src)}" alt="${item.title}" loading="lazy" />
         </div>
         <div class="media-body">
           <div>
@@ -615,9 +699,12 @@ function renderGallery() {
     const thumbEl = cardEl.querySelector(".thumb-wrap");
 
     imgEl.addEventListener("error", () => {
-      cardEl.remove();
-      if (!grid.querySelector(".media-card")) {
-        grid.innerHTML = `<div class="empty-state">No loaded sheet images found for this path in <code>./media/manifest.json</code>.</div>`;
+      imgEl.style.display = "none";
+      if (!thumbEl.querySelector(".missing-badge")) {
+        const badge = document.createElement("div");
+        badge.className = "missing-badge";
+        badge.textContent = "Image failed to load";
+        thumbEl.appendChild(badge);
       }
     });
 
@@ -648,9 +735,10 @@ async function initGallery() {
 
   const dbCount = getSheetDatabases().length;
   const sheetCount = allItems.filter((i) => i.isSheet).length;
+  const mediaCount = allItems.filter((i) => !i.isSheet).length;
   document.getElementById("statusSub").textContent = manifestError
     ? `MANIFEST ERROR (${MANIFEST_PATH}) · ${manifestError}`
-    : `${dbCount} DATABASES · ${sheetCount} SHEETS INDEXED BY PATH`;
+    : `${mediaCount} MEDIA FILES · ${dbCount} SHEET DATABASES · ${sheetCount} SHEETS INDEXED`;
 }
 
 document.getElementById("filterSelect").addEventListener("change", (e) => {

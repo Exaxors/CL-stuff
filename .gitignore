@@ -1,0 +1,12 @@
+﻿# Local manifest generator script (keep out of repo)
+generate_manifest.py
+*.py
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS / Editor clutter
+.DS_Store
+Thumbs.db
+.vscode/

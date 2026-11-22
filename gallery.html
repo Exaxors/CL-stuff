@@ -243,6 +243,7 @@
     text-align: center;
     font-size: 0.68rem;
     color: var(--red);
+    word-break: break-all;
   }
 
   .media-body {
@@ -453,6 +454,26 @@ function encodePathSegments(pathStr) {
     .join("/");
 }
 
+function getFallbackCandidates(src) {
+  const clean = String(src).replace(/^\.\/+/, "").replace(/^\/+/, "");
+  const parts = clean.split("/");
+  const candidates = [src, encodePathSegments(src)];
+
+  // If path is media/_sheets/<group>/<db>/<res>/<file>, also try media/_sheets/<group>/<db>/<file>
+  const sheetMatch = clean.match(/^media\/_sheets\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+)$/);
+  if (sheetMatch) {
+    const [, grp, db, , fname] = sheetMatch;
+    const flatSheet = `./media/_sheets/${grp}/${db}/${fname}`;
+    candidates.push(flatSheet, encodePathSegments(flatSheet));
+  }
+
+  // Also try case-normalized folder/file variants if needed
+  const lower = `./${clean.toLowerCase()}`;
+  candidates.push(lower, encodePathSegments(lower));
+
+  return Array.from(new Set(candidates.filter(Boolean)));
+}
+
 function parseSheetPathMeta(cleanSrc) {
   const norm = String(cleanSrc).split("\\").join("/");
   const match = norm.match(/(?:^|\/)_sheets\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+)$/);
@@ -515,7 +536,8 @@ function normalizeManifest(manifestObj) {
     if (!entry) return;
     const rawPath = String(entry.path || entry.src || entry.id || "").trim().replace(/^\/+/, "");
     if (!rawPath) return;
-    const src = rawPath.startsWith("./") ? rawPath : `./${rawPath}`;
+    const normalizedRel = rawPath.startsWith("media/") ? rawPath : `media/${rawPath}`;
+    const src = `./${normalizedRel}`;
     const meta = parseSheetPathMeta(src);
     const dbKey = entry.database || (meta ? meta.database : entry.category || "sheets");
     const res = entry.resolution || (meta ? meta.resolution : "");
@@ -611,6 +633,42 @@ function renderFilterControls() {
   });
 }
 
+function attachImageWithRetry(imgEl, thumbEl, src) {
+  const candidates = getFallbackCandidates(src);
+  let attempt = 0;
+
+  const tryNext = () => {
+    if (attempt < candidates.length) {
+      const nextUrl = candidates[attempt++];
+      imgEl.src = nextUrl;
+      return;
+    }
+    imgEl.style.display = "none";
+    if (!thumbEl.querySelector(".missing-badge")) {
+      const badge = document.createElement("div");
+      badge.className = "missing-badge";
+      badge.textContent = `Missing: ${src}`;
+      thumbEl.appendChild(badge);
+    }
+  };
+
+  imgEl.addEventListener("error", () => {
+    // Brief retry once for transient 503s before trying fallback candidates
+    if (attempt === 1 && !imgEl.dataset.retried503) {
+      imgEl.dataset.retried503 = "1";
+      const retryUrl = imgEl.src;
+      imgEl.src = "";
+      setTimeout(() => {
+        imgEl.src = retryUrl;
+      }, 250);
+      return;
+    }
+    tryNext();
+  });
+
+  tryNext();
+}
+
 function openLightbox(item) {
   const safeSrc = encodePathSegments(item.src);
   document.getElementById("lbCategory").textContent = item.database || item.category;
@@ -683,7 +741,7 @@ function renderGallery() {
       (item, idx) => `
       <article class="media-card" data-card-idx="${idx}">
         <div class="thumb-wrap" title="Click to preview full image">
-          <img src="${encodePathSegments(item.src)}" alt="${item.title}" loading="lazy" />
+          <img alt="${item.title}" loading="lazy" />
         </div>
         <div class="media-body">
           <div>
@@ -703,16 +761,7 @@ function renderGallery() {
     const imgEl = cardEl.querySelector("img");
     const thumbEl = cardEl.querySelector(".thumb-wrap");
 
-    imgEl.addEventListener("error", () => {
-      imgEl.style.display = "none";
-      if (!thumbEl.querySelector(".missing-badge")) {
-        const badge = document.createElement("div");
-        badge.className = "missing-badge";
-        badge.textContent = "Image failed to load";
-        thumbEl.appendChild(badge);
-      }
-    });
-
+    attachImageWithRetry(imgEl, thumbEl, item.src);
     thumbEl.addEventListener("click", () => openLightbox(item));
   });
 }

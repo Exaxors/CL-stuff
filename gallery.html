@@ -137,6 +137,41 @@
     margin-bottom: 1rem;
   }
 
+  .filter-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  select.filter-select {
+    background: var(--card);
+    color: var(--text-bright);
+    border: 1px solid var(--border);
+    padding: 5px 9px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    min-width: 240px;
+  }
+
+  select.filter-select.unselected {
+    color: #888888;
+  }
+
+  select.filter-select option {
+    color: var(--text-bright);
+    background: var(--card);
+  }
+
+  select.filter-select option.placeholder-opt {
+    color: #888888;
+  }
+
+  select.filter-select:focus {
+    outline: none;
+    border-color: var(--neon);
+  }
+
   .cat-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -156,23 +191,6 @@
   input[type="search"]:focus {
     outline: none;
     border-color: var(--neon);
-  }
-
-  .notice {
-    display: none;
-    background: rgba(245, 197, 66, 0.08);
-    border: 1px dashed var(--gold);
-    color: var(--text);
-    padding: 0.75rem 0.9rem;
-    font-size: 0.73rem;
-    margin-bottom: 1rem;
-  }
-
-  .notice code {
-    color: var(--cyan);
-    background: var(--bg);
-    padding: 1px 5px;
-    border: 1px dashed var(--border);
   }
 
   .gallery-grid {
@@ -271,7 +289,12 @@
     font-size: 0.78rem;
   }
 
-  /* Lightbox modal */
+  .select-filter-prompt {
+    color: #888888;
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+  }
+
   .lightbox {
     display: none;
     position: fixed;
@@ -349,23 +372,11 @@
   }
 
   @media (max-width: 768px) {
-    body {
-      padding: 0.65rem;
-      overflow-x: hidden;
-    }
-    .wrapper {
-      padding: 0.85rem 0.9rem;
-    }
-    .header h1 {
-      font-size: 1.05rem;
-    }
-    input[type="search"] {
-      width: 100%;
-      min-width: 0;
-    }
-    .gallery-grid {
-      grid-template-columns: 1fr;
-    }
+    body { padding: 0.65rem; overflow-x: hidden; }
+    .wrapper { padding: 0.85rem 0.9rem; }
+    .header h1 { font-size: 1.05rem; }
+    select.filter-select, input[type="search"] { width: 100%; min-width: 0; }
+    .gallery-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -374,7 +385,7 @@
     <header class="header">
       <div>
         <h1>CYBERLEEK · INFO GALLERY</h1>
-        <div class="sub" id="statusSub">CATEGORY FOLDERS UNDER ./media/&lt;category&gt;/</div>
+        <div class="sub" id="statusSub">DATABASE SHEETS UNDER ./media/_sheets/&lt;group&gt;/&lt;database&gt;/&lt;res&gt;/</div>
       </div>
       <div class="toolbar">
         <a href="./index.html" class="btn accent">← HUB</a>
@@ -383,13 +394,15 @@
       </div>
     </header>
 
-    <div class="notice" id="setupNotice">
-      <strong>How category folders work on static hosting:</strong> Browsers can't list directory contents automatically on static hosts like GitHub Pages, so categories and files are read from <code>./media/manifest.json</code> under <code>./media/&lt;category&gt;/</code>. Images that fail to load are hidden automatically.
-    </div>
-
     <div class="controls-row">
-      <div class="cat-tabs" id="categoryTabs"></div>
-      <input type="search" id="searchInput" placeholder="Search title, note, or filename..." />
+      <div class="filter-cluster">
+        <select id="filterSelect" class="filter-select unselected" aria-label="Select a filter">
+          <option value="" class="placeholder-opt" selected>select a filter</option>
+          <option value="sheets">sheets</option>
+        </select>
+        <div class="cat-tabs" id="categoryTabs"></div>
+      </div>
+      <input type="search" id="searchInput" placeholder="Search database, path, resolution, or filename..." />
     </div>
 
     <div class="gallery-grid" id="galleryGrid"></div>
@@ -421,69 +434,106 @@
 const MANIFEST_PATH = "./media/manifest.json";
 let manifestError = "";
 let allItems = [];
-let activeCategory = "ALL";
+let activeFilter = "";
 let searchQuery = "";
+
+function parseSheetPathMeta(cleanSrc) {
+  const norm = String(cleanSrc).split("\\").join("/");
+  const match = norm.match(/(?:^|\/)_sheets\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+)$/);
+  if (!match) return null;
+  return {
+    group: match[1],
+    database: match[2],
+    resolution: match[3],
+    filename: match[4],
+  };
+}
 
 function normalizeManifest(manifestObj) {
   const items = [];
   if (!manifestObj || typeof manifestObj !== "object") return items;
 
-  Object.entries(manifestObj).forEach(([category, entries]) => {
-    const cleanCat = String(category).trim();
-    if (!cleanCat || !Array.isArray(entries)) return;
+  const sourceList = Array.isArray(manifestObj.sheets)
+    ? manifestObj.sheets
+    : Array.isArray(manifestObj.entries)
+    ? manifestObj.entries
+    : [];
 
-    entries.forEach((entry) => {
-      if (typeof entry === "string") {
-        const cleanFile = entry.trim().replace(/^\/+/, "");
-        if (!cleanFile) return;
-        const baseName = cleanFile.split("/").pop().replace(/\.[^.]+$/, "");
-        items.push({
-          category: cleanCat,
-          file: cleanFile,
-          src: `./media/${cleanCat}/${cleanFile}`,
-          title: baseName.replace(/[-_]+/g, " "),
-          caption: ""
-        });
-      } else if (entry && typeof entry === "object" && entry.file) {
-        const cleanFile = String(entry.file).trim().replace(/^\/+/, "");
-        const baseName = cleanFile.split("/").pop().replace(/\.[^.]+$/, "");
-        items.push({
-          category: cleanCat,
-          file: cleanFile,
-          src: `./media/${cleanCat}/${cleanFile}`,
-          title: String(entry.title || baseName.replace(/[-_]+/g, " ")),
-          caption: String(entry.caption || "")
-        });
-      }
+  sourceList.forEach((entry) => {
+    if (!entry) return;
+    const rawPath = String(entry.path || entry.src || entry.id || "").trim().replace(/^\/+/, "");
+    if (!rawPath) return;
+    const src = rawPath.startsWith("./") ? rawPath : `./${rawPath}`;
+    const meta = parseSheetPathMeta(src);
+    const dbKey = entry.database || (meta ? meta.database : entry.category || "sheets");
+    const res = entry.resolution || (meta ? meta.resolution : "");
+    const grp = entry.group || (meta ? meta.group : "");
+    const fname = entry.name || (meta ? meta.filename : src.split("/").pop());
+
+    items.push({
+      category: dbKey,
+      group: grp,
+      database: dbKey,
+      resolution: res,
+      isSheet: true,
+      file: meta ? `${meta.group}/${meta.database}/${meta.resolution}/${meta.filename}` : fname,
+      src,
+      title: String(entry.title || `${dbKey}${res ? ` · ${res}` : ""} · ${fname}`),
+      caption: String(entry.caption || `Path: ${src}`),
     });
+  });
+
+  items.sort((a, b) => {
+    const dbCmp = (a.database || "").localeCompare(b.database || "");
+    if (dbCmp !== 0) return dbCmp;
+    return (a.src || "").localeCompare(b.src || "");
   });
 
   return items;
 }
 
-function renderCategoryTabs() {
-  const cats = ["ALL", ...new Set(allItems.map((i) => i.category))];
-  const tabsEl = document.getElementById("categoryTabs");
-  tabsEl.innerHTML = cats
-    .map((cat) => {
-      const count = cat === "ALL" ? allItems.length : allItems.filter((i) => i.category === cat).length;
-      const activeCls = cat === activeCategory ? "btn active" : "btn";
-      const label = cat === "ALL" ? `All (${count})` : `${cat} (${count})`;
-      return `<button type="button" class="${activeCls}" data-cat="${cat}">${label}</button>`;
-    })
-    .join("");
+function getSheetDatabases() {
+  return Array.from(
+    new Set(allItems.filter((i) => i.isSheet && i.database).map((i) => i.database))
+  ).sort((a, b) => a.localeCompare(b));
+}
 
-  tabsEl.querySelectorAll("button[data-cat]").forEach((btn) => {
+function renderFilterControls() {
+  const selectEl = document.getElementById("filterSelect");
+  const tabsEl = document.getElementById("categoryTabs");
+  const sheetCount = allItems.filter((i) => i.isSheet).length;
+  const dbs = getSheetDatabases();
+
+  const prevVal = activeFilter;
+  selectEl.innerHTML = [
+    `<option value="" class="placeholder-opt"${prevVal === "" ? " selected" : ""}>select a filter</option>`,
+    `<option value="sheets"${prevVal === "sheets" ? " selected" : ""}>sheets (${sheetCount})</option>`,
+    ...dbs.map((db) => {
+      const cnt = allItems.filter((i) => i.isSheet && i.database === db).length;
+      return `<option value="${db}"${prevVal === db ? " selected" : ""}>${db} (${cnt})</option>`;
+    }),
+  ].join("");
+  selectEl.classList.toggle("unselected", activeFilter === "");
+
+  tabsEl.innerHTML = [
+    `<button type="button" class="btn ${activeFilter === "sheets" ? "active" : ""}" data-filter="sheets">sheets (${sheetCount})</button>`,
+    ...dbs.map((db) => {
+      const cnt = allItems.filter((i) => i.isSheet && i.database === db).length;
+      return `<button type="button" class="btn ${activeFilter === db ? "active" : ""}" data-filter="${db}">${db} (${cnt})</button>`;
+    }),
+  ].join("");
+
+  tabsEl.querySelectorAll("button[data-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      activeCategory = btn.dataset.cat;
-      renderCategoryTabs();
+      activeFilter = btn.dataset.filter || "";
+      renderFilterControls();
       renderGallery();
     });
   });
 }
 
 function openLightbox(item) {
-  document.getElementById("lbCategory").textContent = item.category;
+  document.getElementById("lbCategory").textContent = item.database || item.category;
   document.getElementById("lbTitle").textContent = item.title;
   document.getElementById("lbCaption").textContent = item.caption || "";
   document.getElementById("lbCaption").style.display = item.caption ? "block" : "none";
@@ -504,22 +554,38 @@ function renderGallery() {
   const grid = document.getElementById("galleryGrid");
   const q = searchQuery.trim().toLowerCase();
 
+  if (manifestError && !allItems.length) {
+    grid.innerHTML = `<div class="empty-state">Could not load <code>./media/manifest.json</code> (${manifestError}).</div>`;
+    return;
+  }
+
+  if (!activeFilter && !q) {
+    grid.innerHTML = `<div class="empty-state"><span class="select-filter-prompt">select a filter</span></div>`;
+    return;
+  }
+
   const filtered = allItems.filter((item) => {
-    const catMatch = activeCategory === "ALL" || item.category === activeCategory;
+    const filterMatch =
+      !activeFilter ||
+      activeFilter === "sheets" ||
+      item.database === activeFilter ||
+      item.category === activeFilter;
+
     const textMatch =
       !q ||
       item.title.toLowerCase().includes(q) ||
       item.caption.toLowerCase().includes(q) ||
-      item.category.toLowerCase().includes(q) ||
+      (item.database || "").toLowerCase().includes(q) ||
+      (item.resolution || "").toLowerCase().includes(q) ||
+      (item.group || "").toLowerCase().includes(q) ||
+      item.src.toLowerCase().includes(q) ||
       item.file.toLowerCase().includes(q);
-    return catMatch && textMatch;
+
+    return filterMatch && textMatch;
   });
 
   if (!filtered.length) {
-    const msg = manifestError
-      ? `Could not load <code>./media/manifest.json</code> (${manifestError}). Make sure <code>manifest.json</code> exists inside <code>./media/</code>.`
-      : `No images match the current filter or exist in <code>./media/&lt;category&gt;/</code> yet.`;
-    grid.innerHTML = `<div class="empty-state">${msg}</div>`;
+    grid.innerHTML = `<div class="empty-state">No sheets match the selected filter or search query.</div>`;
     return;
   }
 
@@ -527,14 +593,14 @@ function renderGallery() {
     .map(
       (item, idx) => `
       <article class="media-card" data-card-idx="${idx}">
-        <div class="thumb-wrap" title="Click to preview full image">
+        <div class="thumb-wrap" title="Click to preview full sheet">
           <img src="${item.src}" alt="${item.title}" loading="lazy" />
         </div>
         <div class="media-body">
           <div>
-            <span class="media-cat">${item.category}</span>
+            <span class="media-cat">${item.database || item.category}</span>
             <div class="media-title" style="margin-top:5px;">${item.title}</div>
-            ${item.caption ? `<div class="media-caption" style="margin-top:3px;">${item.caption}</div>` : ""}
+            ${item.resolution ? `<div class="media-caption" style="margin-top:3px;">Resolution: ${item.resolution}${item.group ? ` · ${item.group}` : ""}</div>` : ""}
           </div>
           <div class="media-path">${item.src}</div>
         </div>
@@ -551,11 +617,7 @@ function renderGallery() {
     imgEl.addEventListener("error", () => {
       cardEl.remove();
       if (!grid.querySelector(".media-card")) {
-        grid.innerHTML = `
-          <div class="empty-state">
-            No loaded images found in <code>./media/&lt;category&gt;/</code>. Check your image files and <code>./media/manifest.json</code>.
-          </div>
-        `;
+        grid.innerHTML = `<div class="empty-state">No loaded sheet images found for this path in <code>./media/manifest.json</code>.</div>`;
       }
     });
 
@@ -581,14 +643,22 @@ async function initGallery() {
   }
 
   allItems = normalizeManifest(manifestData);
-  renderCategoryTabs();
+  renderFilterControls();
   renderGallery();
 
-  const foldersCount = new Set(allItems.map((i) => i.category)).size;
+  const dbCount = getSheetDatabases().length;
+  const sheetCount = allItems.filter((i) => i.isSheet).length;
   document.getElementById("statusSub").textContent = manifestError
     ? `MANIFEST ERROR (${MANIFEST_PATH}) · ${manifestError}`
-    : `${foldersCount} CATEGORY FOLDERS · ${allItems.length} ENTRIES FROM ./media/manifest.json`;
+    : `${dbCount} DATABASES · ${sheetCount} SHEETS INDEXED BY PATH`;
 }
+
+document.getElementById("filterSelect").addEventListener("change", (e) => {
+  activeFilter = e.target.value;
+  e.target.classList.toggle("unselected", activeFilter === "");
+  renderFilterControls();
+  renderGallery();
+});
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
   searchQuery = e.target.value;

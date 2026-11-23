@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CYBERLEEK · Research Backup</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#00050d;--card:#00102b;--c2:#00173d;--bd:#003299;--neon:#0064ec;--green:#60c33a;--red:#ff3355;--gold:#f5c542;--cyan:#34d6d6;--tx:#a0b0c8;--tb:#d6efc1;--td:#6a7a90}
+body{background:var(--bg);color:var(--tx);font:13px/1.5 "Courier New","Lucida Console",monospace;padding:1rem}
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(0,0,0,.04) 4px,rgba(0,0,0,.04) 8px);pointer-events:none;z-index:99}
+.w{max-width:1500px;margin:0 auto;background:var(--card);border:1px solid var(--bd);padding:1rem 1.3rem;box-shadow:0 0 40px rgba(0,100,236,.08)}
+h1{text-align:center;font-size:1.5rem;letter-spacing:4px;color:var(--neon);text-shadow:0 0 30px rgba(0,100,236,.3)}
+.sub{text-align:center;font-size:.72rem;color:var(--td);letter-spacing:2px;border-bottom:1px solid var(--bd);padding-bottom:.5rem;margin-bottom:.6rem}
+nav{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:0;background:var(--card);padding:6px 0;border-bottom:1px dashed var(--bd);z-index:10}
+nav a{background:var(--bg);color:var(--tx);border:1px solid var(--bd);padding:3px 9px;font-size:.7rem;text-decoration:none}
+nav a:hover{border-color:var(--neon);color:var(--tb)}
+h2{font-size:.85rem;letter-spacing:4px;text-transform:uppercase;color:var(--neon);margin:1.2rem 0 .5rem;padding-bottom:4px;border-bottom:1px dashed var(--bd)}
+h3{font-size:.78rem;color:var(--tb);margin:.7rem 0 .25rem}
+p,li{margin:.25rem 0}ul{padding-left:1.2rem}
+.box{background:var(--bg);border:1px solid var(--bd);padding:.6rem .8rem;margin:.5rem 0}
+.warn{border-color:var(--red)}.note{border-color:var(--cyan)}.gold{border-color:var(--gold)}
+b,.hl{color:var(--tb)}.g{color:var(--green)}.r{color:var(--red)}.y{color:var(--gold)}.c{color:var(--cyan)}.n{color:var(--neon)}.d{color:var(--td)}
+code{color:var(--cyan);word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:.74rem;margin:.4rem 0}
+th,td{padding:5px 8px;border-bottom:1px dashed var(--bd);text-align:left;vertical-align:top}
+th{color:var(--neon);font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 1.2rem}
+.ch{text-align:center;font-size:.7rem;letter-spacing:4px;color:var(--td);border-bottom:1px dashed var(--bd);padding:3px 0;margin-bottom:3px}
+.e{padding:3px 0;border-bottom:1px dashed rgba(0,50,153,.5)}
+.e .t{color:var(--neon);font-size:.68rem;margin-right:6px}.e .f{color:var(--tb);font-weight:700}
+.e .m{display:block;color:var(--td);font-size:.7rem}
+.p{color:var(--red);font-size:.66rem}.a{color:var(--cyan);font-size:.66rem}.wn{color:var(--green);font-size:.66rem}
+.pill{font-size:.62rem;border:1px solid currentColor;border-radius:3px;padding:0 4px}
+details{background:var(--bg);border:1px solid var(--bd);margin:.4rem 0;padding:.4rem .7rem}
+summary{cursor:pointer;color:var(--tb);font-weight:700}
+.foot{text-align:center;font-size:.6rem;color:var(--td);letter-spacing:2px;border-top:1px solid var(--bd);padding-top:.5rem;margin-top:1rem}
+@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+.btn {
+  background: var(--bg);
+  color: var(--tx);
+  border: 1px solid var(--bd);
+  padding: 5px 10px;
+  font-family: inherit;
+  font-size: .72rem;
+  letter-spacing: .5px;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: border-color .15s, color .15s, background .15s;
+}
+
+.btn:hover {
+  border-color: var(--neon);
+  color: var(--tb);
+  background: var(--c2);
+}
+
+.btn.accent {
+  color: var(--cyan);
+  border-color: rgba(52, 214, 214, .45);
+}
+
+.hub-back-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: .65rem;
+}
+/* Timeline refresh */
+.tl-count{float:right;color:var(--td);font-size:.62rem;letter-spacing:1px;font-weight:400}
+.tl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;align-items:start;margin:.65rem 0}
+.tl-month{background:var(--bg);border:1px solid var(--bd);padding:.65rem .75rem;min-width:0}
+.tl-month h3{color:var(--neon);font-size:.72rem;letter-spacing:3px;margin:0 0 .55rem;padding-bottom:.45rem;border-bottom:1px dashed var(--bd)}
+.tl-list{position:relative}
+.tl-event{display:grid;grid-template-columns:78px minmax(0,1fr);gap:.55rem;padding:.48rem 0;border-bottom:1px dashed rgba(0,50,153,.55)}
+.tl-event:last-child{border-bottom:0}
+.tl-date{display:flex;flex-direction:column;gap:2px;color:var(--neon);font-size:.68rem;line-height:1.35}
+.tl-date b{color:var(--td);font-size:.58rem;font-weight:400}
+.tl-content{min-width:0}
+.tl-title{color:var(--tb);font-size:.69rem;line-height:1.45;overflow-wrap:anywhere}
+.tl-tag{display:inline-block;vertical-align:1px;margin:2px 3px 0 0;padding:0 4px;border:1px solid currentColor;border-radius:2px;font-size:.53rem;letter-spacing:.7px;white-space:nowrap}
+.tl-tag.poll{color:var(--red)}.tl-tag.announcement{color:var(--cyan)}.tl-tag.winner{color:var(--green)}
+@media(max-width:1050px){.tl-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.tl-grid{grid-template-columns:1fr}.tl-count{float:none;display:block;margin-top:3px}.tl-event{grid-template-columns:70px minmax(0,1fr)}}
+
+</style></head><body><div class="w"><div class="hub-back-row">
+  <a href="./index.html" class="btn accent">← HUB</a>
+</div>
+<h1>CYBERLEEK</h1>
+<div class="sub">RESEARCH BACKUP · GTA VI LEAKS · AUG – NOV 2026 · COMPILED 2026-11-23</div>
+<nav><a href="#ov">Overview</a><a href="#tl">Timeline</a><a href="#files">Files</a><a href="#game">Gameplay</a><a href="#map">Map</a><a href="#fake">Debunked</a><a href="#chain">On-chain</a><a href="#id">Identity</a><a href="#web">Portal &amp; token</a><a href="#react">Reactions</a><a href="#open">Open / verdict</a></nav>
+
+<h2 id="ov">Overview</h2>
+<p>Backup of the CL research archive (zyrexdz "cyberleek-leak-research" snapshot of 2026-08-20/21, Telegram/portal snapshots, style guide, market dashboard) plus the <b>on-chain timeline updated through 23.11.2026</b> (program <code>7rAgHPLDc9NryZmNdeEzyDui6D9PHkvTxMjKhNSa7w3a</code>, 47 entries: 27 leaks, 12 announcements, 8 polls).</p>
+<div class="box warn"><b class="r">Key warnings from the research</b><ul>
+<li>The portal watermark in video 4 says <i>"CYBERLEEK DOES NOT HAVE TWITTER"</i> → X accounts (<code>@cyberleek_ar_io</code> suspended 19.08, <code>@MrCyberLeek</code>, <code>@cyberleekario</code>, <code>@cyberleek_of</code>, <code>@Miosz179322</code>) and Telegram <code>@cyberleek</code>/<code>@cyberleekario</code> are treated as imposters. Discord "cyberleek / cyberleek_west / surwest" likewise unverified.</li>
+<li><code>$CYBERLEEK</code> (Solana, mint <code>ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg</code>) is a high-risk memecoin; votes were non-refundable token transfers (token sink). Treat as probable pump &amp; dump. Beware fake sites.</li>
+<li>Footage = genuine early Rockstar material per research (97% confidence), re-encoded/watermarked/spliced with FFmpeg 6.1 by the leaker. Leaked files themselves are copyrighted and <b>not</b> included here (hashes only).</li></ul></div>
+<div class="box note"><b class="c">Update vs. the GitHub research:</b> the repo (Aug) said full-build access was "not confirmed". Later on-chain posts (Oct/Nov) claim the leaker holds a full Nov-2026 Xbox build (v1.0.2.1), released files via torrent (19.11) and an EXE ZIP (23.11). These are <b>CL's own claims</b>; this backup contains no independent verification. Announced verification hashes (ZIP/EXE) are in the timeline.</div>
+
+<h2 id="tl">Leak timeline <span class="tl-count">47 ON-CHAIN ENTRIES · UTC</span></h2>
+<p class="d">Chronological overview based on the supplied Solana on-chain timeline. Polls, announcements and poll winners are marked separately. Download locations, credentials and magnet links are intentionally omitted.</p>
+<div class="tl-grid"><section class="tl-month"><h3>AUGUST 2026</h3><div class="tl-list"><article class="tl-event"><div class="tl-date"><span>15.08</span><b>22:08 UTC</b></div><div class="tl-content"><div class="tl-title">map sneak peek 1 </div></div></article><article class="tl-event"><div class="tl-date"><span>15.08</span><b>22:17 UTC</b></div><div class="tl-content"><div class="tl-title">map sneak peek 1 (duplicate account) </div></div></article><article class="tl-event"><div class="tl-date"><span>16.08</span><b>15:11 UTC</b></div><div class="tl-content"><div class="tl-title">map sneak peek 2 </div></div></article><article class="tl-event"><div class="tl-date"><span>17.08</span><b>21:07 UTC</b></div><div class="tl-content"><div class="tl-title">Basketball.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>18.08</span><b>17:26 UTC</b></div><div class="tl-content"><div class="tl-title">full_map.png </div></div></article><article class="tl-event"><div class="tl-date"><span>18.08</span><b>19:05 UTC</b></div><div class="tl-content"><div class="tl-title">random video 1 / delivery driver </div></div></article><article class="tl-event"><div class="tl-date"><span>19.08</span><b>13:27 UTC</b></div><div class="tl-content"><div class="tl-title">taser video </div></div></article><article class="tl-event"><div class="tl-date"><span>19.08</span><b>16:54 UTC</b></div><div class="tl-content"><div class="tl-title">junkies video </div></div></article><article class="tl-event"><div class="tl-date"><span>19.08</span><b>19:26 UTC</b></div><div class="tl-content"><div class="tl-title">poll: &quot;Next GTA 6 Video… Cinematic drive by?&quot; (Car DAY / Car NIGHT / Motorcycle NIGHT / Plane DAY) <span class="tl-tag poll">POLL</span></div></div></article><article class="tl-event"><div class="tl-date"><span>20.08</span><b>09:43 UTC</b></div><div class="tl-content"><div class="tl-title">plane.mp4 <span class="tl-tag winner">POLL WINNER</span></div></div></article><article class="tl-event"><div class="tl-date"><span>21.08</span><b>12:39 UTC</b></div><div class="tl-content"><div class="tl-title">hypercar part 1 </div></div></article><article class="tl-event"><div class="tl-date"><span>22.08</span><b>11:16 UTC</b></div><div class="tl-content"><div class="tl-title">hypercar part 2 </div></div></article><article class="tl-event"><div class="tl-date"><span>22.08</span><b>11:17 UTC</b></div><div class="tl-content"><div class="tl-title">hypercar part 2 (duplicate account) </div></div></article><article class="tl-event"><div class="tl-date"><span>22.08</span><b>18:28 UTC</b></div><div class="tl-content"><div class="tl-title">strip club </div></div></article><article class="tl-event"><div class="tl-date"><span>23.08</span><b>12:59 UTC</b></div><div class="tl-content"><div class="tl-title">gas.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>23.08</span><b>16:56 UTC</b></div><div class="tl-content"><div class="tl-title">plane (NIGHT).mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>23.08</span><b>17:36 UTC</b></div><div class="tl-content"><div class="tl-title">poll: &quot;Next GTA 6 Video?&quot; (Beach / Nudist Town / Strip Club 2) <span class="tl-tag poll">POLL</span></div></div></article><article class="tl-event"><div class="tl-date"><span>24.08</span><b>13:08 UTC</b></div><div class="tl-content"><div class="tl-title">nudist_town.mp4 (STRONG NUDITY) <span class="tl-tag winner">POLL WINNER</span></div></div></article><article class="tl-event"><div class="tl-date"><span>24.08</span><b>13:23 UTC</b></div><div class="tl-content"><div class="tl-title">poll: &quot;Do you really want to see the prologue with Lucia?&quot; (Yes Please / Fuck No) <span class="tl-tag poll">POLL</span></div></div></article><article class="tl-event"><div class="tl-date"><span>25.08</span><b>09:46 UTC</b></div><div class="tl-content"><div class="tl-title">nine1nine.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>25.08</span><b>10:43 UTC</b></div><div class="tl-content"><div class="tl-title">beach.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>25.08</span><b>13:31 UTC</b></div><div class="tl-content"><div class="tl-title">game store.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>26.08</span><b>11:18 UTC</b></div><div class="tl-content"><div class="tl-title">rideout customs.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>26.08</span><b>15:17 UTC</b></div><div class="tl-content"><div class="tl-title">prologue 1.mp4 (lufi.ethibox.fr) <span class="tl-tag winner">POLL WINNER</span></div></div></article></div></section><section class="tl-month"><h3>OCTOBER 2026</h3><div class="tl-list"><article class="tl-event"><div class="tl-date"><span>05.10</span><b>13:27 UTC</b></div><div class="tl-content"><div class="tl-title">lifesign poll (&quot;???&#x27;~j&quot; as both options) </div></div></article><article class="tl-event"><div class="tl-date"><span>08.10</span><b>10:45 UTC</b></div><div class="tl-content"><div class="tl-title">&quot;GTA 6: An Extended Leek&quot; (24min video) </div></div></article><article class="tl-event"><div class="tl-date"><span>09.10</span><b>11:03 UTC</b></div><div class="tl-content"><div class="tl-title">poll: &quot;Next GTA 6 Leek?&quot; (FREEROAM JASON first person / FREEROAM LUCIA third person / SIDE MISSION JASON NAKED / SIDE MISSION LUCIA) <span class="tl-tag poll">POLL</span></div></div></article><article class="tl-event"><div class="tl-date"><span>10.10</span><b>12:01 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;LUCIA LEEK – POLL AND MCAP LEVELS&quot; (2M = bikini / 3M = topless / 4M = fully naked / 6M = 4K closeups fully naked) <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>10.10</span><b>13:54 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;The Offer&quot; (30M marketcap → full story mode build · or T2 physical disks + public apology = CL stops) <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>11.10</span><b>10:42 UTC</b></div><div class="tl-content"><div class="tl-title">Stunt.mp4 <span class="tl-tag winner">POLL WINNER</span></div></div></article><article class="tl-event"><div class="tl-date"><span>11.10</span><b>11:05 UTC</b></div><div class="tl-content"><div class="tl-title">poll: &quot;Lucia closeup 4k video&quot; (Thanks daddy / Love you) <span class="tl-tag poll">POLL</span></div></div></article><article class="tl-event"><div class="tl-date"><span>12.10</span><b>09:54 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;CYBERLEEK MILESTONE ROADMAP&quot; (5M Mini Tank / 9M Tank / 13M Police Shootout / 17M Beach Massacre / 21M Fighter Jet / 25M Train vs Train) <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>12.10</span><b>10:34 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;CYBERLEEK MILESTONE ROADMAP v2k&quot; (5M Mini Tank / 7M Jumbo Jet / 9M Tank / 11M Private Lap Dance / 13M Police Shootout / 17M Beach Massacre / 21M Fighter Jet / 25M Train vs Train / 30M Full 200+GB playable build) <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>12.10</span><b>10:47 UTC</b></div><div class="tl-content"><div class="tl-title">Lucia closeup 4k.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>12.10</span><b>12:12 UTC</b></div><div class="tl-content"><div class="tl-title">poll: &quot;Next GTA 6 Freeroam Lucia Leek?&quot; (Barbershop / Clothing store / Tuning shop / Race track / Pool minigame) <span class="tl-tag poll">POLL</span></div></div></article><article class="tl-event"><div class="tl-date"><span>14.10</span><b>11:49 UTC</b></div><div class="tl-content"><div class="tl-title">&quot;GTA 6: THE END OF THE ROAD&quot;.mp4 </div></div></article><article class="tl-event"><div class="tl-date"><span>14.10</span><b>12:08 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;THE END OF THE ROAD (1/3)&quot; – Defending token sales (sold twice for fees only, public chain, token was always a donation not an investment, &quot;rugpull&quot; talk comes from misinformed YouTubers) <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>14.10</span><b>12:08 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;THE END OF THE ROAD (2/3)&quot; – Withholding the ending (has game ending that would punish Take-Two but ruin it for innocent gamers. Dead man&#x27;s switch active — releases story spoilers only if CL is removed) <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>14.10</span><b>12:08 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;THE END OF THE ROAD (3/3)&quot; – Failed project (30M milestone not reached, so no 200+GB build. Sad about the negativity. Edict stands, leaks stop &quot;for now&quot;) <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article></div></section><section class="tl-month"><h3>NOVEMBER 2026</h3><div class="tl-list"><article class="tl-event"><div class="tl-date"><span>19.11</span><b>18:41 UTC</b></div><div class="tl-content"><div class="tl-title">&quot;GTA 6: XBOX BUILD 1.0.2.1 (NOV 2026)&quot; – torrent magnet (magnet:?xt=urn:btih:465d6a0eac381e68ca77115f44f19f0c968b9590) </div></div></article><article class="tl-event"><div class="tl-date"><span>19.11</span><b>18:41 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;THE BUILD GOES OUT (2/2)&quot; – Countdown timer for final file (the EXE). Zero = executable drops, no conditions. Unless CYBERLEEK hits 15M marketcap first (dropped from 30M). If Xbox build fails and support holds, CL will work on PS5 build <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>19.11</span><b>18:42 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;THE BUILD GOES OUT (1/2)&quot; – Full November 2026 GTA VI build going out by torrent. Every file except the main executable (held on countdown). Xbox build, not PC. &quot;CL told you not to preorder for a reason&quot; <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>19.11</span><b>18:43 UTC</b></div><div class="tl-content"><div class="tl-title">poll: &quot;The EXE is on a timer. What will happen?&quot; (30fps on console is fine. I can wait. / EMULATION WEEK. DROP THE FILE.) <span class="tl-tag poll">POLL</span></div></div></article><article class="tl-event"><div class="tl-date"><span>21.11</span><b>07:43 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;MILESTONE CHANGES AND INFO&quot; – Early .exe release milestone dropped to 6M marketcap. EXE will be provided in ZIP with SHA-256 hashes. Virus concerns addressed (&quot;you do NOT need to run the exe, and it won&#x27;t run anyway&quot; — meant for Xbox emulator developers). Beware of fake websites — CL is not selling anything, only way to support is trading CYBERLEEK token <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>23.11</span><b>14:36 UTC</b></div><div class="tl-content"><div class="tl-title">&quot;GTA 6: XBOX EXE 1.0.2.1&quot; </div></div></article><article class="tl-event"><div class="tl-date"><span>23.11</span><b>14:36 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;XMAS CAME EARLY (2/2)&quot; – Every release was always free and always will be. Donations = votes for more. Crypto is just a tool (&quot;no other way to move funds without names&quot;). Full story in README.txt inside the zip. BTC + XMR addresses provided. &quot;No game ownership, no peace.&quot; <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article><article class="tl-event"><div class="tl-date"><span>23.11</span><b>14:36 UTC</b></div><div class="tl-content"><div class="tl-title">announcement: &quot;XMAS CAME EARLY (1/2)&quot; – The exe is out. Always free. Early Christmas gift from CL. Torch passes to open source recomp/emulation projects. Verify before trusting any file — the one and only true hashes: ZIP SHA-256: 7545a2f7fb4b399cf8850987f087ed9a4d8499ddb6d6c2d642fd60c27f569730 / EXE SHA-256: e95020b2fa4a721db3df59fdecf75621730ac559d8835252f6c3b658d5a08993 (check with sha256sum / certutil -hashfile). Mismatch = not from CL. <span class="tl-tag announcement">ANNOUNCEMENT</span></div></div></article></div></section></div>
+<div class="box gold"><b class="y">Observed pattern:</b> poll winner → video within roughly a day; escalating market-cap-gated promises (content tiers, milestone roadmap, build release); thresholds repeatedly changed. The November build and executable releases remain claims by CyberLeek and are not independently verified by this archive.</div>
+
+<h2 id="files">Leaked files &amp; hashes (not hosted)</h2>
+<table><tr><th>File</th><th>Content</th><th>Length / format</th><th>SHA-256</th></tr>
+<tr><td>output.mp4</td><td>Basketball, Focus meter</td><td>69 s · 1440p</td><td><code>bbcb8f662b694fc894f09d57a92c4e3cae6df5b9e078ecba6cb6002f23cf9e90</code></td></tr>
+<tr><td>video2.mp4</td><td>Picador highway, Goose Key/Hamlet/Vice City signs</td><td>68 s · 1080p</td><td><code>c2a2284d8bb5be8d022b7d41f021703666d40026e632b7937faeb5ef4c49d6ae</code></td></tr>
+<tr><td>taser.mp4</td><td>Allied Crystal yard (Ambrosia), Taser, MTL Packer, boat scene</td><td>124.5 s</td><td><code>785697aa8ae852aed899588ccf7d705b43addbc50e5ac690c7df9a1c60972287</code></td></tr>
+<tr><td>junkies.mp4</td><td>VCPD bike, Fuzzard Drain Canal, camp, Zombix tip</td><td>144.5 s</td><td><code>44927e1820ee191df93666fb4d8add3fad7990d39ed3c4cabee60027ed0fc6d2</code></td></tr>
+<tr><td>plane.mp4</td><td>Biplane over penitentiary/marina, "LEEK" wall</td><td>141.5 s · HDR</td><td><code>583226eb1635c611634e453146828caeaf9fa4c5abb25b21336ad5cfaa613037</code></td></tr>
+<tr><td>hypercar1.mp4</td><td>Truffade Thrax carjack, airport, highway</td><td>145 s · HDR</td><td><code>c0df0e6fb48dd63da24d1e551d17b0cdd366ad7a0ccba9710d494f81fd2cd321</code></td></tr>
+<tr><td>full_map.png</td><td>Leonida, 2590×3240</td><td>—</td><td><code>c5a07256f62f3ae37904540621f2b07d2f647fd10867b620622b3471910563f6</code></td></tr>
+<tr><td>map peek 1 / 2</td><td>Dalton Island / Catalan &amp; Gloriana Key</td><td>—</td><td><code>0d1f9f52…bb12</code> / <code>b223c521…cbac</code></td></tr></table>
+<p class="d">Note: local copies of video 1/2 hashed differently from the README table (re-download variance). All videos share FFmpeg 6.1 (Lavf60.16.100 / libx265 60.31.102), 10-bit BT.2020 PQ, 30 fps, AAC 48 kHz. taser, junkies and plane contain a ~2 s silent black splice; the boat scene is reused in taser and junkies. Later (Aug–Nov) videos listed in the timeline were not analysed in the research.</p>
+
+<h2 id="game">Gameplay findings</h2>
+<ul><li><b>Build age:</b> radio plays Tate McRae "Sports Car" (released 24.01.2025) → build compiled ≥ Jan 2025; insider NateDrake: footage over a year old. Map claimed (by CL on Discord, unverified) to be from 2023.</li>
+<li><b>"LEEK" wall (plane, 1:15–1:38):</b> shows live player input — someone was playing, but full-build possession was unproven in August.</li>
+<li><b>Mechanics/HUD:</b> Clone Key vs Smash Window car theft · Focus bar · round minimap with iFruit CarPlay · RDR2-style GREET/TAUNT/DEFUSE/WARN dialogue · red police search radius · 6-star wanted (NikTek) · crime-reported delay · demon karma icon · Zombix painkiller tolerance tip · fuel gauge (Vapid '70 Ganado, Thrax) · Stun Gun (ammo "9 1") with flashlight hint · knockout/disarm melee, droppable hats · legendary animals (crowned gator, Grassrivers).</li>
+<li><b>World:</b> Fuzzard Drain Canal, "TO 97" / Route 397 signs, Vice City Transit, RON oil, Bite Burger, Whiz, eCola, airport Skytrain, Leonida State Penitentiary (8 watchtowers). Route in video 4 mapped to South Vice-Dale by @theicybee.</li>
+<li><b>Debunked theory:</b> "RDR2 mod on Cities: Skylines map" — new voice lines, mechanics, physics and Rockstar's DMCA behaviour contradict it.</li></ul>
+
+<h2 id="map">Map &amp; counties</h2>
+<table><tr><th>County</th><th>On map</th><th>In trailers</th></tr>
+<tr><td>Vice-Dale</td><td>yes</td><td>yes (T1 0:28 police door)</td></tr><tr><td>Mariana</td><td>yes</td><td>yes (T2 2:29, Route 404 E)</td></tr><tr><td>Kelly</td><td>yes</td><td>yes</td></tr><tr><td>Leonard</td><td>yes</td><td>yes (Port Gellhorn)</td></tr><tr><td>Lummox</td><td>yes (north wilderness, Mount Kalaga)</td><td>not yet</td></tr></table>
+<p>Landmass ≈ <b>1.656×</b> GTA V (778,026 vs 469,834 px, Reddit u/UUT-). Map is a low-detail dev overview (martipk). Locations: Ambrosia, Catalan Key, Gloriana Key, Dalton Island, Grassrivers, Vice City metro, Goose Key, Hamlet. Game launch: 19.11.2026; Netflix "Extended Look": 27.08.2026.</p>
+
+<h2 id="fake">Debunked / unverified</h2>
+<table><tr><th>Item</th><th>Verdict</th></tr>
+<tr><td>Discord claims: Lucia intro mission, prison pickup at 2%, Robux-like creator currency, "not the player"</td><td class="r">Unverified; currency claim = crypto bait</td></tr>
+<tr><td>Early Discord (17–18.08) vs. later copycat servers (<code>cyberleek_west</code>, <code>surwest</code>, <code>ZWjnQSSJ2P</code>)</td><td>First wave possibly real; second wave fake; both banned</td></tr>
+<tr><td>"Lucia Ending Video" teaser (19.08 16:08)</td><td class="r">Inspect-element mockup (edited "gofile" → "file.io"); never on any ballot (credit davit_36049)</td></tr>
+<tr><td>@cyberleek_ar_io: blurred 2022 nightclub frame as new threat, AI banners, renamed account, ~88.9k followers (DexScreener linked it); @MrCyberLeek fake "FBI raid" GIF</td><td class="r">Imposter / staged</td></tr>
+<tr><td>"808 Mafia" (<code>@clumsylulz</code>) shader code / "July devkit"</td><td class="r">Recycled 2022 Lapsus$ leak, admitted unrelated</td></tr>
+<tr><td>cyberleek.com (reg. 18.08), VK handle, GitHub @cyberleek, t.me/cyberleek</td><td>Squats / coincidences</td></tr>
+<tr><td>"GTA audio SDT" inside Solana program bytecode</td><td>False positives in compiled Rust ELF (@koffiekasper)</td></tr></table>
+
+<h2 id="chain">On-chain architecture</h2>
+<ul><li><b>Operator key</b> <code>6Nq6KAzFKFCKDXYg1kqs23EuBBEWoWAgmBQAQtq4FaF3</code>: first tx 15.08 17:14 UTC (funded 4.61 SOL by <code>3YLNDX…</code>), deployed poll/link program <code>7rAgH…</code> at 18:46, upgrade authority, signs CreateLink (videos), UpdateTabs, ProcessResults (~427 txs); swept 147,210 tokens from poll vault. Poll finalization is manual (<code>finalBalances</code> snapshot) → centralized, not DAO.</li>
+<li><b>Funding hub</b> <code>3YLNDX…</code>: 14.08 09:42 1 SOL → ArNS controller <code>52yK…</code> (registered cyberleek / cyberleak / ciberleek, one manifest <code>TTZwYqvC…</code>); 15.08 12:23 → Turbo uploader <code>667Gfn…</code>; 15.08 09:49 → <code>Ec2qmcp…</code> → 10 SOL → token creator <code>Hok9nbV…</code> (minted 1B at 14:23; 27% / 270M to side wallet <code>CbfbaNpC…</code>; kept fee NFT).</li>
+<li><b>Funds:</b> 156 SOL via ~20 throwaway wallets from 13.08 (<code>EjsB4…</code> → <code>2ZdUUvrr…</code> → hub). Operator on-chain footprint begins at <code>EjsB4qhc…</code>; <code>J4zoc1r…</code> / <code>26sZDub…</code> are KuCoin hot-wallet infrastructure (memo patterns <code>dfc94084, a80e4738, a8b33709, 03772c77, 2b8debe6</code>; earlier May-29 and Jul-5 withdrawal legs via forwarders <code>9WwEfddZ…</code>, <code>GE5VNJ…</code>). "KuCoin" label is a third-party explorer tag; the account holder is not determinable from the chain.</li>
+<li><b>Token/site timing:</b> token, Raydium pool and site program created 15.08 (14:00–22:00) — 3 days before footage went public (marketing-stunt theory plausible, unproven).</li>
+<li><b>Poll 1 (Plane DAY):</b> one transfer of 65,342.86 tokens (~$80.24) decided it per early report; portal later shows 228,631 total donated (Plane 64.4%, Car DAY 35%). Voting wallet for Plane: <code>8MAye9…</code>.</li></ul>
+
+<h2 id="id">Identity research (summary)</h2>
+<div class="box note"><p class="d">Personal identifiers (real names, towns, emails/XMPP) found in the source repo are deliberately <b>left out</b> of this backup; the repo itself redacted parts for anti-doxxing reasons. Everything here is circumstantial.</p></div>
+<ul><li>User "cyberleek" on German forum szenebox.org (Jan 2018): self-described 25–30, web-security/Linux/3D-printing/Raspberry Pi; German/Swiss-German phrasing ("Moiin", "Grüsse"); posted JS-help and XSS-report threads; 2023 posts on exploit groups, Cloudflare/VPN issues (Perfect Privacy), tracking BreachForums clones.</li>
+<li>Second account "tech-forum" for a Swiss forum site (Dec 2017 – ~2019; CS:GO server, Debian/Apache); matching Twitter @T3chF0rum (3.1.2018) with identical flaming-skull avatar.</li>
+<li>Gateway hosting seen on Hetzner (Nuremberg); other mirrors Contabo (FR) and a US cable IP. Hetzner VPS can be bought pseudonymously, so not conclusive. Implied age now ~33–38, if the forum user is the same person — <b>not confirmed</b>.</li></ul>
+
+<h2 id="web">Portal, manifesto &amp; token</h2>
+<ul><li>Portals: leek.vilenarios.com (main), cyberleek.vilenarios.com, cyberleek.ario.koltigin.xyz, leek.turbo-gateway.com, cyberleek.turbo-gateway.com, cyberleek.ar.io (ArNS/Arweave; some often down).</li>
+<li><b>Edict / Three Commandments:</b> I. no digital pre-orders (physical only); II. no fake single-player DLC (content already on disc); III. offline fallback/final patch when servers end (cites The Crew). Demands: public statement + apology + concrete commitment; raises funds for a "secret project"; "If CYBERLEEK can reach Rockstar, no one is safe."</li>
+<li>Token: supply 1B, LP burned, mint &amp; freeze revoked (supply 999,990,703), 0% tax. Dread posts by "CyberLeeker" (/d/leaks) 18.08 07:36 with a smaller watermark than the re-encoded portal version.</li></ul>
+
+<h2 id="react">Reactions</h2>
+<ul><li><b>Stop Killing Games / Ross Scott:</b> publicly distanced themselves; no money to CL.</li>
+<li><b>Take-Two/Rockstar:</b> no statement; mass DMCA takedowns (X, YouTube, TikTok, Reddit, Streamable).</li>
+<li><b>Press:</b> IGN, Eurogamer, Forbes, Kotaku, PC Gamer, GamesRadar, Mashable. Reddit: footage real, token = scam.</li></ul>
+
+<h2 id="open">Open questions &amp; verdict</h2>
+<ul><li>Raw un-watermarked files; recording date; how the footage was obtained (2022 breach access, insider, purchase); one person or team (promoter vs uploader); true extent of the claimed Nov build — now partly claimed, still unverified here.</li></ul>
+<div class="box"><b class="g">Verdict (Aug research): REAL</b> — genuine Rockstar gameplay, watermarked and spliced by the leaker; new content (Taser, Fuzzard canal, Zombix, boat scenes) absent from trailers and the 2022 leak. Confidence 97%. Crypto side: probable monetization scheme.</div>
+
+<div class="foot">CL RESEARCH BACKUP · BASED ON ZYREXDZ ARCHIVE + ON-CHAIN TIMELINE · PROVIDED BY n0ne</div>
+</div></body></html>

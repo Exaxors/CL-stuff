@@ -467,5 +467,36 @@
     "urls": [],
     "created": 1795246996,
     "closed": null
+  },
+  {
+    "type": "Leak",
+    "type_key": "LEAKS",
+    "pubkey": "FCHmtL2svRKgGfL67Q9HoHnGMYSuBBk2h8bHjhAm9ot1",
+    "content": "GTA 6: XBOX EXE 1.0.2.1 PW: thankyoucyberleek",
+    "urls": [
+      "https://42.gigafile.nu/0303-cc2b0ca9ba19045c33c407fc5b65cefdd",
+      "https://www.upload.ee/files/19985421/early_xmas.zip.html",
+      "https://dropmefiles.com/cCKKT"
+    ],
+    "created": 1795444573,
+    "closed": null
+  },
+  {
+    "type": "Announcement",
+    "type_key": "ANNOUNCEMENTS",
+    "pubkey": "F5SYk8yuVHKW8Unw6ZwmU83omrrHQMSqRX87DsnQ4Z3m",
+    "content": "XMAS CAME EARLY (2/2)",
+    "urls": [],
+    "created": 1795444590,
+    "closed": null
+  },
+  {
+    "type": "Announcement",
+    "type_key": "ANNOUNCEMENTS",
+    "pubkey": "6p9P1ZJUMuqqNQApcGXQhK4UriTvDBA2HAsYjTBPi84i",
+    "content": "XMAS CAME EARLY (1/2)",
+    "urls": [],
+    "created": 1795444602,
+    "closed": null
   }
 ]

@@ -65,9 +65,9 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.5rem;
     margin-bottom: 0.65rem;
   }
 
@@ -87,6 +87,96 @@
     margin-top: 2px;
   }
 
+  /* ───── PortWatch status box (top right, not clickable) ───── */
+  .pw-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.65rem 0.5rem;
+    width: 250px;
+    max-width: 100%;
+    cursor: default;
+    user-select: none;
+  }
+
+  .pw-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 0.35rem;
+  }
+
+  .pw-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .pw-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(96, 195, 58, 0.8);
+    animation: pwBlink 2.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pwBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.15; }
+  }
+
+  .pw-pct {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .pw-track {
+    height: 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .pw-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--neon) 0%, var(--green) 100%);
+    transition: width 0.35s ease;
+  }
+
+  .pw-timer-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 0.4rem;
+    padding-top: 0.3rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.62rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .pw-timer {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-bright);
+    font-variant-numeric: tabular-nums;
+    text-transform: none;
+  }
+
+  /* ───── Layout sections ───── */
   .section-label {
     font-size: 0.66rem;
     letter-spacing: 2.2px;
@@ -97,7 +187,6 @@
     margin-bottom: 0.45rem;
   }
 
-  /* 3-column row for the core modules on desktop/tablet */
   .core-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -105,7 +194,6 @@
     margin-bottom: 0.7rem;
   }
 
-  /* 2-column grid for viewer & gateway tools */
   .tools-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -274,6 +362,10 @@
       font-size: 1.05rem;
       word-break: break-word;
     }
+
+    .pw-box {
+      width: 100%;
+    }
   }
 </style>
 </head>
@@ -284,6 +376,33 @@
         <h1>UNOFFICIAL · CYBERLEEK · HUB</h1>
         <div class="sub">LANDING PAGE · TIMELINE · MARKET ANALYZER · GALLERY &amp; GATEWAYS</div>
       </div>
+
+      <!-- PortWatch VI status (mirror of external project, display only) -->
+      <aside
+        class="pw-box"
+        id="portwatch-widget"
+        aria-label="PortWatch VI status"
+        data-tracker-url="https://portwatch-vi.xyz/data/tracker.json"
+        data-release-iso="2026-11-23T14:36:00Z"
+        data-poll-ms="180000"
+      >
+        <div class="pw-top">
+          <span class="pw-label">
+            <span class="pw-dot" aria-hidden="true"></span>
+            <span>PortWatch VI</span>
+          </span>
+          <span class="pw-pct" id="pw-pct">--%</span>
+        </div>
+
+        <div class="pw-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="pw-bar">
+          <div class="pw-fill" id="pw-fill"></div>
+        </div>
+
+        <div class="pw-timer-row">
+          <span>CL EXE TIMER</span>
+          <span class="pw-timer" id="pw-timer">00d 00h 00m 00s</span>
+        </div>
+      </aside>
     </header>
 
     <div class="section-label">Core Modules</div>
@@ -477,7 +596,80 @@ function mountHub() {
   }
 }
 
-window.addEventListener("DOMContentLoaded", mountHub);
+/* ───── PortWatch VI widget ───── */
+function mountPortwatch() {
+  const widget = document.getElementById("portwatch-widget");
+  if (!widget) return;
+
+  const pctEl = document.getElementById("pw-pct");
+  const barEl = document.getElementById("pw-bar");
+  const fillEl = document.getElementById("pw-fill");
+  const timerEl = document.getElementById("pw-timer");
+
+  let releaseMs = Date.parse(widget.dataset.releaseIso || "2026-11-23T14:36:00Z");
+
+  function updateTimer() {
+    if (!Number.isFinite(releaseMs)) return;
+    const diffSec = Math.max(0, Math.floor((Date.now() - releaseMs) / 1000));
+    const d = Math.floor(diffSec / 86400);
+    const h = Math.floor((diffSec % 86400) / 3600);
+    const m = Math.floor((diffSec % 3600) / 60);
+    const s = diffSec % 60;
+    const pad = (n) => String(n).padStart(2, "0");
+    timerEl.textContent = `${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+  }
+
+  function applyData(data) {
+    const efforts = Array.isArray(data?.efforts) ? data.efforts : [];
+    const history = Array.isArray(data?.history) ? data.history : [];
+    const latestHist = history.length ? history[history.length - 1] : null;
+
+    let score = latestHist?.leader ?? latestHist?.score;
+    if (score === undefined || score === null) {
+      score = efforts.reduce((best, item) => {
+        const val = Number(item?.score ?? item?.progress ?? -Infinity);
+        return Number.isFinite(val) && val > best ? val : best;
+      }, -Infinity);
+      if (!Number.isFinite(score)) score = undefined;
+    }
+
+    const exeIso = data?.exe?.releasedAt ?? data?.exe?.released_at;
+    if (exeIso) {
+      const parsed = Date.parse(exeIso);
+      if (Number.isFinite(parsed)) releaseMs = parsed;
+    }
+
+    if (score !== undefined && score !== null && Number.isFinite(Number(score))) {
+      const clamped = Math.max(0, Math.min(100, Number(score)));
+      const textVal = Number.isInteger(clamped) ? String(clamped) : clamped.toFixed(1);
+      pctEl.textContent = `${textVal}%`;
+      fillEl.style.width = `${clamped}%`;
+      barEl.setAttribute("aria-valuenow", String(clamped));
+    }
+  }
+
+  async function syncTracker() {
+    const url = widget.dataset.trackerUrl;
+    if (!url) return;
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) return;
+      applyData(await res.json());
+    } catch {
+      // keep current state if offline or CORS-restricted
+    }
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
+  syncTracker();
+  setInterval(syncTracker, Number(widget.dataset.pollMs) || 180000);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  mountHub();
+  mountPortwatch();
+});
 </script>
 </body>
 </html>

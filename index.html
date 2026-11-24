@@ -744,10 +744,10 @@ for (const e of efforts) {
 }
 
 const score =
-  latestHist && Number.isFinite(Number(latestHist.leader))
-    ? Number(latestHist.leader)
-    : Number.isFinite(bestEffortScore)
+  Number.isFinite(bestEffortScore) && bestEffortScore > -Infinity
     ? bestEffortScore
+    : latestHist && Number.isFinite(Number(latestHist.leader))
+    ? Number(latestHist.leader)
     : null;
 
 if (score !== null && Number.isFinite(score)) {

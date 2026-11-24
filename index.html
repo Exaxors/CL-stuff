@@ -87,7 +87,6 @@
     margin-top: 2px;
   }
 
-  /* ───── PortWatch box (whole box clickable) ───── */
   .pw-box {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -214,7 +213,6 @@
     text-transform: none;
   }
 
-  /* ───── Footer + hidden eye button ───── */
   .footer {
     position: relative;
     text-align: center;
@@ -251,7 +249,6 @@
     outline: none;
   }
 
-  /* ───── Layout sections ───── */
   .section-label {
     font-size: 0.66rem;
     letter-spacing: 2.2px;
@@ -441,7 +438,6 @@
         <div class="sub">LANDING PAGE · TIMELINE · MARKET ANALYZER · GALLERY &amp; GATEWAYS</div>
       </div>
 
-      <!-- PortWatch VI status: whole box is a link to portwatch-vi.xyz -->
       <a
         class="pw-box"
         id="portwatch-widget"
@@ -487,7 +483,6 @@
 
     <div class="footer">
       provided by n0ne
-      <!-- hidden easter egg, bottom-right of footer -->
       <button
         type="button"
         class="eye-btn"
@@ -499,19 +494,6 @@
   </div>
 
 <script>
-/**
- * Future-proof link registry:
- * To add Discord or any new link later, append an object to EXTRA_LINKS:
- * {
- *   id: "discord",
- *   badge: "Community",
- *   badgeClass: "tag-future",
- *   title: "Discord Server",
- *   description: "Community discussion, updates, and announcements.",
- *   href: "https://discord.gg/YOUR_INVITE",
- *   external: true
- * }
- */
 const CORE_MODULES = [
   {
     id: "timeline",
@@ -551,15 +533,11 @@ const CORE_MODULES = [
   }
 ];
 
-const EXTRA_LINKS = [
-  // Add future entries here (e.g. Discord invite)
-];
+const EXTRA_LINKS = [];
 
 const GATEWAY_FINDER_URL = "https://wayfinder.ar.io/?q=cyberleek";
 const CONFIRMED_GATEWAY_URL = "https://cyberleek.arj.innostack.xyz";
 const GITHUB_VIEWER_URL = "https://github.com/Exaxors/cyberleek-viewer";
-
-/* Eye button target, stored obfuscated (base64) so it is not plain in the page source. */
 const EYE_TARGET_B64 = "aHR0cHM6Ly9nb2ZpbGUuaW8vZC9BNG9JeVpHdQ==";
 
 let gatewayAttemptCount = 0;
@@ -676,7 +654,6 @@ function mountHub() {
       });
     }
 
-    /* Eye button: decode target on click and open in a new tab. */
     const eyeBtn = document.getElementById("eyeBtn");
     if (eyeBtn) {
       eyeBtn.addEventListener("click", (e) => {
@@ -718,28 +695,59 @@ function mountPortwatch() {
     timerEl.textContent = `${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
   }
 
-  function applyData(data) {
-    const efforts = Array.isArray(data?.efforts) ? data.efforts : [];
-    const history = Array.isArray(data?.history) ? data.history : [];
-    const latestHist = history.length ? history[history.length - 1] : null;
+  /* Derive a 0-100 score from a single effort entry. Order:
+     1. manualScore  (the official PortWatch percentage per project)
+     2. score / progress
+     3. weighted build from gta.{loads,boots,menu,ingame}
+  */
+  function effortScore(effort) {
+    if (!effort || typeof effort !== "object") return null;
 
-    let score = latestHist?.leader ?? latestHist?.score;
-    if (score === undefined || score === null) {
-      score = efforts.reduce((best, item) => {
-        const val = Number(item?.score ?? item?.progress ?? -Infinity);
-        return Number.isFinite(val) && val > best ? val : best;
-      }, -Infinity);
-      if (!Number.isFinite(score)) score = undefined;
+    if (Number.isFinite(Number(effort.manualScore))) {
+      return Number(effort.manualScore);
+    }
+    if (Number.isFinite(Number(effort.score))) {
+      return Number(effort.score);
+    }
+    if (Number.isFinite(Number(effort.progress))) {
+      return Number(effort.progress);
     }
 
-    const exeIso = data?.exe?.releasedAt ?? data?.exe?.released_at;
+    const gta = effort.gta;
+    if (gta && typeof gta === "object") {
+      const w = { loads: 0.15, boots: 0.20, menu: 0.25, ingame: 0.40 };
+      let sum = 0;
+      let any = false;
+      for (const [k, weight] of Object.entries(w)) {
+        const v = Number(gta[k]);
+        if (Number.isFinite(v)) {
+          sum += Math.max(0, Math.min(1, v)) * weight;
+          any = true;
+        }
+      }
+      if (any) return sum * 100;
+    }
+    return null;
+  }
+
+  function applyData(data) {
+    /* Score: highest effort in the tracker = how close "we" are overall. */
+    const efforts = Array.isArray(data && data.efforts) ? data.efforts : [];
+    let best = null;
+    for (const e of efforts) {
+      const s = effortScore(e);
+      if (s !== null && (best === null || s > best)) best = s;
+    }
+
+    /* exe.releasedAt overrides the static timer base. */
+    const exeIso = data && data.exe && (data.exe.releasedAt || data.exe.released_at);
     if (exeIso) {
       const parsed = Date.parse(exeIso);
       if (Number.isFinite(parsed)) releaseMs = parsed;
     }
 
-    if (score !== undefined && score !== null && Number.isFinite(Number(score))) {
-      const clamped = Math.max(0, Math.min(100, Number(score)));
+    if (best !== null && Number.isFinite(best)) {
+      const clamped = Math.max(0, Math.min(100, best));
       const textVal = Number.isInteger(clamped) ? String(clamped) : clamped.toFixed(1);
       pctEl.textContent = `${textVal}%`;
       fillEl.style.width = `${clamped}%`;
@@ -755,7 +763,7 @@ function mountPortwatch() {
       if (!res.ok) return;
       applyData(await res.json());
     } catch {
-      // keep current state if offline or CORS-restricted
+      /* keep current state if offline or CORS-restricted */
     }
   }
 

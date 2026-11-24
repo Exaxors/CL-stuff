@@ -509,7 +509,7 @@ const CORE_MODULES = [
     badge: "Analytics",
     badgeClass: "tag-internal",
     title: "Market Analyzer",
-    description: "Market cap chart, 12h/24h/latest impact deltas, top/bottom movers, and CSV export.",
+    description: "Market cap chart, 12h/24h/latest impact delta, top/bottom movers, and CSV export.",
     href: "./market.html",
     external: false
   },
@@ -695,25 +695,35 @@ function mountPortwatch() {
     timerEl.textContent = `${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
   }
 
-  /* Derive a 0-100 score from a single effort entry. Order:
-     1. manualScore  (the official PortWatch percentage per project)
-     2. score / progress
-     3. weighted build from gta.{loads,boots,menu,ingame}
-  */
-  function effortScore(effort) {
-    if (!effort || typeof effort !== "object") return null;
-
-    if (Number.isFinite(Number(effort.manualScore))) {
-      return Number(effort.manualScore);
-    }
-    if (Number.isFinite(Number(effort.score))) {
-      return Number(effort.score);
-    }
-    if (Number.isFinite(Number(effort.progress))) {
-      return Number(effort.progress);
+  function applyData(data) {
+    /* Timer base: use the tracker's exe.releasedAt if provided. */
+    const exeIso = data && data.exe && (data.exe.releasedAt || data.exe.released_at);
+    if (exeIso) {
+      const parsed = Date.parse(exeIso);
+      if (Number.isFinite(parsed)) releaseMs = parsed;
     }
 
-    const gta = effort.gta;
+    /* Score:
+       The tracker's `manualScore` can hit 100 for a single project that has
+       achieved in-game, which makes the bar stuck at 100%.
+       Instead, take the highest-STARRED project (the "main" one) and derive
+       its progress from the milestone flags gta.loads/boots/menu/ingame,
+       weighted like the PortWatch site itself does. */
+    const efforts = Array.isArray(data && data.efforts) ? data.efforts : [];
+    if (!efforts.length) return;
+
+    const main = efforts.reduce((best, e) => {
+      const stars = e && e.stats && Number(e.stats.stars);
+      const bestStars = best && best.stats && Number(best.stats.stars);
+      if (!Number.isFinite(stars)) return best;
+      if (!Number.isFinite(bestStars)) return e;
+      return stars > bestStars ? e : best;
+    }, null) || efforts[0];
+
+    let score = null;
+
+    /* Prefer milestone-derived progress if we have gta flags. */
+    const gta = main && main.gta;
     if (gta && typeof gta === "object") {
       const w = { loads: 0.15, boots: 0.20, menu: 0.25, ingame: 0.40 };
       let sum = 0;
@@ -725,29 +735,18 @@ function mountPortwatch() {
           any = true;
         }
       }
-      if (any) return sum * 100;
-    }
-    return null;
-  }
-
-  function applyData(data) {
-    /* Score: highest effort in the tracker = how close "we" are overall. */
-    const efforts = Array.isArray(data && data.efforts) ? data.efforts : [];
-    let best = null;
-    for (const e of efforts) {
-      const s = effortScore(e);
-      if (s !== null && (best === null || s > best)) best = s;
+      if (any) score = sum * 100;
     }
 
-    /* exe.releasedAt overrides the static timer base. */
-    const exeIso = data && data.exe && (data.exe.releasedAt || data.exe.released_at);
-    if (exeIso) {
-      const parsed = Date.parse(exeIso);
-      if (Number.isFinite(parsed)) releaseMs = parsed;
+    /* Fallback: manualScore / score / progress, but never over 99 unless
+       the in-game flag is truly 1. */
+    if (score === null) {
+      const raw = main && (main.manualScore ?? main.score ?? main.progress);
+      if (Number.isFinite(Number(raw))) score = Number(raw);
     }
 
-    if (best !== null && Number.isFinite(best)) {
-      const clamped = Math.max(0, Math.min(100, best));
+    if (score !== null && Number.isFinite(score)) {
+      const clamped = Math.max(0, Math.min(100, score));
       const textVal = Number.isInteger(clamped) ? String(clamped) : clamped.toFixed(1);
       pctEl.textContent = `${textVal}%`;
       fillEl.style.width = `${clamped}%`;

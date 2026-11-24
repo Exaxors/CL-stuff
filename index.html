@@ -718,81 +718,104 @@ function mountPortwatch() {
   }
 
 function computePortwatchScore(e) {
-if (!e || typeof e !== "object") return 0;
-if (Number.isFinite(Number(e.manualScore))) return Number(e.manualScore);
-if (Number.isFinite(Number(e.score))) return Number(e.score);
+  if (!e || typeof e !== "object") return 0;
 
-const g = e.gta || {};
-const clamp01 = (v) => Math.max(0, Math.min(1, Number(v) || 0));
+  const directCandidates = [
+    e.manualScore,
+    e.score,
+    e.progress,
+    e.percent,
+    e.total,
+  ];
+  for (const val of directCandidates) {
+    const num = Number(val);
+    if (Number.isFinite(num)) return num;
+  }
 
-if (clamp01(g.ingame) >= 1) {
-  const fpsPart = Math.min(1, (Number(g.fps) || 0) / 30) * 15;
-  const stablePart = clamp01(g.stable) * 15;
-  return 70 + fpsPart + stablePart;
-}
-if (clamp01(g.ingame) > 0) return 55 + 15 * clamp01(g.ingame);
-if (clamp01(g.menu) > 0) return 40 + 15 * clamp01(g.menu);
-if (clamp01(g.boots) > 0) return 25 + 15 * clamp01(g.boots);
-if (clamp01(g.loads) > 0) return 25;
+  const clamp01 = (v) => Math.max(0, Math.min(1, Number(v) || 0));
+  const st = e.stages || e.progress || e.gta || {};
 
-const gw = e.groundwork || {};
-return (
-  clamp01(gw.loader) * 5 +
-  clamp01(gw.shaders) * 7 +
-  clamp01(gw.graphics) * 8 +
-  clamp01(gw.proven) * 5
-);
+  let base = 0;
+  if (clamp01(st.playable) >= 1) base = 50;
+  else if (clamp01(st.inWorld ?? st.world ?? st.ingame) > 0) base = 40;
+  else if (clamp01(st.menu) > 0) base = 30;
+  else if (clamp01(st.firstFrame ?? st.boots) > 0) base = 20;
+  else if (clamp01(st.exeRuns ?? st.loads) > 0) base = 10;
+  else base = clamp01(st.groundwork) * 10;
+
+  const story = clamp01(e.story ?? st.story) * 35;
+  const rendering = clamp01(e.rendering ?? st.rendering) * 25;
+  const fpsScore = Math.min(1, (Number(e.fps ?? st.fps) || 0) / 30) * 20;
+  const stability = clamp01(e.stability ?? st.stability) * 20;
+
+  return base + (base >= 50 ? story + rendering + fpsScore + stability : 0);
 }
 
 function applyData(data) {
-const exeIso = data && data.exe && (data.exe.releasedAt || data.exe.released_at);
-if (exeIso) {
-  const parsed = Date.parse(exeIso);
-  if (Number.isFinite(parsed)) releaseMs = parsed;
-}
-
-const efforts = Array.isArray(data && data.efforts) ? data.efforts : [];
-const history = Array.isArray(data && data.history) ? data.history : [];
-const latestHist = history.length ? history[history.length - 1] : null;
-
-let bestEffort = null;
-let bestEffortScore = -Infinity;
-for (const e of efforts) {
-  const s = computePortwatchScore(e);
-  if (s > bestEffortScore) {
-    bestEffortScore = s;
-    bestEffort = e;
+  const exeIso = data && data.exe && (data.exe.releasedAt || data.exe.released_at);
+  if (exeIso) {
+    const parsed = Date.parse(exeIso);
+    if (Number.isFinite(parsed)) releaseMs = parsed;
   }
-}
 
-const score =
-  Number.isFinite(bestEffortScore) && bestEffortScore > -Infinity
-    ? bestEffortScore
-    : latestHist && Number.isFinite(Number(latestHist.leader))
-    ? Number(latestHist.leader)
-    : null;
+  const efforts = Array.isArray(data && data.efforts) ? data.efforts : [];
+  const history = Array.isArray(data && data.history) ? data.history : [];
+  const latestHist = history.length ? history[history.length - 1] : null;
 
-if (score !== null && Number.isFinite(score)) {
-  const clamped = Math.max(0, Math.min(100, score));
-  const textVal = Number.isInteger(clamped) ? String(clamped) : clamped.toFixed(1);
-  pctEl.textContent = `${textVal}%`;
-  fillEl.style.width = `${clamped}%`;
-  barEl.setAttribute("aria-valuenow", String(clamped));
-}
+  let bestEffort = null;
+  let bestEffortScore = -Infinity;
+  for (const e of efforts) {
+    const s = computePortwatchScore(e);
+    if (s > bestEffortScore) {
+      bestEffortScore = s;
+      bestEffort = e;
+    }
+  }
 
-const tipEl = document.getElementById("pw-tip");
-if (tipEl && bestEffort) {
-  const leaderName = bestEffort.name || (latestHist && latestHist.leaderId) || "Unknown";
-  const g = bestEffort.gta || {};
-  const milestone =
-    g.stable >= 1 ? "Stable" :
-    g.fps >= 30 ? "30 FPS" :
-    g.ingame >= 1 ? "In-game" :
-    g.menu >= 1 ? "Main menu" :
-    g.boots >= 1 ? "First frame" :
-    g.loads >= 1 ? "Exe runs" : "Groundwork";
-  tipEl.innerHTML = `Leader: <b>${leaderName}</b> — Has reached “<b>${milestone}</b>”. Click anywhere on this box to open PortWatch.`;
-}
+  const histLeader = latestHist
+    ? Number(latestHist.leader ?? latestHist.max ?? latestHist.score)
+    : NaN;
+
+  const overallDirect = Number(
+    data?.overall?.score ??
+    data?.overall?.progress ??
+    data?.overall ??
+    data?.progress ??
+    data?.leaderScore ??
+    NaN
+  );
+
+  // Prefer the highest reported progress across efforts, latest history entry, or top-level overall field
+  const candidates = [bestEffortScore, histLeader, overallDirect].filter((n) => Number.isFinite(n));
+  const score = candidates.length ? Math.max(...candidates) : null;
+
+  if (score !== null && Number.isFinite(score)) {
+    const clamped = Math.max(0, Math.min(100, score));
+    const textVal = Number.isInteger(clamped) ? String(clamped) : clamped.toFixed(1);
+    pctEl.textContent = `${textVal}%`;
+    fillEl.style.width = `${clamped}%`;
+    barEl.setAttribute("aria-valuenow", String(clamped));
+  }
+
+  // Keep tooltip accurate when the top score comes from history or top-level overall progress
+  let topEffort = bestEffort;
+  if (Number.isFinite(histLeader) && histLeader >= bestEffortScore && latestHist?.leaderId) {
+    const matched = efforts.find((item) => item.id === latestHist.leaderId || item.slug === latestHist.leaderId || item.name === latestHist.leaderId);
+    if (matched) topEffort = matched;
+  }
+
+  const tipEl = document.getElementById("pw-tip");
+  if (tipEl && topEffort) {
+    const leaderName = topEffort.name || (latestHist && latestHist.leaderId) || "Unknown";
+    const st = topEffort.stages || topEffort.progress || topEffort.gta || {};
+    const milestone =
+      st.playable >= 1 ? "Playable" :
+      (st.inWorld ?? st.world ?? st.ingame) > 0 ? "In the world" :
+      st.menu > 0 ? "Main menu" :
+      (st.firstFrame ?? st.boots) > 0 ? "First frame" :
+      (st.exeRuns ?? st.loads) > 0 ? "Exe runs" : "Groundwork";
+    tipEl.innerHTML = `Leader: <b>${leaderName}</b> — Has reached “<b>${milestone}</b>”. Click anywhere on this box to open PortWatch.`;
+  }
 }
 
   async function syncTracker() {

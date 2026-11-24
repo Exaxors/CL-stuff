@@ -494,7 +494,7 @@
     </div>
     <div class="toolbar">
       <a href="index.html" class="nav-link-btn">← HUB</a>
-      <button id="reloadAllBtn" title="Fetch ./cyberleek_events_2.json and ./cyberleek_mcap_history_2.json" style="display:none">Fetch Latest Data</button>
+      <button id="reloadAllBtn" title="Fetch ./cyberleek_events.json and ./cyberleek_mcap_history.json" style="display:none">Fetch Latest Data</button>
       <button id="pickEventsBtn" title="Select a local events JSON file" style="display:none">Load Events JSON</button>
       <button id="pickMcapBtn" title="Select a local market cap JSON file" style="display:none">Load Mcap JSON</button>
       <button id="exportCsvBtn" style="display:none">Export Computed CSV</button>
@@ -616,7 +616,7 @@ function showServerNotice(msg) {
   const isFileProto = window.location.protocol === "file:";
   const serverHint = isFileProto
     ? "<br><b>Browser <code>file://</code> block detected:</b> Browsers block <code>fetch()</code> on local files unless served over HTTP. Start a local server in this folder (e.g. <code>python -m http.server 8000</code>) or use <b>Load Events JSON</b> / <b>Load Mcap JSON</b> above."
-    : "<br>Ensure <code>cyberleek_events_2.json</code> and <code>cyberleek_mcap_history_2.json</code> exist next to this HTML file, or pick them manually via <b>Load Events JSON</b> / <b>Load Mcap JSON</b>.";
+    : "<br>Ensure <code>cyberleek_events.json</code> and <code>cyberleek_mcap_history.json</code> exist next to this HTML file, or pick them manually via <b>Load Events JSON</b> / <b>Load Mcap JSON</b>.";
   box.innerHTML = "<b>Could not fetch dataset file:</b> " + msg + serverHint;
   box.style.display = "block";
 }

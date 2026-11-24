@@ -990,8 +990,8 @@ function drawChart() {
   for (let i = 0; i <= 4; i++) {
     const ts = minTs + (i / 4) * (maxTs - minTs);
     const x = xOf(ts);
-    const dStr = new Date(ts * 1000).toISOString().slice(5, 16).replace("T", " ");
-    ctx.fillText(dStr, Math.max(pad.left, x - 34), h - 10);
+    const dStr = new Date(ts * 1000).toISOString().slice(5, 10);
+    ctx.fillText(dStr, Math.max(pad.left, x - 18), h - 10);
   }
 
   ctx.strokeStyle = "#0064ec";

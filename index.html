@@ -96,6 +96,42 @@
     max-width: 100%;
     cursor: default;
     user-select: none;
+    position: relative;
+  }
+
+  .pw-box:hover,
+  .pw-box:focus-visible {
+    border-color: var(--neon);
+    outline: none;
+  }
+
+  .pw-tip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 290px;
+    max-width: calc(100vw - 1.5rem);
+    background: var(--card);
+    border: 1px solid var(--neon);
+    padding: 0.55rem 0.7rem;
+    font-size: 0.68rem;
+    line-height: 1.45;
+    letter-spacing: 0.2px;
+    text-transform: none;
+    color: var(--text);
+    box-shadow: 0 6px 20px rgba(0, 5, 13, 0.85);
+    z-index: 100;
+  }
+
+  .pw-tip b {
+    color: var(--text-bright);
+  }
+
+  .pw-box:hover .pw-tip,
+  .pw-box:focus .pw-tip,
+  .pw-box:focus-within .pw-tip {
+    display: block;
   }
 
   .pw-top {
@@ -382,6 +418,7 @@
         class="pw-box"
         id="portwatch-widget"
         aria-label="PortWatch VI status"
+        tabindex="0"
         data-tracker-url="https://portwatch-vi.xyz/data/tracker.json"
         data-release-iso="2026-11-23T14:36:00Z"
         data-poll-ms="180000"
@@ -401,6 +438,10 @@
         <div class="pw-timer-row">
           <span>CL EXE TIMER</span>
           <span class="pw-timer" id="pw-timer">00d 00h 00m 00s</span>
+        </div>
+
+        <div class="pw-tip" role="tooltip">
+          This is the <b>PortWatch</b> progress bar: see how close we are to playing GTA VI on our PCs.
         </div>
       </aside>
     </header>

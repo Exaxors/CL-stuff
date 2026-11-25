@@ -156,6 +156,22 @@
   .findings-list li + li { margin-top: 0.35rem; }
   .findings-list strong { color: var(--text-bright); }
 
+  .belobug-box {
+    background: var(--bg);
+    border: 1px solid var(--purple);
+    padding: 0.8rem 0.95rem;
+    margin-bottom: 0.85rem;
+  }
+  .belobug-title { color: var(--purple); font-size: 0.84rem; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 0.25rem; }
+  .belobug-sub { color: var(--text-dim); font-size: 0.71rem; margin-bottom: 0.65rem; }
+  .belobug-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; margin-top: 0.55rem; }
+  .issue-card { background: var(--card); border: 1px solid var(--border); padding: 0.65rem 0.8rem; }
+  .issue-title { color: var(--gold); font-size: 0.76rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .issue-desc { color: var(--text); font-size: 0.71rem; }
+  .issue-list { padding-left: 1.15rem; font-size: 0.72rem; color: var(--text); margin-top: 0.45rem; }
+  .issue-list li + li { margin-top: 0.32rem; }
+  .issue-list strong { color: var(--text-bright); }
+
   .panel-card { background: var(--bg); border: 1px solid var(--border); padding: 0.78rem 0.9rem; margin-bottom: 0.7rem; }
   .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border); margin-bottom: 0.65rem; }
   .step-title-wrap { display: flex; align-items: center; gap: 10px; }
@@ -205,7 +221,7 @@
   .footer { text-align: center; font-size: 0.62rem; color: var(--text-dim); letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.9rem; text-transform: uppercase; }
 
   @media (max-width: 960px) { .flags-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 680px) { .prereq-grid { grid-template-columns: 1fr; } .wrapper { padding: 0.7rem 0.75rem; } .header h1 { font-size: 1.05rem; } }
+  @media (max-width: 680px) { .prereq-grid, .belobug-grid { grid-template-columns: 1fr; } .wrapper { padding: 0.7rem 0.75rem; } .header h1 { font-size: 1.05rem; } }
 </style>
 </head>
 <body>
@@ -213,9 +229,10 @@
     <header class="header">
       <div>
         <h1>UNOFFICIAL · CYBERLEEK · VICTORY GUIDE</h1>
-        <div class="sub">BUILD &amp; RUN REFERENCE · WINDOWS 10/11 · RTX 5090 (UPDATED FINDINGS)</div>
+        <div class="sub">BUILD &amp; RUN REFERENCE · WINDOWS 10/11 · RTX 5090 (BELOBUG FORK ADDED)</div>
         <div class="badge-row">
           <span class="card-tag tag-internal"><span class="glow-box" aria-hidden="true"></span>NVIDIA RTX 5090</span>
+          <span class="card-tag tag-purple">Belobug/VIctory-Belobug-AMD</span>
           <span class="card-tag tag-future">Experimental / Source Build</span>
           <span class="card-tag tag-external">PowerShell / Cargo</span>
         </div>
@@ -229,8 +246,8 @@
       <div class="findings-title">◈ UPDATED FINDINGS &amp; RTX 5090 REALITY CHECK</div>
       <ul class="findings-list">
         <li><strong>Menu vs. Open World:</strong> Reaching the start menu (~30 FPS) works on upstream and experimental builds, but entering the 3D world hits heavy shader/translation bottlenecks (~1–8 FPS in early tests) with missing geometry/lighting quirks.</li>
-        <li><strong>Fork Focus:</strong> <code>DexNom/VIctory</code> targets AMD/DXIL workflows primarily; NVIDIA-tuned forks (such as <code>fxceless/victory-fork</code>) focus more directly on D3D12/NVIDIA translation and frame-pacing experiments.</li>
-        <li><strong>Path &amp; Flag Sanity Check:</strong> Replace the example <code>F:\...</code> path in Step 2 with your real unpacked game executable path, and test plain launch first if optional flags like <code>--rt</code> or <code>VICTORY_RELAY</code> aren't supported by your build.</li>
+        <li><strong>Fork Focus:</strong> <code>DexNom/VIctory</code> targets AMD/DXIL workflows primarily; <code>Belobug/VIctory-Belobug-AMD</code> is a fork of VIctory tailored around AMD/Radeon testing &amp; diagnostics; NVIDIA-tuned forks (such as <code>fxceless/victory-fork</code>) focus more directly on D3D12/NVIDIA translation and frame-pacing experiments.</li>
+        <li><strong>Path &amp; Flag Sanity Check:</strong> Replace the example path in Step 2 with your real unpacked game executable path, and test plain launch first if optional flags like <code>--rt</code> or <code>VICTORY_RELAY</code> aren't supported by your build.</li>
         <li><strong>Warmup / Shader Cache:</strong> Letting shader warming/pre-translation finish before entering the 3D world helps reduce runtime stalls—keep Task Manager open to monitor Windows Commit (~33 GB) and VRAM (~10 GB).</li>
       </ul>
     </section>
@@ -268,7 +285,7 @@
       <div class="prereq-grid">
         <div class="req-card">
           <div class="req-title">Windows 10 / 11 (64-bit) + AVX2 CPU</div>
-          <div class="req-sub">Requires a modern 64-bit Windows environment on an AVX2-capable processor.</div>
+          <div class="req-sub">Requires a modern 64-bit Windows environment on an AVX2-capable processor (Belobug notes testing on Windows 11; Windows 10 may need a newer D3D12 runtime per issue #9 / PR #44).</div>
         </div>
         <div class="req-card">
           <div class="req-title">D3D12 SM 6.6 + Mesh Shaders <span class="card-tag tag-internal">RTX 5090 Ready</span></div>
@@ -276,7 +293,7 @@
         </div>
         <div class="req-card">
           <div class="req-title">Rustup &amp; VS C++ Build Tools</div>
-          <div class="req-sub">Keep MSVC build tools and Rust installed. Setup scripts use them to compile locally from source.</div>
+          <div class="req-sub">Keep MSVC build tools and Rust installed. Cargo and setup scripts use them to compile locally from source.</div>
         </div>
         <div class="req-card">
           <div class="req-title">External Unpacked Xbox Series Build</div>
@@ -293,21 +310,23 @@
         <div class="step-title-wrap">
           <span class="step-num">01</span>
           <div>
-            <div class="panel-title">Download &amp; Extract the Repository</div>
-            <div class="panel-desc">Extract DexNom's ZIP to a clean folder without spaces, or clone another fork via Git.</div>
+            <div class="panel-title">Download, Extract, or Clone the Repository</div>
+            <div class="panel-desc">Choose DexNom ZIP extraction, or clone Belobug / fxceless / Marvisak via Git.</div>
           </div>
         </div>
       </div>
       <div class="sub-bar">
         <div class="btn-group" id="fork-tabs" role="tablist" aria-label="Fork selector">
           <button type="button" data-fork="DexNom/VIctory" class="btn fork-tab active">DexNom/VIctory</button>
+          <button type="button" data-fork="Belobug/VIctory-Belobug-AMD" class="btn fork-tab">Belobug/VIctory-Belobug-AMD</button>
           <button type="button" data-fork="fxceless/victory-fork" class="btn fork-tab">fxceless/victory-fork</button>
           <button type="button" data-fork="Marvisak/VIctory" class="btn fork-tab">Marvisak/VIctory</button>
         </div>
         <div class="btn-group">
           <label for="fork-select" class="panel-desc">Repo:</label>
           <select id="fork-select" class="terminal-select">
-            <option value="DexNom/VIctory">DexNom/VIctory (Target Fork · AMD/DXIL Focus)</option>
+            <option value="DexNom/VIctory">DexNom/VIctory (Target Fork · ZIP / Setup.cmd)</option>
+            <option value="Belobug/VIctory-Belobug-AMD">Belobug/VIctory-Belobug-AMD (AMD Fork · Diag Build)</option>
             <option value="fxceless/victory-fork">fxceless/victory-fork (NVIDIA / Relay Fixes)</option>
             <option value="Marvisak/VIctory">Marvisak/VIctory (Upstream Base)</option>
           </select>
@@ -326,7 +345,7 @@
 <span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore for DexNom ZIP workflow)</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The ZIP is extracted cleanly and you can see <code>Setup.cmd</code> inside the folder.
+        <strong>CHECKPOINT:</strong> The ZIP is extracted (or the repository is cloned cleanly) and you can see <code>Setup.cmd</code> or <code>Cargo.toml</code> in the folder.
       </div>
     </article>
 
@@ -336,21 +355,21 @@
         <div class="step-title-wrap">
           <span class="step-num">02</span>
           <div>
-            <div class="panel-title">Inspect &amp; Run Setup.cmd (Compile)</div>
-            <div class="panel-desc">Skim Setup.cmd first, then run it with your actual unpacked game executable path.</div>
+            <div class="panel-title">Inspect &amp; Compile (Setup.cmd or Cargo Diag Build)</div>
+            <div class="panel-desc">Run DexNom's Setup.cmd or compile Belobug's diagnostics profile with Cargo.</div>
           </div>
         </div>
       </div>
       <div class="code-block">
         <div class="code-head">
-          <span>POWERSHELL / WINDOWS EXPLORER</span>
+          <span id="cmd-step-2-head">POWERSHELL / WINDOWS EXPLORER</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-2">COPY</button>
         </div>
         <pre id="cmd-step-2" class="code-pre"><span class="c-cmt"># Inspect Setup.cmd before running, then execute with your real game path:</span>
 <span class="c-cmd">.\Setup.cmd</span> -GamePath <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path	o\game_scarlett_master.exe"</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The setup script finishes without build errors and creates the Start Menu shortcut / <code>victory-play.exe</code> in AppData.
+        <strong>CHECKPOINT:</strong> Compilation finishes without build errors and produces your runtime executable or shortcut.
       </div>
     </article>
 
@@ -360,21 +379,21 @@
         <div class="step-title-wrap">
           <span class="step-num">03</span>
           <div>
-            <div class="panel-title">Launch to Menu &amp; Let Shader Warming Finish</div>
-            <div class="panel-desc">Verify menu boot first, allow shader warming/pre-translation to complete, and watch Commit memory.</div>
+            <div class="panel-title">Launch, Let Pipeline/Shader Translation Finish &amp; Watch Commit</div>
+            <div class="panel-desc">First launch after a build translates shaders/pipelines—the loading screen can stay frozen with sound for minutes.</div>
           </div>
         </div>
       </div>
       <div class="code-block">
         <div class="code-head">
-          <span>WINDOWS START MENU / WARMUP</span>
+          <span id="cmd-step-3-head">WINDOWS START MENU / WARMUP</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-3">COPY</button>
         </div>
         <pre id="cmd-step-3" class="code-pre"><span class="c-cmt"># Open Start Menu and launch "DexNom Runtime"</span>
 <span class="c-cmt"># Allow any shader warming / pre-translation step to finish before pushing into the 3D world</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The game reaches the menu (~30 FPS) and warming finishes without error 1455 or an NVIDIA TDR reset.
+        <strong>CHECKPOINT:</strong> Shader/pipeline translation completes without Windows error 1455 or an NVIDIA TDR reset while Commit stays within budget (~33 GB).
       </div>
     </article>
 
@@ -394,7 +413,7 @@
         <div class="req-title">Optional Launch Flags (Verify Against Your Build)</div>
         
         <p class="panel-desc" style="margin-top: 8px; margin-bottom: 4px; color: var(--text);">
-          <strong>Note:</strong> Run <code>victory-play.exe</code> without extra flags first. Flags like <code>--rt</code> or <code>VICTORY_RELAY</code> are experimental/fork-specific and may not exist in every build.
+          <strong>Note:</strong> Run without extra flags first. Flags like <code>--rt</code> or <code>VICTORY_RELAY</code> are experimental/fork-specific and may not exist in every build.
         </p>
 
         <div class="flags-grid">
@@ -438,11 +457,54 @@
       </div>
 
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The game launches from PowerShell using your saved configuration without CLI argument errors.
+        <strong>CHECKPOINT:</strong> The game launches from PowerShell using your configuration without CLI argument errors.
       </div>
     </article>
 
-    <div class="footer">provided by n0ne · updated findings build</div>
+    <div class="section-label">Belobug/VIctory-Belobug-AMD · Fork Notes &amp; Known Problems</div>
+    <section class="belobug-box">
+      <div class="belobug-title">◈ BELOBUG FORK (https://github.com/Belobug/VIctory-Belobug-AMD)</div>
+      <div class="belobug-sub">Fork of VIctory built and tested on AMD hardware (Windows 11); documented build command, startup behavior, and known issues.</div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>BELOBUG DIAGNOSTICS BUILD &amp; RUN (POWERSHELL)</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-belobug-ref">COPY</button>
+        </div>
+        <pre id="cmd-belobug-ref" class="code-pre"><span class="c-cmd">cargo</span> build --profile diag -p victory --features diagnostics
+<span class="c-env">$env:VICTORY_PRESENT_TARGET</span>=<span class="c-val">"1x1:1"</span>
+<span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>
+<span class="c-cmd">.	arget\diagictory.exe</span> run <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path	o\game_scarlett_master.exe"</span> --execute --console series-x</pre>
+      </div>
+
+      <div class="belobug-grid">
+        <div class="issue-card">
+          <div class="issue-title">First-Launch Pipeline Build (~2,500 Pipelines)</div>
+          <div class="issue-desc">The first launch after a build translates every shader and builds roughly 2,500 pipelines; the loading screen can remain frozen—with sound playing—for minutes.</div>
+        </div>
+        <div class="issue-card">
+          <div class="issue-title">Memory Footprint (~33 GB Commit)</div>
+          <div class="issue-desc">Commits roughly 33 GB after ~15 minutes of driving (title's ~7 GB, ~8 GB textures on GPU, buffer copies, and system backing of video memory).</div>
+        </div>
+        <div class="issue-card">
+          <div class="issue-title">Ray-Traced Light Stand-In Constant</div>
+          <div class="issue-desc">No ray-traced light; a single constant stands in everywhere/every hour. Default <code>0.6</code> flattens night shadows and leaves noon unlit areas nearly black; levels that looked right on the author's machine: <code>0.07</code> bluish at night, <code>0.3</code> warm at dusk/dawn, <code>1.4</code> sky blue at noon.</div>
+        </div>
+        <div class="issue-card">
+          <div class="issue-title">Dropped Draws &amp; Unimplemented Compute</div>
+          <div class="issue-desc">Per-draw descriptor slots can run out in heavy areas, and ~380 draws per frame are dropped in the world due to untranslated programs and 6 pipelines refused by the AMD driver (2 compute, 4 mesh).</div>
+        </div>
+      </div>
+
+      <ul class="issue-list">
+        <li><strong>In-Game Phone Unlit:</strong> With the in-game phone out, the world is unlit (see the fork's table/notes).</li>
+        <li><strong>Compute Passes &amp; <code>VICTORY_RAYS=1</code>:</strong> Some compute programs (ray-tracing structure builders, wind volumes, and others) do not translate and their passes are dropped. Setting <code>VICTORY_RAYS=1</code> translates/runs the builders, then removes the device ~1.5 minutes later (do not expect light from it; even after fixing stale list/descriptor names in Radeon GPU Detective, it ends on a read at an unmapped address).</li>
+        <li><strong>Windows 10 vs. Windows 11:</strong> Reported not to get past startup on Windows 10 without a newer D3D12 runtime (issue #9, PR #44, unmerged/untested there); only run on Windows 11 in that setup.</li>
+        <li><strong>Known Failing Tests &amp; Repo Notes:</strong> <code>list::tests::lists_are_cut_at_waits_that_follow_work</code> in <code>victory-gpu</code> and five <code>xmem</code> tests in <code>victory-hle</code> fail (issues #2 and #8); <code>crates/victory-shader/src/emit/lower.rs</code> exceeds the <code>cargo xtask</code> size limit as source code (not an asset); many changes are title/GPU-specific and marked as shortcuts approximating console behavior.</li>
+      </ul>
+    </section>
+
+    <div class="footer">provided by n0ne · updated with belobug fork</div>
   </div>
 
   <div id="copy-toast" class="toast">✓ Copied command to clipboard</div>
@@ -452,7 +514,12 @@
       'DexNom/VIctory': {
         url: 'ZIP Download (No Git)',
         activeClass: 'active',
-        note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation (AMD/DXIL focus; use ZIP download).'
+        note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation (use ZIP download &amp; Setup.cmd).'
+      },
+      'Belobug/VIctory-Belobug-AMD': {
+        url: 'https://github.com/Belobug/VIctory-Belobug-AMD.git',
+        activeClass: 'active-purple',
+        note: 'Selected: <span style="color:var(--purple);">Belobug/VIctory-Belobug-AMD</span> — Fork of VIctory built with diagnostics profile &amp; <code>VICTORY_PRESENT_TARGET=1x1:1</code> / <code>VICTORY_HAIR=1</code>.'
       },
       'fxceless/victory-fork': {
         url: 'https://github.com/fxceless/victory-fork.git',
@@ -461,8 +528,8 @@
       },
       'Marvisak/VIctory': {
         url: 'https://github.com/Marvisak/VIctory.git',
-        activeClass: 'active-purple',
-        note: 'Selected: <span style="color:var(--purple);">Marvisak/VIctory</span> — Upstream base repository (boots to start menu at ~30 FPS).'
+        activeClass: 'active-gold',
+        note: 'Selected: <span style="color:var(--gold);">Marvisak/VIctory</span> — Upstream base repository (boots to start menu at ~30 FPS).'
       }
     };
 
@@ -492,16 +559,47 @@
       });
 
       const cmd1 = document.getElementById('cmd-step-1');
+      const cmd2 = document.getElementById('cmd-step-2');
+      const cmd2Head = document.getElementById('cmd-step-2-head');
+      const cmd3 = document.getElementById('cmd-step-3');
+      const cmd3Head = document.getElementById('cmd-step-3-head');
+
       if (cmd1) {
         if (currentFork === 'DexNom/VIctory') {
-           cmd1.innerHTML = `<span class="c-cmt"># DexNom: Download the ZIP from GitHub (Code -&gt; Download ZIP)</span>
+          cmd1.innerHTML = `<span class="c-cmt"># DexNom: Download the ZIP from GitHub (Code -&gt; Download ZIP)</span>
 <span class="c-cmt"># Extract it to a folder without spaces, e.g., D:\DexNom</span>
 <span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore for DexNom ZIP workflow)</span>`;
         } else {
-           cmd1.innerHTML = `<span class="c-cmd">git</span> clone ${info.url}
-<span class="c-cmd">cd</span> VIctory`;
+          cmd1.innerHTML = `<span class="c-cmd">git</span> clone ${info.url}
+<span class="c-cmd">cd</span> ${currentFork.split('/')[1]}`;
         }
       }
+
+      if (cmd2 && cmd2Head) {
+        if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
+          cmd2Head.textContent = 'POWERSHELL · BELOBUG DIAGNOSTICS BUILD';
+          cmd2.innerHTML = `<span class="c-cmd">cargo</span> build --profile diag -p victory --features diagnostics`;
+        } else {
+          cmd2Head.textContent = 'POWERSHELL / WINDOWS EXPLORER';
+          cmd2.innerHTML = `<span class="c-cmt"># Inspect Setup.cmd before running, then execute with your real game path:</span>
+<span class="c-cmd">.\Setup.cmd</span> -GamePath <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path\to\game_scarlett_master.exe"</span>`;
+        }
+      }
+
+      if (cmd3 && cmd3Head) {
+        if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
+          cmd3Head.textContent = 'POWERSHELL · BELOBUG RUN (~2,500 PIPELINES ON FIRST LAUNCH)';
+          cmd3.innerHTML = `<span class="c-env">$env:VICTORY_PRESENT_TARGET</span>=<span class="c-val">"1x1:1"</span>
+<span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>
+<span class="c-cmd">.\target\diag\victory.exe</span> run <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path\to\game_scarlett_master.exe"</span> --execute --console series-x`;
+        } else {
+          cmd3Head.textContent = 'WINDOWS START MENU / WARMUP';
+          cmd3.innerHTML = `<span class="c-cmt"># Open Start Menu and launch "DexNom Runtime"</span>
+<span class="c-cmt"># Allow any shader warming / pre-translation step to finish before pushing into the 3D world</span>`;
+        }
+      }
+
+      updateStep6Command();
     }
 
     function updateStep6Command() {
@@ -516,6 +614,10 @@
       document.getElementById('label-flag-rt').classList.toggle('active-flag', useRT);
 
       const lines = [];
+      if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
+        lines.push(`<span class="c-env">$env:VICTORY_PRESENT_TARGET</span>=<span class="c-val">"1x1:1"</span>`);
+        lines.push(`<span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>`);
+      }
       if (useTrace) {
         lines.push(`<span class="c-env">$env:VICTORY_LOG</span>=<span class="c-val">"victory_loader=trace,info"</span>`);
       }
@@ -527,7 +629,12 @@
       if (useRT) runFlags += ' --rt';
       if (useSeriesS) runFlags += ' --console series-s';
 
-      lines.push(`<span class="c-cmd">&amp; "$env:LOCALAPPDATA\DexNom Runtime\victory-play.exe"</span>${runFlags}`);
+      if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
+        const consoleFlag = useSeriesS ? '--console series-s' : '--console series-x';
+        lines.push(`<span class="c-cmd">.\target\diag\victory.exe</span> run <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path\to\game_scarlett_master.exe"</span> --execute ${consoleFlag}${useRT ? ' --rt' : ''}`);
+      } else {
+        lines.push(`<span class="c-cmd">&amp; "$env:LOCALAPPDATA\DexNom Runtime\victory-play.exe"</span>${runFlags}`);
+      }
 
       document.getElementById('cmd-step-6').innerHTML = lines.join('<br>');
     }

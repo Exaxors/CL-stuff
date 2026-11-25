@@ -4,7 +4,7 @@
 <link rel="icon" href="./icon.ico" type="image/ico" />
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>n0ne's CYBERLEEK · VIctory Build &amp; Run Guide</title>
+<title>n0ne's CYBERLEEK · VIctory &amp; Leonida Build &amp; Run Guide</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -156,6 +156,21 @@
   .findings-list li + li { margin-top: 0.35rem; }
   .findings-list strong { color: var(--text-bright); }
 
+  .tree-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.85rem;
+  }
+  .tree-title { color: var(--text-bright); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 0.45rem; }
+  .tree-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+  .tree-card { background: var(--card); border: 1px solid var(--border); padding: 0.6rem 0.75rem; }
+  .tree-head { font-size: 0.75rem; font-weight: 700; color: var(--cyan); margin-bottom: 0.3rem; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .tree-list { list-style: none; font-size: 0.71rem; color: var(--text); }
+  .tree-list li { padding: 2px 0; }
+  .tree-list li strong { color: var(--text-bright); }
+  .branch-tag { color: var(--text-dim); }
+
   .belobug-box {
     background: var(--bg);
     border: 1px solid var(--purple);
@@ -165,12 +180,32 @@
   .belobug-title { color: var(--purple); font-size: 0.84rem; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 0.25rem; }
   .belobug-sub { color: var(--text-dim); font-size: 0.71rem; margin-bottom: 0.65rem; }
   .belobug-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; margin-top: 0.55rem; }
+
+  .leonida-box {
+    background: var(--bg);
+    border: 1px solid var(--green);
+    padding: 0.85rem 0.95rem;
+    margin-bottom: 0.85rem;
+  }
+  .leonida-title { color: var(--green); font-size: 0.86rem; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 0.3rem; }
+  .leonida-sub { color: var(--text); font-size: 0.73rem; margin-bottom: 0.65rem; }
+  .leonida-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; margin-top: 0.55rem; }
+
   .issue-card { background: var(--card); border: 1px solid var(--border); padding: 0.65rem 0.8rem; }
   .issue-title { color: var(--gold); font-size: 0.76rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .issue-title-green { color: var(--green); font-size: 0.76rem; font-weight: 700; margin-bottom: 0.25rem; }
   .issue-desc { color: var(--text); font-size: 0.71rem; }
   .issue-list { padding-left: 1.15rem; font-size: 0.72rem; color: var(--text); margin-top: 0.45rem; }
   .issue-list li + li { margin-top: 0.32rem; }
   .issue-list strong { color: var(--text-bright); }
+
+  .layout-table-wrap { overflow-x: auto; margin-top: 0.6rem; border: 1px solid var(--border); }
+  table.layout-table { width: 100%; border-collapse: collapse; font-size: 0.71rem; text-align: left; }
+  table.layout-table th { background: var(--card-2); color: var(--cyan); padding: 0.45rem 0.65rem; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px; }
+  table.layout-table td { padding: 0.42rem 0.65rem; border-bottom: 1px dashed var(--border); color: var(--text); vertical-align: top; }
+  table.layout-table tr:nth-child(even) td { background: rgba(0, 16, 43, 0.55); }
+  table.layout-table td:first-child { color: var(--text-bright); font-weight: 700; white-space: nowrap; }
+  table.layout-table td:nth-child(2) { color: var(--green); white-space: nowrap; }
 
   .panel-card { background: var(--bg); border: 1px solid var(--border); padding: 0.78rem 0.9rem; margin-bottom: 0.7rem; }
   .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border); margin-bottom: 0.65rem; }
@@ -221,20 +256,19 @@
   .footer { text-align: center; font-size: 0.62rem; color: var(--text-dim); letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.9rem; text-transform: uppercase; }
 
   @media (max-width: 960px) { .flags-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 680px) { .prereq-grid, .belobug-grid { grid-template-columns: 1fr; } .wrapper { padding: 0.7rem 0.75rem; } .header h1 { font-size: 1.05rem; } }
+  @media (max-width: 680px) { .prereq-grid, .belobug-grid, .leonida-grid, .tree-grid { grid-template-columns: 1fr; } .wrapper { padding: 0.7rem 0.75rem; } .header h1 { font-size: 1.05rem; } }
 </style>
 </head>
 <body>
   <div class="wrapper">
     <header class="header">
       <div>
-        <h1>UNOFFICIAL · CYBERLEEK · VICTORY GUIDE</h1>
-        <div class="sub">BUILD &amp; RUN REFERENCE · WINDOWS 10/11 · RTX 5090 (BELOBUG FORK ADDED)</div>
+        <h1>UNOFFICIAL · CYBERLEEK · VICTORY &amp; LEONIDA GUIDE</h1>
+        <div class="sub">BUILD &amp; RUN REFERENCE · WINDOWS 10/11 · VERIFIED ON RYZEN 9 5900X + RTX 3060 12GB</div>
         <div class="badge-row">
-          <span class="card-tag tag-internal"><span class="glow-box" aria-hidden="true"></span>NVIDIA RTX 5090</span>
-          <span class="card-tag tag-purple">Belobug/VIctory-Belobug-AMD</span>
-          <span class="card-tag tag-future">Experimental / Source Build</span>
-          <span class="card-tag tag-external">PowerShell / Cargo</span>
+          <span class="card-tag tag-internal"><span class="glow-box" aria-hidden="true"></span>Runs on R9 5900X · RTX 3060 12GB</span>
+          <span class="card-tag tag-gold">~4 FPS · Crashes at 1st QTE</span>
+          <span class="card-tag tag-external">VIctory Forks vs. Leonida</span>
         </div>
       </div>
       <div class="btn-group">
@@ -243,18 +277,45 @@
     </header>
 
     <section class="findings-box">
-      <div class="findings-title">◈ UPDATED FINDINGS &amp; RTX 5090 REALITY CHECK</div>
+      <div class="findings-title">◈ TEST UPDATE &amp; VERIFIED RIG SPECS (WORKS ON MY RIG)</div>
       <ul class="findings-list">
-        <li><strong>Menu vs. Open World:</strong> Reaching the start menu (~30 FPS) works on upstream and experimental builds, but entering the 3D world hits heavy shader/translation bottlenecks (~1–8 FPS in early tests) with missing geometry/lighting quirks.</li>
-        <li><strong>Fork Focus:</strong> <code>DexNom/VIctory</code> targets AMD/DXIL workflows primarily; <code>Belobug/VIctory-Belobug-AMD</code> is a fork of VIctory tailored around AMD/Radeon testing &amp; diagnostics; NVIDIA-tuned forks (such as <code>fxceless/victory-fork</code>) focus more directly on D3D12/NVIDIA translation and frame-pacing experiments.</li>
-        <li><strong>Path &amp; Flag Sanity Check:</strong> Replace the example path in Step 2 with your real unpacked game executable path, and test plain launch first if optional flags like <code>--rt</code> or <code>VICTORY_RELAY</code> aren't supported by your build.</li>
-        <li><strong>Warmup / Shader Cache:</strong> Letting shader warming/pre-translation finish before entering the 3D world helps reduce runtime stalls—keep Task Manager open to monitor Windows Commit (~33 GB) and VRAM (~10 GB).</li>
+        <li><strong>Verified Rig:</strong> AMD Ryzen 9 5900X (12-Core / 24-Thread, 4.8 GHz) · MSI MPG X570 GAMING PLUS · NVIDIA GeForce RTX 3060 12GB · 32GB DDR4-3200 (2×16GB) · Samsung 970 EVO Plus 1TB NVMe + Samsung 850 EVO 1TB SATA.</li>
+        <li><strong>Test Result (DexNom Fork):</strong> Boots and runs on this rig at the ~4 FPS reported on PortWatch, then crashes right after reaching the first QTE—only the bare minimum loads, far from retail.</li>
+        <li><strong>Memory &amp; Warmup:</strong> Let shader warming (<code>LeonidaWarm.exe</code> / <code>victory-warm</code>) finish before entering the 3D world, and watch Task Manager <strong>Committed</strong> memory (~33 GB) so 32 GB RAM + page file does not hit error 1455.</li>
       </ul>
+    </section>
+
+    <section class="tree-box">
+      <div class="tree-title">◈ REPOSITORY LINEAGE · WHICH ONES ARE FORKS OF VICTORY</div>
+      <div class="tree-grid">
+        <div class="tree-card">
+          <div class="tree-head">
+            <span>VIctory Upstream &amp; Forks</span>
+            <span class="card-tag tag-purple">VIctory Tree</span>
+          </div>
+          <ul class="tree-list">
+            <li><strong>Marvisak/VIctory</strong> <span class="branch-tag">— Upstream Base Repo</span></li>
+            <li><span class="branch-tag">├─</span> <strong>DexNom/VIctory</strong> <span class="branch-tag">[Fork of VIctory · ZIP / Setup.cmd]</span></li>
+            <li><span class="branch-tag">├─</span> <strong>Belobug/VIctory-Belobug-AMD</strong> <span class="branch-tag">[Fork of VIctory · AMD / Diag]</span></li>
+            <li><span class="branch-tag">└─</span> <strong>fxceless/victory-fork</strong> <span class="branch-tag">[Fork of VIctory · NVIDIA / Relay]</span></li>
+          </ul>
+        </div>
+        <div class="tree-card">
+          <div class="tree-head">
+            <span>Standalone Runtime (Not a VIctory Fork)</span>
+            <span class="card-tag tag-internal">Separate Codebase</span>
+          </div>
+          <ul class="tree-list">
+            <li><strong>Leonida</strong> <span class="branch-tag">(GPL-3.0-or-later)</span></li>
+            <li><span class="branch-tag">└─</span> Uses <code>leonida-*</code> crates (<code>Apps/Leonida</code>, <code>Crates/*</code>, <code>Tasks</code>), installs to <code>%LOCALAPPDATA%\Leonida</code>, and builds <code>Leonida.exe</code>, <code>LeonidaPlay.exe</code> &amp; <code>LeonidaWarm.exe</code>.</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <section id="warning-callout" class="warning-box">
       <div class="warning-head">
-        <div class="warning-title">⚠ GPU DRIVER RESET (TDR) &amp; UNVERIFIED FORK RISK</div>
+        <div class="warning-title">⚠ GPU DRIVER RESET (TDR), QTE CRASHES &amp; UNVERIFIED FORK RISK</div>
         <div class="btn-group">
           <button type="button" class="btn" id="warning-toggle-btn">Collapse</button>
           <button type="button" class="btn" id="warning-dismiss-btn" title="Dismiss warning">✕</button>
@@ -262,13 +323,13 @@
       </div>
       <div id="warning-body" class="warning-body">
         <p>
-          <strong>Expect Driver Resets Past the Menu:</strong> Entering the 3D open world on experimental builds frequently triggers Windows Timeout Detection and Recovery (<code>TDR</code>), temporarily blacking out your monitors and resetting the NVIDIA display driver. Even when runs avoid a crash, stability past the menu is not guaranteed.
+          <strong>Early-Build Stability:</strong> Even when the game boots and runs in-world (~4 FPS on DexNom), expect crashes at early milestones (such as the first QTE) and occasional Windows <code>TDR</code> display driver resets. Only bare-minimum world assets load right now—nowhere near retail.
         </p>
         <p>
           <strong>Inspect Before Building:</strong> Community forks move rapidly and contain experimental, unreviewed code. Always review the source code before compiling and <u>never run precompiled <code>.exe</code> binaries</u> from untrusted links. There is no official installer.
         </p>
         <p>
-          <strong>RAM &amp; VRAM:</strong> A run in the world takes about <b>33 GB of Windows commit</b> (RAM plus paging file) and about <b>10 GB of video memory</b>. Check Committed under Task Manager → Performance → Memory. If <code>crashes.log</code> reports Windows error 1455, close other applications or increase the Windows paging file size, then retry.
+          <strong>RAM &amp; VRAM:</strong> A run in the world takes about <b>33 GB of Windows commit</b> (RAM plus paging file) and ~8–10 GB VRAM (fits within 12 GB VRAM, though 32 GB system RAM relies on page file headroom). If <code>crashes.log</code> reports Windows error 1455, close other apps or increase the Windows paging file size.
         </p>
       </div>
     </section>
@@ -284,20 +345,20 @@
       </div>
       <div class="prereq-grid">
         <div class="req-card">
-          <div class="req-title">Windows 10 / 11 (64-bit) + AVX2 CPU</div>
-          <div class="req-sub">Requires a modern 64-bit Windows environment on an AVX2-capable processor (Belobug notes testing on Windows 11; Windows 10 may need a newer D3D12 runtime per issue #9 / PR #44).</div>
+          <div class="req-title">Windows 10 / 11 (64-bit) + AVX2 CPU <span class="card-tag tag-internal">R9 5900X Tested</span></div>
+          <div class="req-sub">Requires 64-bit Windows with a current Direct3D 12 driver (Belobug notes Windows 11; Windows 10 may need a newer D3D12 runtime per issue #9 / PR #44).</div>
         </div>
         <div class="req-card">
-          <div class="req-title">D3D12 SM 6.6 + Mesh Shaders <span class="card-tag tag-internal">RTX 5090 Ready</span></div>
-          <div class="req-sub">Needs a Direct3D 12 GPU with Shader Model 6.6 and Mesh Shader support; your RTX 5090 clears this easily.</div>
+          <div class="req-title">D3D12 SM 6.6 + Mesh Shaders <span class="card-tag tag-internal">RTX 3060 12GB Tested</span></div>
+          <div class="req-sub">Needs a Direct3D 12 GPU with Shader Model 6.6 and Mesh Shader support (verified working on RTX 3060 12GB).</div>
         </div>
         <div class="req-card">
-          <div class="req-title">Rustup &amp; VS C++ Build Tools</div>
-          <div class="req-sub">Keep MSVC build tools and Rust installed. Cargo and setup scripts use them to compile locally from source.</div>
+          <div class="req-title">Rust 1.98+ &amp; VS Build Tools (C++)</div>
+          <div class="req-sub">Leonida requires Rust 1.98 or newer plus Visual Studio Build Tools with Desktop development with C++ (x64 MSVC toolset and a Windows 10 or 11 SDK).</div>
         </div>
         <div class="req-card">
           <div class="req-title">External Unpacked Xbox Series Build</div>
-          <div class="req-sub">Store your unpacked game build in a separate folder <strong>outside</strong> the runtime folder.</div>
+          <div class="req-sub">Store your unpacked game build in a separate folder <strong>outside</strong> the runtime folder. Game files, saves, and shader caches stay on your computer.</div>
         </div>
       </div>
     </section>
@@ -310,42 +371,48 @@
         <div class="step-title-wrap">
           <span class="step-num">01</span>
           <div>
-            <div class="panel-title">Download, Extract, or Clone the Repository</div>
-            <div class="panel-desc">Choose DexNom ZIP extraction, or clone Belobug / fxceless / Marvisak via Git.</div>
+            <div class="panel-title">Select Runtime or VIctory Fork &amp; Get Source</div>
+            <div class="panel-desc">Pick a VIctory fork (DexNom, Belobug, fxceless, upstream Marvisak) or standalone Leonida.</div>
           </div>
         </div>
       </div>
       <div class="sub-bar">
         <div class="btn-group" id="fork-tabs" role="tablist" aria-label="Fork selector">
-          <button type="button" data-fork="DexNom/VIctory" class="btn fork-tab active">DexNom/VIctory</button>
-          <button type="button" data-fork="Belobug/VIctory-Belobug-AMD" class="btn fork-tab">Belobug/VIctory-Belobug-AMD</button>
-          <button type="button" data-fork="fxceless/victory-fork" class="btn fork-tab">fxceless/victory-fork</button>
-          <button type="button" data-fork="Marvisak/VIctory" class="btn fork-tab">Marvisak/VIctory</button>
+          <button type="button" data-fork="DexNom/VIctory" class="btn fork-tab active">DexNom/VIctory [Fork]</button>
+          <button type="button" data-fork="Belobug/VIctory-Belobug-AMD" class="btn fork-tab">Belobug/VIctory-Belobug-AMD [Fork]</button>
+          <button type="button" data-fork="fxceless/victory-fork" class="btn fork-tab">fxceless/victory-fork [Fork]</button>
+          <button type="button" data-fork="Marvisak/VIctory" class="btn fork-tab">Marvisak/VIctory [Upstream]</button>
+          <button type="button" data-fork="Leonida" class="btn fork-tab">Leonida [Standalone]</button>
         </div>
         <div class="btn-group">
           <label for="fork-select" class="panel-desc">Repo:</label>
           <select id="fork-select" class="terminal-select">
-            <option value="DexNom/VIctory">DexNom/VIctory (Target Fork · ZIP / Setup.cmd)</option>
-            <option value="Belobug/VIctory-Belobug-AMD">Belobug/VIctory-Belobug-AMD (AMD Fork · Diag Build)</option>
-            <option value="fxceless/victory-fork">fxceless/victory-fork (NVIDIA / Relay Fixes)</option>
-            <option value="Marvisak/VIctory">Marvisak/VIctory (Upstream Base)</option>
+            <optgroup label="VIctory Upstream &amp; Forks">
+              <option value="DexNom/VIctory">DexNom/VIctory (Fork · Tested ~4 FPS to 1st QTE)</option>
+              <option value="Belobug/VIctory-Belobug-AMD">Belobug/VIctory-Belobug-AMD (Fork · AMD / Diag Build)</option>
+              <option value="fxceless/victory-fork">fxceless/victory-fork (Fork · NVIDIA / Relay Fixes)</option>
+              <option value="Marvisak/VIctory">Marvisak/VIctory (Upstream Base)</option>
+            </optgroup>
+            <optgroup label="Standalone Runtime">
+              <option value="Leonida">Leonida (Standalone · %LOCALAPPDATA%\Leonida)</option>
+            </optgroup>
           </select>
         </div>
       </div>
       <p id="fork-note" class="panel-desc">
-        Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation (AMD/DXIL focus; use ZIP download).
+        Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Fork of VIctory (verified on R9 5900X + RTX 3060 12GB: ~4 FPS, crashes after 1st QTE).
       </p>
       <div class="code-block">
         <div class="code-head">
           <span>POWERSHELL / BROWSER</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-1">COPY</button>
         </div>
-        <pre id="cmd-step-1" class="code-pre"><span class="c-cmt"># DexNom: Download the ZIP from GitHub (Code -&gt; Download ZIP)</span>
+        <pre id="cmd-step-1" class="code-pre"><span class="c-cmt"># DexNom (VIctory Fork): Download the ZIP from GitHub (Code -&gt; Download ZIP)</span>
 <span class="c-cmt"># Extract it to a folder without spaces, e.g., D:\DexNom</span>
-<span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore for DexNom ZIP workflow)</span></pre>
+<span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore if using ZIP download)</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The ZIP is extracted (or the repository is cloned cleanly) and you can see <code>Setup.cmd</code> or <code>Cargo.toml</code> in the folder.
+        <strong>CHECKPOINT:</strong> The repository is extracted or cloned cleanly and you can see <code>Setup.cmd</code> or <code>Cargo.toml</code> in the folder.
       </div>
     </article>
 
@@ -355,21 +422,21 @@
         <div class="step-title-wrap">
           <span class="step-num">02</span>
           <div>
-            <div class="panel-title">Inspect &amp; Compile (Setup.cmd or Cargo Diag Build)</div>
-            <div class="panel-desc">Run DexNom's Setup.cmd or compile Belobug's diagnostics profile with Cargo.</div>
+            <div class="panel-title">Inspect &amp; Compile (Setup.cmd or Cargo Build)</div>
+            <div class="panel-desc">Run Setup.cmd with your unpacked game path or compile manually with Cargo.</div>
           </div>
         </div>
       </div>
       <div class="code-block">
         <div class="code-head">
-          <span id="cmd-step-2-head">POWERSHELL / WINDOWS EXPLORER</span>
+          <span id="cmd-step-2-head">POWERSHELL / WINDOWS EXPLORER · DEXNOM SETUP</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-2">COPY</button>
         </div>
         <pre id="cmd-step-2" class="code-pre"><span class="c-cmt"># Inspect Setup.cmd before running, then execute with your real game path:</span>
 <span class="c-cmd">.\Setup.cmd</span> -GamePath <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path	o\game_scarlett_master.exe"</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> Compilation finishes without build errors and produces your runtime executable or shortcut.
+        <strong>CHECKPOINT:</strong> Compilation finishes without build errors and installs your binaries/shortcuts.
       </div>
     </article>
 
@@ -379,8 +446,8 @@
         <div class="step-title-wrap">
           <span class="step-num">03</span>
           <div>
-            <div class="panel-title">Launch, Let Pipeline/Shader Translation Finish &amp; Watch Commit</div>
-            <div class="panel-desc">First launch after a build translates shaders/pipelines—the loading screen can stay frozen with sound for minutes.</div>
+            <div class="panel-title">Warm Shader Cache, Launch &amp; Watch Commit Memory</div>
+            <div class="panel-desc">Let shader warming/pipeline translation finish first, then launch and monitor Task Manager Commit (~33 GB).</div>
           </div>
         </div>
       </div>
@@ -390,10 +457,10 @@
           <button type="button" class="btn copy-btn" data-target="cmd-step-3">COPY</button>
         </div>
         <pre id="cmd-step-3" class="code-pre"><span class="c-cmt"># Open Start Menu and launch "DexNom Runtime"</span>
-<span class="c-cmt"># Allow any shader warming / pre-translation step to finish before pushing into the 3D world</span></pre>
+<span class="c-cmt"># Allow shader warming / pre-translation to finish before pushing into the 3D world</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> Shader/pipeline translation completes without Windows error 1455 or an NVIDIA TDR reset while Commit stays within budget (~33 GB).
+        <strong>CHECKPOINT:</strong> Shader warming/translation completes without Windows error 1455 (expect ~4 FPS in-world and an early crash around the 1st QTE).
       </div>
     </article>
 
@@ -403,17 +470,17 @@
         <div class="step-title-wrap">
           <span class="step-num">04</span>
           <div>
-            <div class="panel-title">Optional: Manual Launch (Advanced / Unverified Flags)</div>
-            <div class="panel-desc">Test plain launch first; experimental flags below vary by fork/build and may be unsupported.</div>
+            <div class="panel-title">Optional: Manual Launch &amp; Overrides (Advanced)</div>
+            <div class="panel-desc">Run binaries directly from terminal or apply environment overrides / experimental flags.</div>
           </div>
         </div>
       </div>
 
       <div class="sub-bar" style="display:block;">
-        <div class="req-title">Optional Launch Flags (Verify Against Your Build)</div>
+        <div class="req-title">Optional Launch Flags &amp; Overrides (Verify Against Your Build)</div>
         
         <p class="panel-desc" style="margin-top: 8px; margin-bottom: 4px; color: var(--text);">
-          <strong>Note:</strong> Run without extra flags first. Flags like <code>--rt</code> or <code>VICTORY_RELAY</code> are experimental/fork-specific and may not exist in every build.
+          <strong>Note:</strong> For VIctory forks, test plain launch first; flags like <code>--rt</code> or <code>VICTORY_RELAY</code> vary by fork. For Leonida, keep <code>Leonida.exe</code>, <code>LeonidaPlay.exe</code>, and <code>LeonidaWarm.exe</code> together outside the checkout or override paths via <code>LEONIDA_GAME_DIR</code>, <code>LEONIDA_CACHE_DIR</code>, and <code>LEONIDA_DATA_DIR</code>.
         </p>
 
         <div class="flags-grid">
@@ -421,7 +488,7 @@
             <input type="checkbox" id="flag-series-s" class="step6-option" />
             <div>
               <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--console series-s</div>
-              <div class="panel-desc">Test Series S target profile</div>
+              <div class="panel-desc">VIctory Series S profile</div>
             </div>
           </label>
           <label class="flag-item" id="label-flag-trace-log">
@@ -441,8 +508,8 @@
           <label class="flag-item" id="label-flag-rt">
             <input type="checkbox" id="flag-rt" class="step6-option" />
             <div>
-              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--rt</div>
-              <div class="panel-desc">Ray tracing (unverified flag)</div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--rt / Exp. RT</div>
+              <div class="panel-desc">Experimental ray tracing</div>
             </div>
           </label>
         </div>
@@ -461,9 +528,9 @@
       </div>
     </article>
 
-    <div class="section-label">Belobug/VIctory-Belobug-AMD · Fork Notes &amp; Known Problems</div>
+    <div class="section-label">VIctory Fork · Belobug/VIctory-Belobug-AMD Notes &amp; Known Problems</div>
     <section class="belobug-box">
-      <div class="belobug-title">◈ BELOBUG FORK (https://github.com/Belobug/VIctory-Belobug-AMD)</div>
+      <div class="belobug-title">◈ BELOBUG FORK (FORK OF VICTORY · https://github.com/Belobug/VIctory-Belobug-AMD)</div>
       <div class="belobug-sub">Fork of VIctory built and tested on AMD hardware (Windows 11); documented build command, startup behavior, and known issues.</div>
 
       <div class="code-block">
@@ -504,7 +571,129 @@
       </ul>
     </section>
 
-    <div class="footer">provided by n0ne · updated with belobug fork</div>
+    <div class="section-label">Standalone Runtime · Leonida Architecture, Layout &amp; Conventions</div>
+    <section class="leonida-box">
+      <div class="leonida-title">◈ LEONIDA RUNTIME REFERENCE (STANDALONE · GPL-3.0-or-later)</div>
+      <div class="leonida-sub">
+        Leonida runs an Xbox Series executable from your own game installation on 64-bit Windows. The title's x86-64 code runs natively, console system APIs are provided by Leonida, and GPU work is translated to Direct3D 12. Game files, saves, and shader caches stay on your computer.
+      </div>
+
+      <div class="leonida-grid">
+        <div class="issue-card">
+          <div class="issue-title-green">Requirements</div>
+          <ul class="issue-list" style="margin-top:0;">
+            <li><strong>OS &amp; GPU:</strong> 64-bit Windows with a current Direct3D 12 driver (mesh shaders, Shader Model 6.6).</li>
+            <li><strong>Toolchain:</strong> Rust <code>1.98</code> or newer.</li>
+            <li><strong>MSVC / SDK:</strong> Visual Studio Build Tools with <em>Desktop development with C++</em> (x64 MSVC toolset and a Windows 10 or 11 SDK).</li>
+          </ul>
+        </div>
+        <div class="issue-card">
+          <div class="issue-title-green">Automated Install (Setup.cmd)</div>
+          <div class="issue-desc">
+            Double-click <code>Setup.cmd</code>, then select the Series X game executable inside your own extracted installation (or run <code>.\Setup.cmd --game-path "D:\Games\SeriesX\game.exe"</code>). Setup:
+          </div>
+          <ul class="issue-list">
+            <li>1. Fetches and verifies the BCPack format tables,</li>
+            <li>2. Builds <code>Leonida.exe</code>, <code>LeonidaPlay.exe</code>, and <code>LeonidaWarm.exe</code>,</li>
+            <li>3. Installs them into <code>%LOCALAPPDATA%\Leonida</code>,</li>
+            <li>4. Adds <strong>Leonida</strong> and <strong>Leonida (Experimental RT)</strong> to the Start menu.</li>
+          </ul>
+          <div class="issue-desc" style="margin-top:0.35rem;">
+            Saves go to <code>State</code>, shader caches to <code>Cache</code>, and per-run diagnostics to <code>Logs</code> inside the install directory. Run <code>Setup.cmd</code> again to update. <code>LeonidaWarm.exe</code> warms the shader cache ahead of play.
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>LEONIDA MANUAL BUILD &amp; POLICY CHECK (POWERSHELL)</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-leonida-manual">COPY</button>
+        </div>
+        <pre id="cmd-leonida-manual" class="code-pre"><span class="c-cmd">cargo</span> run --package leonida-tasks -- tables
+<span class="c-cmd">cargo</span> build --release --package leonida --features diagnostics --bins
+<span class="c-cmt"># Binaries land in targetelease. Keep all three together outside the checkout and pass the game executable to LeonidaPlay.exe.</span>
+<span class="c-cmt"># Copy LeonidaExample.toml to Leonida.toml to set custom game, cache and data directories.</span>
+<span class="c-cmt"># Environment overrides: LEONIDA_GAME_DIR, LEONIDA_CACHE_DIR, LEONIDA_DATA_DIR</span>
+<span class="c-cmd">cargo</span> run --package leonida-tasks -- policy</pre>
+      </div>
+
+      <div class="layout-table-wrap">
+        <table class="layout-table">
+          <thead>
+            <tr>
+              <th>Folder</th>
+              <th>Package</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Apps/Leonida</td>
+              <td>leonida</td>
+              <td>Command-line front end, launcher and shader warm-up</td>
+            </tr>
+            <tr>
+              <td>Crates/Core</td>
+              <td>leonida-core</td>
+              <td>Configuration, logging, asset-policy guard</td>
+            </tr>
+            <tr>
+              <td>Crates/Image</td>
+              <td>leonida-image</td>
+              <td>Read-only PE32+ and import-library analysis</td>
+            </tr>
+            <tr>
+              <td>Crates/Loader</td>
+              <td>leonida-loader</td>
+              <td>Prepares, maps, binds and starts the title image</td>
+            </tr>
+            <tr>
+              <td>Crates/Services</td>
+              <td>leonida-services</td>
+              <td>Console system API implementations</td>
+            </tr>
+            <tr>
+              <td>Crates/Graphics</td>
+              <td>leonida-graphics</td>
+              <td>D3D12.X objects, command lists and GPU memory on host D3D12</td>
+            </tr>
+            <tr>
+              <td>Crates/Shader</td>
+              <td>leonida-shader</td>
+              <td>Console shader containers to host DXIL</td>
+            </tr>
+            <tr>
+              <td>Crates/Formats</td>
+              <td>leonida-formats</td>
+              <td>Texture layouts, BCPack, audio codecs</td>
+            </tr>
+            <tr>
+              <td>Crates/Conversion</td>
+              <td>leonida-conversion</td>
+              <td>Converter trait and content-addressed cache</td>
+            </tr>
+            <tr>
+              <td>Crates/Title</td>
+              <td>leonida-title</td>
+              <td>Title-specific containers, build identities and hooks</td>
+            </tr>
+            <tr>
+              <td>Tasks</td>
+              <td>leonida-tasks</td>
+              <td>Repository policy, format tables, Windows setup</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="issue-list">
+        <li><strong>Documentation:</strong> See <code>Docs/Architecture.md</code> and <code>Docs/AssetPolicy.md</code> in the repository.</li>
+        <li><strong>Repository Conventions:</strong> Every file and folder name is <code>PascalCase</code>; source and configuration files carry no comments; everything that can be Rust is Rust. Run <code>cargo run --package leonida-tasks -- policy</code> to check all three rules plus the asset policy.</li>
+        <li><strong>License:</strong> Leonida is licensed under <code>GPL-3.0-or-later</code>. See <code>License.txt</code> and <code>Notice.md</code>.</li>
+      </ul>
+    </section>
+
+    <div class="footer">provided by n0ne · tested on r9 5900x + rtx 3060 12gb</div>
   </div>
 
   <div id="copy-toast" class="toast">✓ Copied command to clipboard</div>
@@ -514,22 +703,27 @@
       'DexNom/VIctory': {
         url: 'ZIP Download (No Git)',
         activeClass: 'active',
-        note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation (use ZIP download &amp; Setup.cmd).'
+        note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — <strong>Fork of VIctory</strong> (tested on R9 5900X + RTX 3060 12GB: ~4 FPS, crashes after 1st QTE; use ZIP download &amp; Setup.cmd).'
       },
       'Belobug/VIctory-Belobug-AMD': {
         url: 'https://github.com/Belobug/VIctory-Belobug-AMD.git',
         activeClass: 'active-purple',
-        note: 'Selected: <span style="color:var(--purple);">Belobug/VIctory-Belobug-AMD</span> — Fork of VIctory built with diagnostics profile &amp; <code>VICTORY_PRESENT_TARGET=1x1:1</code> / <code>VICTORY_HAIR=1</code>.'
+        note: 'Selected: <span style="color:var(--purple);">Belobug/VIctory-Belobug-AMD</span> — <strong>Fork of VIctory</strong> built with diagnostics profile &amp; <code>VICTORY_PRESENT_TARGET=1x1:1</code> / <code>VICTORY_HAIR=1</code>.'
       },
       'fxceless/victory-fork': {
         url: 'https://github.com/fxceless/victory-fork.git',
         activeClass: 'active-cyan',
-        note: 'Selected: <span style="color:var(--cyan);">fxceless/victory-fork</span> — Features experimental D3D12/NVIDIA shader translation &amp; frame-pacing experiments.'
+        note: 'Selected: <span style="color:var(--cyan);">fxceless/victory-fork</span> — <strong>Fork of VIctory</strong> with experimental D3D12/NVIDIA shader translation &amp; frame-pacing fixes.'
       },
       'Marvisak/VIctory': {
         url: 'https://github.com/Marvisak/VIctory.git',
         activeClass: 'active-gold',
-        note: 'Selected: <span style="color:var(--gold);">Marvisak/VIctory</span> — Upstream base repository (boots to start menu at ~30 FPS).'
+        note: 'Selected: <span style="color:var(--gold);">Marvisak/VIctory</span> — <strong>Upstream VIctory base</strong> repository (boots to start menu at ~30 FPS).'
+      },
+      'Leonida': {
+        url: 'Local / Setup.cmd',
+        activeClass: 'active',
+        note: 'Selected: <span style="color:var(--green);">Leonida</span> — <strong>Standalone runtime</strong> (not a VIctory fork); Setup.cmd installs <code>Leonida.exe</code>, <code>LeonidaPlay.exe</code> &amp; <code>LeonidaWarm.exe</code> to <code>%LOCALAPPDATA%\Leonida</code>.'
       }
     };
 
@@ -565,10 +759,13 @@
       const cmd3Head = document.getElementById('cmd-step-3-head');
 
       if (cmd1) {
-        if (currentFork === 'DexNom/VIctory') {
-          cmd1.innerHTML = `<span class="c-cmt"># DexNom: Download the ZIP from GitHub (Code -&gt; Download ZIP)</span>
+        if (currentFork === 'Leonida') {
+          cmd1.innerHTML = `<span class="c-cmt"># Leonida (Standalone): Extract or clone the Leonida repository to a local folder (e.g., D:\Leonida)</span>
+<span class="c-cmt"># Verify Setup.cmd, Docs/Architecture.md, and Docs/AssetPolicy.md are present.</span>`;
+        } else if (currentFork === 'DexNom/VIctory') {
+          cmd1.innerHTML = `<span class="c-cmt"># DexNom (VIctory Fork): Download the ZIP from GitHub (Code -&gt; Download ZIP)</span>
 <span class="c-cmt"># Extract it to a folder without spaces, e.g., D:\DexNom</span>
-<span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore for DexNom ZIP workflow)</span>`;
+<span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore if using ZIP download)</span>`;
         } else {
           cmd1.innerHTML = `<span class="c-cmd">git</span> clone ${info.url}
 <span class="c-cmd">cd</span> ${currentFork.split('/')[1]}`;
@@ -576,18 +773,27 @@
       }
 
       if (cmd2 && cmd2Head) {
-        if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
-          cmd2Head.textContent = 'POWERSHELL · BELOBUG DIAGNOSTICS BUILD';
+        if (currentFork === 'Leonida') {
+          cmd2Head.textContent = 'POWERSHELL / WINDOWS EXPLORER · LEONIDA SETUP';
+          cmd2.innerHTML = `<span class="c-cmt"># Double-click Setup.cmd and select your Series X executable, or pass --game-path:</span>
+<span class="c-cmd">.\Setup.cmd</span> --game-path <span class="c-val">"D:\Games\SeriesX\game.exe"</span>`;
+        } else if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
+          cmd2Head.textContent = 'POWERSHELL · BELOBUG (VICTORY FORK) DIAGNOSTICS BUILD';
           cmd2.innerHTML = `<span class="c-cmd">cargo</span> build --profile diag -p victory --features diagnostics`;
         } else {
-          cmd2Head.textContent = 'POWERSHELL / WINDOWS EXPLORER';
+          cmd2Head.textContent = 'POWERSHELL / WINDOWS EXPLORER · SETUP';
           cmd2.innerHTML = `<span class="c-cmt"># Inspect Setup.cmd before running, then execute with your real game path:</span>
 <span class="c-cmd">.\Setup.cmd</span> -GamePath <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path\to\game_scarlett_master.exe"</span>`;
         }
       }
 
       if (cmd3 && cmd3Head) {
-        if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
+        if (currentFork === 'Leonida') {
+          cmd3Head.textContent = 'POWERSHELL / START MENU · LEONIDA WARM & PLAY';
+          cmd3.innerHTML = `<span class="c-cmt"># Warm the shader cache ahead of play:</span>
+<span class="c-cmd">&amp; "$env:LOCALAPPDATA\Leonida\LeonidaWarm.exe"</span>
+<span class="c-cmt"># Then launch "Leonida" or "Leonida (Experimental RT)" from the Start menu</span>`;
+        } else if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
           cmd3Head.textContent = 'POWERSHELL · BELOBUG RUN (~2,500 PIPELINES ON FIRST LAUNCH)';
           cmd3.innerHTML = `<span class="c-env">$env:VICTORY_PRESENT_TARGET</span>=<span class="c-val">"1x1:1"</span>
 <span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>
@@ -595,7 +801,7 @@
         } else {
           cmd3Head.textContent = 'WINDOWS START MENU / WARMUP';
           cmd3.innerHTML = `<span class="c-cmt"># Open Start Menu and launch "DexNom Runtime"</span>
-<span class="c-cmt"># Allow any shader warming / pre-translation step to finish before pushing into the 3D world</span>`;
+<span class="c-cmt"># Allow shader warming / pre-translation to finish before pushing into the 3D world</span>`;
         }
       }
 
@@ -614,6 +820,14 @@
       document.getElementById('label-flag-rt').classList.toggle('active-flag', useRT);
 
       const lines = [];
+      if (currentFork === 'Leonida') {
+        lines.push(`<span class="c-cmt"># Optional directory overrides (if not using Leonida.toml):</span>`);
+        lines.push(`<span class="c-cmt"># $env:LEONIDA_GAME_DIR="D:\Games\SeriesX"; $env:LEONIDA_CACHE_DIR="D:\LeonidaCache"; $env:LEONIDA_DATA_DIR="D:\LeonidaData"</span>`);
+        lines.push(`<span class="c-cmd">&amp; "$env:LOCALAPPDATA\Leonida\LeonidaPlay.exe"</span> <span class="c-val">"D:\Games\SeriesX\game.exe"</span>`);
+        document.getElementById('cmd-step-6').innerHTML = lines.join('<br>');
+        return;
+      }
+
       if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
         lines.push(`<span class="c-env">$env:VICTORY_PRESENT_TARGET</span>=<span class="c-val">"1x1:1"</span>`);
         lines.push(`<span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>`);

@@ -550,6 +550,15 @@ const CORE_MODULES = [
     description: "Current state of all findings, updated through the 23.11 EXE release — text-only, no images yet.",
     href: "./research.html",
     external: false
+  },
+  {
+    id: "victory-guide",
+    badge: "Guide",
+    badgeClass: "tag-internal",
+    title: "VIctory Build & Run Guide",
+    description: "Step-by-step guide to build & run the VIctory PC runtime. No files are hosted here; this is a source-build reference only.",
+    href: "./victory_build_run_guide.html",
+    external: false
   }
 ];
 
@@ -564,7 +573,7 @@ let gatewayAttemptCount = 0;
 
 function renderModuleButton(item) {
   const targetAttrs = item.external ? ' target="_blank" rel="noopener noreferrer"' : "";
-  const hasGlowBox = item.id === "timeline" || item.id === "market";
+  const hasGlowBox = item.id === "timeline" || item.id === "market" || item.id === "victory-guide";
   const glowHtml = hasGlowBox ? '<span class="glow-box" aria-hidden="true"></span>' : "";
   return `
     <a class="module-btn-card" href="${item.href}"${targetAttrs} data-link-id="${item.id}">
@@ -743,10 +752,10 @@ function computePortwatchScore(e) {
   else if (clamp01(st.exeRuns ?? st.loads) > 0) base = 10;
   else base = clamp01(st.groundwork) * 10;
 
-  const story = clamp01(e.story ?? st.story) * 35;
-  const rendering = clamp01(e.rendering ?? st.rendering) * 25;
-  const fpsScore = Math.min(1, (Number(e.fps ?? st.fps) || 0) / 30) * 20;
-  const stability = clamp01(e.stability ?? st.stability) * 20;
+  const story = clamp01(st.story ?? e.story) * 35;
+  const rendering = clamp01(st.rendering ?? st.render ?? e.rendering ?? e.render) * 25;
+  const fpsScore = Math.min(1, (Number(st.fps ?? e.fps) || 0) / 30) * 20;
+  const stability = clamp01(st.stability ?? e.stability) * 20;
 
   return base + (base >= 50 ? story + rendering + fpsScore + stability : 0);
 }
@@ -776,18 +785,11 @@ function applyData(data) {
     ? Number(latestHist.leader ?? latestHist.max ?? latestHist.score)
     : NaN;
 
-  const overallDirect = Number(
-    data?.overall?.score ??
-    data?.overall?.progress ??
-    data?.overall ??
-    data?.progress ??
-    data?.leaderScore ??
-    NaN
-  );
-
-  // Prefer the highest reported progress across efforts, latest history entry, or top-level overall field
-  const candidates = [bestEffortScore, histLeader, overallDirect].filter((n) => Number.isFinite(n));
-  const score = candidates.length ? Math.max(...candidates) : null;
+  const score = Number.isFinite(histLeader)
+    ? histLeader
+    : Number.isFinite(bestEffortScore) && bestEffortScore > -Infinity
+    ? bestEffortScore
+    : null;
 
   if (score !== null && Number.isFinite(score)) {
     const clamped = Math.max(0, Math.min(100, score));
@@ -797,10 +799,14 @@ function applyData(data) {
     barEl.setAttribute("aria-valuenow", String(clamped));
   }
 
-  // Keep tooltip accurate when the top score comes from history or top-level overall progress
   let topEffort = bestEffort;
-  if (Number.isFinite(histLeader) && histLeader >= bestEffortScore && latestHist?.leaderId) {
-    const matched = efforts.find((item) => item.id === latestHist.leaderId || item.slug === latestHist.leaderId || item.name === latestHist.leaderId);
+  if (latestHist && latestHist.leaderId) {
+    const matched = efforts.find(
+      (item) =>
+        item.id === latestHist.leaderId ||
+        item.slug === latestHist.leaderId ||
+        item.name === latestHist.leaderId
+    );
     if (matched) topEffort = matched;
   }
 

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="./icon.ico" type="image/ico" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>n0ne's CYBERLEEK · VIctory Build &amp; Run Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #00050d;
+    --card: #00102b;
+    --card-2: #00173d;
+    --border: #003299;
+    --neon: #0064ec;
+    --green: #60c33a;
+    --red: #ff3355;
+    --gold: #f5c542;
+    --cyan: #34d6d6;
+    --purple: #b388ff;
+    --text: #a0b0c8;
+    --text-bright: #d6efc1;
+    --text-dim: #6a7a90;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Courier New", "Lucida Console", monospace;
+    min-height: 100vh;
+    padding: 0.75rem;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0,0,0,0.04) 4px, rgba(0,0,0,0.04) 8px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .wrapper {
+    max-width: 1220px;
+    margin: 0 auto;
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 0.95rem 1.15rem;
+    box-shadow: 0 0 40px rgba(0, 100, 236, 0.08);
+  }
+
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .header h1 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--neon);
+    text-shadow: 0 0 30px rgba(0, 100, 236, 0.25);
+  }
+
+  .header .sub {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 0.45rem;
+  }
+
+  .card-tag {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-internal { color: var(--green); }
+  .tag-external { color: var(--cyan); }
+  .tag-future { color: var(--gold); }
+  .tag-danger { color: var(--red); }
+  .tag-purple { color: var(--purple); }
+
+  .glow-box {
+    width: 8px; height: 8px;
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(96, 195, 58, 0.8);
+    animation: pwBlink 2.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pwBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
+
+  .section-label {
+    font-size: 0.66rem;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 3px;
+    margin-bottom: 0.65rem;
+    margin-top: 1rem;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  .warning-box {
+    background: var(--bg);
+    border: 1px solid var(--gold);
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.85rem;
+  }
+  .warning-box.dismissed { display: none; }
+  .warning-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+  .warning-title { color: var(--gold); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.4px; }
+  .warning-body { margin-top: 0.55rem; padding-top: 0.55rem; border-top: 1px dashed var(--border); font-size: 0.74rem; color: var(--text); }
+  .warning-body.hidden { display: none; }
+  .warning-body p + p { margin-top: 0.4rem; }
+  .warning-body strong { color: var(--text-bright); }
+
+  .panel-card { background: var(--bg); border: 1px solid var(--border); padding: 0.78rem 0.9rem; margin-bottom: 0.7rem; }
+  .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border); margin-bottom: 0.65rem; }
+  .step-title-wrap { display: flex; align-items: center; gap: 10px; }
+  .step-num { width: 30px; height: 30px; border: 1px solid var(--neon); background: var(--card); color: var(--cyan); font-size: 0.76rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .panel-title { color: var(--text-bright); font-size: 0.92rem; font-weight: 700; }
+  .panel-desc { color: var(--text-dim); font-size: 0.72rem; margin-top: 2px; }
+
+  .prereq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+  .req-card { background: var(--card); border: 1px solid var(--border); padding: 0.65rem 0.8rem; }
+  .req-title { color: var(--text-bright); font-size: 0.8rem; font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .req-sub { color: var(--text); font-size: 0.72rem; margin-top: 0.3rem; }
+
+  .sub-bar { background: var(--card); border: 1px solid var(--border); padding: 0.55rem 0.7rem; margin-bottom: 0.55rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .btn { background: var(--card-2); color: var(--text-bright); border: 1px solid var(--border); padding: 5px 10px; font-family: inherit; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.4px; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px; user-select: none; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+  .btn:hover { border-color: var(--cyan); color: var(--cyan); background: #001f54; }
+  .btn.active { border-color: var(--green); color: var(--text-bright); background: rgba(96, 195, 58, 0.18); }
+  .btn.active-cyan { border-color: var(--cyan); color: var(--cyan); background: rgba(52, 214, 214, 0.16); }
+  .btn.active-purple { border-color: var(--purple); color: var(--purple); background: rgba(179, 136, 255, 0.16); }
+  .btn.active-gold { border-color: var(--gold); color: var(--gold); background: rgba(245, 197, 66, 0.16); }
+
+  select.terminal-select { background: var(--bg); color: var(--text-bright); border: 1px solid var(--border); padding: 5px 9px; font-family: inherit; font-size: 0.68rem; cursor: pointer; }
+  select.terminal-select:focus { outline: none; border-color: var(--cyan); }
+
+  .code-block { background: var(--bg); border: 1px solid var(--border); margin-top: 0.5rem; overflow: hidden; }
+  .code-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0.35rem 0.65rem; background: var(--card); border-bottom: 1px dashed var(--border); font-size: 0.64rem; color: var(--text-dim); }
+  pre.code-pre { padding: 0.68rem 0.78rem; font-family: inherit; font-size: 0.76rem; color: var(--text-bright); overflow-x: auto; line-height: 1.5; }
+
+  .verify-box { margin-top: 0.55rem; padding: 0.52rem 0.72rem; background: var(--card); border-left: 3px solid var(--green); border-top: 1px dashed var(--border); border-right: 1px dashed var(--border); border-bottom: 1px dashed var(--border); font-size: 0.72rem; color: var(--text); }
+  .verify-box strong { color: var(--green); }
+
+  .flags-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; width: 100%; margin-top: 0.45rem; }
+  .flag-item { background: var(--bg); border: 1px solid var(--border); padding: 0.5rem 0.65rem; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .flag-item:hover { border-color: var(--cyan); }
+  .flag-item.active-flag { border-color: var(--cyan); background: rgba(52, 214, 214, 0.08); }
+  .flag-item input[type="checkbox"] { accent-color: var(--cyan); cursor: pointer; flex-shrink: 0; }
+
+  code { color: var(--cyan); font-family: inherit; }
+  .c-cmd { color: var(--cyan); font-weight: 700; }
+  .c-env { color: var(--gold); font-weight: 700; }
+  .c-val { color: var(--green); }
+  .c-cmt { color: var(--text-dim); }
+
+  .toast { position: fixed; bottom: 16px; right: 16px; background: var(--card); border: 1px solid var(--green); color: var(--text-bright); padding: 0.5rem 0.8rem; font-size: 0.7rem; font-weight: 700; z-index: 10000; opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity 0.2s, transform 0.2s; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .footer { text-align: center; font-size: 0.62rem; color: var(--text-dim); letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.9rem; text-transform: uppercase; }
+
+  @media (max-width: 960px) { .flags-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 680px) { .prereq-grid { grid-template-columns: 1fr; } .wrapper { padding: 0.7rem 0.75rem; } .header h1 { font-size: 1.05rem; } }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="header">
+      <div>
+        <h1>UNOFFICIAL · CYBERLEEK · VICTORY GUIDE</h1>
+        <div class="sub">BUILD &amp; RUN REFERENCE · WINDOWS 10/11 · RTX 5090</div>
+        <div class="badge-row">
+          <span class="card-tag tag-internal"><span class="glow-box" aria-hidden="true"></span>NVIDIA RTX 5090</span>
+          <span class="card-tag tag-future">Experimental / Source Build</span>
+          <span class="card-tag tag-external">PowerShell / Cargo</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <a href="./index.html" class="btn">← BACK TO HUB</a>
+      </div>
+    </header>
+
+    <section id="warning-callout" class="warning-box">
+      <div class="warning-head">
+        <div class="warning-title">⚠ GPU DRIVER RESET (TDR) &amp; UNVERIFIED FORK RISK</div>
+        <div class="btn-group">
+          <button type="button" class="btn" id="warning-toggle-btn">Collapse</button>
+          <button type="button" class="btn" id="warning-dismiss-btn" title="Dismiss warning">✕</button>
+        </div>
+      </div>
+      <div id="warning-body" class="warning-body">
+        <p>
+          <strong>Expect Driver Resets Past the Menu:</strong> Entering the 3D open world on experimental builds frequently triggers Windows Timeout Detection and Recovery (<code>TDR</code>), temporarily blacking out your monitors and resetting the NVIDIA display driver. The latest runs did not crash, but it is not ruled out.
+        </p>
+        <p>
+          <strong>Inspect Before Building:</strong> Community forks move rapidly and contain experimental, unreviewed code. Always review the source code before compiling and <u>never run precompiled <code>.exe</code> binaries</u> from untrusted links. There is no official installer.
+        </p>
+        <p>
+          <strong>RAM &amp; VRAM:</strong> A run in the world takes about <b>33 GB of Windows commit</b> (RAM plus paging file) and about <b>10 GB of video memory</b>. Check Committed under Task Manager → Performance → Memory. If <code>crashes.log</code> reports Windows error 1455, close other applications or increase the Windows paging file size, then retry.
+        </p>
+      </div>
+    </section>
+
+    <div class="section-label">System &amp; Environment Requirements</div>
+    <section class="panel-card">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Baseline Setup &amp; Tooling</div>
+          <div class="panel-desc">What your machine and workspace need before compiling or running the runtime.</div>
+        </div>
+        <span class="card-tag tag-external">Reference Only</span>
+      </div>
+      <div class="prereq-grid">
+        <div class="req-card">
+          <div class="req-title">Windows 10 / 11 (64-bit) + AVX2 CPU</div>
+          <div class="req-sub">Requires a modern 64-bit Windows environment on an AVX2-capable processor.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-title">D3D12 SM 6.6 + Mesh Shaders <span class="card-tag tag-internal">RTX 5090 Ready</span></div>
+          <div class="req-sub">Needs a Direct3D 12 GPU with Shader Model 6.6 and Mesh Shader support; your RTX 5090 clears this easily.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-title">Git, Rustup &amp; VS C++ Build Tools</div>
+          <div class="req-sub">Keep Git and MSVC build tools installed; <code>rust-toolchain.toml</code> pulls the expected Rust toolchain automatically.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-title">External Unpacked Xbox Series Build</div>
+          <div class="req-sub">Store your unpacked game build in a separate folder <strong>outside</strong> the cloned <code>VIctory</code> repository.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-label">Build &amp; Run Walkthrough</div>
+
+    <!-- STEP 1 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <div class="step-title-wrap">
+          <span class="step-num">01</span>
+          <div>
+            <div class="panel-title">Clone the Fork Repository</div>
+            <div class="panel-desc">Pick a fork tab or dropdown option to update the clone command below.</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub-bar">
+        <div class="btn-group" id="fork-tabs" role="tablist" aria-label="Fork selector">
+          <button type="button" data-fork="DexNom/VIctory" class="btn fork-tab active">DexNom/VIctory</button>
+          <button type="button" data-fork="fxceless/victory-fork" class="btn fork-tab">fxceless/victory-fork</button>
+          <button type="button" data-fork="Marvisak/VIctory" class="btn fork-tab">Marvisak/VIctory</button>
+        </div>
+        <div class="btn-group">
+          <label for="fork-select" class="panel-desc">Repo:</label>
+          <select id="fork-select" class="terminal-select">
+            <option value="DexNom/VIctory">DexNom/VIctory (Target Fork)</option>
+            <option value="fxceless/victory-fork">fxceless/victory-fork (NVIDIA / Relay Fixes)</option>
+            <option value="Marvisak/VIctory">Marvisak/VIctory (Upstream Base)</option>
+          </select>
+        </div>
+      </div>
+      <p id="fork-note" class="panel-desc">
+        Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation.
+      </p>
+      <div class="code-block">
+        <div class="code-head">
+          <span>POWERSHELL</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-step-1">COPY</button>
+        </div>
+        <pre id="cmd-step-1" class="code-pre"><span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git
+<span class="c-cmd">cd</span> VIctory</pre>
+      </div>
+      <div class="verify-box">
+        <strong>CHECKPOINT:</strong> The repository clones cleanly and <code>dir</code> inside the folder lists <code>Cargo.toml</code> and <code>victory.example.toml</code>.
+      </div>
+    </article>
+
+    <!-- STEP 2 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <div class="step-title-wrap">
+          <span class="step-num">02</span>
+          <div>
+            <div class="panel-title">Install Safety Commit Hook</div>
+            <div class="panel-desc">Enable <code>xtask</code> hooks so binaries or game assets are never accidentally staged in Git.</div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>POWERSHELL</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-step-2">COPY</button>
+        </div>
+        <pre id="cmd-step-2" class="code-pre"><span class="c-cmd">cargo</span> xtask install-hooks</pre>
+      </div>
+      <div class="verify-box">
+        <strong>CHECKPOINT:</strong> Cargo finishes building <code>xtask</code> and installs the pre-commit hook cleanly.
+      </div>
+    </article>
+
+    <!-- STEP 3 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <div class="step-title-wrap">
+          <span class="step-num">03</span>
+          <div>
+            <div class="panel-title">Create &amp; Configure <code>victory.toml</code></div>
+            <div class="panel-desc">Copy the example configuration and point it at your external unpacked game directory.</div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>POWERSHELL</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-step-3">COPY</button>
+        </div>
+        <pre id="cmd-step-3" class="code-pre"><span class="c-cmd">copy</span> victory.example.toml victory.toml
+<span class="c-cmd">notepad</span> victory.toml
+<span class="c-cmt"># Save victory.toml with your external game folder path, then validate:</span>
+<span class="c-cmd">cargo</span> run -p victory -- config</pre>
+      </div>
+      <div class="verify-box">
+        <strong>CHECKPOINT:</strong> <code>cargo run -p victory -- config</code> prints resolved paths with zero missing-directory errors. Keep game files outside the <code>VIctory</code> directory.
+      </div>
+    </article>
+
+    <!-- STEP 4 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <div class="step-title-wrap">
+          <span class="step-num">04</span>
+          <div>
+            <div class="panel-title">Run Workspace Unit Tests</div>
+            <div class="panel-desc">Confirm the Rust toolchain, shader translation crates, and loader modules compile before building.</div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span>POWERSHELL</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-step-4">COPY</button>
+        </div>
+        <pre id="cmd-step-4" class="code-pre"><span class="c-cmd">cargo</span> test --workspace</pre>
+      </div>
+      <div class="verify-box">
+        <strong>CHECKPOINT:</strong> Workspace tests complete with <code>test result: ok</code> and no compilation failures.
+      </div>
+    </article>
+
+    <!-- STEP 5 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <div class="step-title-wrap">
+          <span class="step-num">05</span>
+          <div>
+            <div class="panel-title">Compile the Binary</div>
+            <div class="panel-desc">Build the standard release binary or switch to the diagnostics profile for crash telemetry.</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub-bar">
+        <div>
+          <div class="req-title">Build Profile Mode</div>
+          <div class="panel-desc">Switch to Diagnostics if you want extra telemetry when troubleshooting GPU resets.</div>
+        </div>
+        <div class="btn-group">
+          <button type="button" id="btn-profile-release" data-profile="release" class="btn profile-btn active">--release (Default)</button>
+          <button type="button" id="btn-profile-diag" data-profile="diag" class="btn profile-btn">--profile diag (Crash Telemetry)</button>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-head">
+          <span id="label-step-5">POWERSHELL · RELEASE PROFILE</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-step-5">COPY</button>
+        </div>
+        <pre id="cmd-step-5" class="code-pre"><span class="c-cmd">cargo</span> build --release -p victory</pre>
+      </div>
+      <div id="verify-step-5" class="verify-box">
+        <strong>CHECKPOINT:</strong> <code>target\release\victory.exe</code> is produced without linker errors.
+      </div>
+    </article>
+
+    <!-- STEP 6 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <div class="step-title-wrap">
+          <span class="step-num">06</span>
+          <div>
+            <div class="panel-title">Pre-Translate Shaders &amp; Launch</div>
+            <div class="panel-desc">Translate shaders first to warm up the cache, then start the runtime executable.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-bar" style="display:block;">
+        <div class="req-title">Optional Launch Flags &amp; Environment Variables</div>
+        
+        <p class="panel-desc" style="margin-top: 8px; margin-bottom: 4px; color: var(--text);">
+          <strong>Explanation:</strong> The flags below are appended to <code>victory.exe</code>. By default, <code>victory.exe</code> looks for the game path in your <code>victory.toml</code> (from Step 3). If you haven't configured the <code>.toml</code> yet, or want to point to a different directory, enable the <code>--GamePath</code> flag and edit the path in the command below.
+        </p>
+
+        <div class="flags-grid">
+          <label class="flag-item" id="label-flag-series-s">
+            <input type="checkbox" id="flag-series-s" class="step6-option" />
+            <div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--console series-s</div>
+              <div class="panel-desc">Test Series S target profile</div>
+            </div>
+          </label>
+          <label class="flag-item" id="label-flag-trace-log">
+            <input type="checkbox" id="flag-trace-log" class="step6-option" />
+            <div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">VICTORY_LOG=trace</div>
+              <div class="panel-desc">Verbose loader diagnostics</div>
+            </div>
+          </label>
+          <label class="flag-item" id="label-flag-relay">
+            <input type="checkbox" id="flag-relay" class="step6-option" />
+            <div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">VICTORY_RELAY="2"</div>
+              <div class="panel-desc">Open-world frame pacing</div>
+            </div>
+          </label>
+          <label class="flag-item" id="label-flag-gamepath">
+            <input type="checkbox" id="flag-gamepath" class="step6-option" />
+            <div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--GamePath "D:\..."</div>
+              <div class="panel-desc">Bypass victory.toml (specify game path inline)</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>POWERSHELL</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-step-6">COPY</button>
+        </div>
+        <pre id="cmd-step-6" class="code-pre"><span class="c-cmd">.\target\release\victory.exe</span> translate --cache --pipelines "D:\My Games\Series X\shaders.rpf" "D:\My Games\Series X\game_scarlett_master.exe" "D:\My Games\Series X\XboxBvhBuilder.dll" "D:\My Games\Series X\amd_fidelityfx_upscaler_xbox.dll"
+<span class="c-cmd">.\target\release\victory.exe</span> run --execute "D:\My Games\Series X\game_scarlett_master.exe"</pre>
+      </div>
+
+      <div class="verify-box">
+        <strong>CHECKPOINT:</strong> The window opens, plays boot/intro videos around ~30 FPS, and reaches the start menu. Loading into the world takes about a minute; the intro cutscene plays, then the prologue starts. <em>(Note: The current build runs at about 1 FPS in the world, with some missing ray-traced shadows.)</em>
+      </div>
+    </article>
+
+    <div class="footer">provided by n0ne</div>
+  </div>
+
+  <div id="copy-toast" class="toast">✓ Copied command to clipboard</div>
+
+  <script>
+    const FORKS = {
+      'DexNom/VIctory': {
+        url: 'https://github.com/DexNom/VIctory.git',
+        activeClass: 'active',
+        note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation.'
+      },
+      'fxceless/victory-fork': {
+        url: 'https://github.com/fxceless/victory-fork.git',
+        activeClass: 'active-cyan',
+        note: 'Selected: <span style="color:var(--cyan);">fxceless/victory-fork</span> — Features experimental D3D12 shader translation &amp; <code>VICTORY_RELAY</code> frame-pacing fixes.'
+      },
+      'Marvisak/VIctory': {
+        url: 'https://github.com/Marvisak/VIctory.git',
+        activeClass: 'active-purple',
+        note: 'Selected: <span style="color:var(--purple);">Marvisak/VIctory</span> — Upstream base repository (boots to start menu at ~30 FPS).'
+      }
+    };
+
+    const ALL_ACTIVE_CLASSES = ['active', 'active-cyan', 'active-purple', 'active-gold'];
+    let currentFork = 'DexNom/VIctory';
+    let currentBuildProfile = 'release';
+
+    function applyForkSelection(repo) {
+      currentFork = FORKS[repo] ? repo : 'DexNom/VIctory';
+      const info = FORKS[currentFork];
+
+      const forkSelect = document.getElementById('fork-select');
+      if (forkSelect && forkSelect.value !== currentFork) {
+        forkSelect.value = currentFork;
+      }
+
+      const forkNote = document.getElementById('fork-note');
+      if (forkNote) {
+        forkNote.innerHTML = info.note;
+      }
+
+      document.querySelectorAll('.fork-tab').forEach(tab => {
+        const isSelected = tab.getAttribute('data-fork') === currentFork;
+        tab.classList.remove(...ALL_ACTIVE_CLASSES);
+        if (isSelected) {
+          tab.classList.add(info.activeClass);
+        }
+      });
+
+      const cmd1 = document.getElementById('cmd-step-1');
+      if (cmd1) {
+        cmd1.innerHTML = `<span class="c-cmd">git</span> clone ${info.url}
+<span class="c-cmd">cd</span> VIctory`;
+      }
+    }
+
+    function applyBuildProfile(profile) {
+      currentBuildProfile = profile === 'diag' ? 'diag' : 'release';
+      const btnRel = document.getElementById('btn-profile-release');
+      const btnDiag = document.getElementById('btn-profile-diag');
+      const cmd5 = document.getElementById('cmd-step-5');
+      const label5 = document.getElementById('label-step-5');
+      const verify5 = document.getElementById('verify-step-5');
+
+      btnRel.classList.remove(...ALL_ACTIVE_CLASSES);
+      btnDiag.classList.remove(...ALL_ACTIVE_CLASSES);
+
+      if (currentBuildProfile === 'diag') {
+        btnDiag.classList.add('active-gold');
+        label5.textContent = 'POWERSHELL · DIAGNOSTICS PROFILE (CRASH TELEMETRY)';
+        cmd5.innerHTML = `<span class="c-cmd">cargo</span> build --profile diag -p victory --features diagnostics`;
+        verify5.innerHTML = `<strong>CHECKPOINT:</strong> <code>target\\diag\\victory.exe</code> is generated with crash telemetry hooks enabled.`;
+      } else {
+        btnRel.classList.add('active');
+        label5.textContent = 'POWERSHELL · RELEASE PROFILE';
+        cmd5.innerHTML = `<span class="c-cmd">cargo</span> build --release -p victory`;
+        verify5.innerHTML = `<strong>CHECKPOINT:</strong> <code>target\\release\\victory.exe</code> is generated on disk without linker errors.`;
+      }
+
+      updateStep6Command();
+    }
+
+    function updateStep6Command() {
+      const useSeriesS = document.getElementById('flag-series-s').checked;
+      const useTrace = document.getElementById('flag-trace-log').checked;
+      const useRelay = document.getElementById('flag-relay').checked;
+      const useGamePath = document.getElementById('flag-gamepath').checked;
+
+      // UI-Highlight für die Options-Buttons umschalten
+      document.getElementById('label-flag-series-s').classList.toggle('active-flag', useSeriesS);
+      document.getElementById('label-flag-trace-log').classList.toggle('active-flag', useTrace);
+      document.getElementById('label-flag-relay').classList.toggle('active-flag', useRelay);
+      document.getElementById('label-flag-gamepath').classList.toggle('active-flag', useGamePath);
+
+      // Pfad je nach Profil (diag oder release) anpassen
+      const exePath = currentBuildProfile === 'diag' ? '.\\target\\diag\\victory.exe' : '.\\target\\release\\victory.exe';
+
+      // Standard-Pfad für den Game-Ordner (aus Beispiel)
+      const gameDir = 'D:\\My Games\\Series X';
+      const shaderRpf = `${gameDir}\\shaders.rpf`;
+      const titleExe = `${gameDir}\\game_scarlett_master.exe`;
+      const bvhDll = `${gameDir}\\XboxBvhBuilder.dll`;
+      const fidelityDll = `${gameDir}\\amd_fidelityfx_upscaler_xbox.dll`;
+
+      const lines = [];
+      if (useTrace) {
+        lines.push(`<span class="c-env">$env:VICTORY_LOG</span>=<span class="c-val">"victory_loader=trace,info"</span>`);
+      }
+      if (useRelay) {
+        lines.push(`<span class="c-env">$env:VICTORY_RELAY</span>=<span class="c-val">"2"</span>`);
+      }
+
+      // Build the flags string
+      let translateFlags = '';
+      if (useSeriesS) translateFlags += ' --console series-s';
+      
+      if (useGamePath) {
+        lines.push(`<span class="c-cmt"># IMPORTANT: Change the path below to your actual game directory!</span>`);
+      }
+
+      // Erstelle den translate-Befehl (mit oder ohne explizite Pfade)
+      if (useGamePath) {
+        lines.push(`<span class="c-cmd">${exePath}</span> translate --cache --pipelines "${shaderRpf}" "${titleExe}" "${bvhDll}" "${fidelityDll}"${translateFlags}`);
+      } else {
+        lines.push(`<span class="c-cmd">${exePath}</span> translate --cache --pipelines${translateFlags}`);
+      }
+
+      // Erstelle den run-Befehl
+      if (useGamePath) {
+        lines.push(`<span class="c-cmd">${exePath}</span> run "${titleExe}" --execute${translateFlags}`);
+      } else {
+        lines.push(`<span class="c-cmd">${exePath}</span> run --execute${translateFlags}`);
+      }
+
+      document.getElementById('cmd-step-6').innerHTML = lines.join('<br>');
+    }
+
+    function copyCode(elementId, btnEl) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const rawText = el.innerText;
+
+      const textArea = document.createElement('textarea');
+      textArea.value = rawText;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast();
+        if (btnEl) {
+          const orig = btnEl.textContent;
+          btnEl.textContent = 'COPIED!';
+          btnEl.classList.add('active');
+          setTimeout(() => {
+            btnEl.textContent = orig;
+            btnEl.classList.remove('active');
+          }, 1500);
+        }
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    let toastTimeout;
+    function showToast() {
+      const toast = document.getElementById('copy-toast');
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.fork-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          applyForkSelection(tab.getAttribute('data-fork'));
+        });
+      });
+
+      const forkSelect = document.getElementById('fork-select');
+      if (forkSelect) {
+        forkSelect.addEventListener('change', (e) => {
+          applyForkSelection(e.target.value);
+        });
+      }
+
+      document.querySelectorAll('.profile-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          applyBuildProfile(btn.getAttribute('data-profile'));
+        });
+      });
+
+      document.querySelectorAll('.step6-option').forEach(opt => {
+        opt.addEventListener('change', updateStep6Command);
+      });
+
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          copyCode(btn.getAttribute('data-target'), btn);
+        });
+      });
+
+      document.getElementById('warning-toggle-btn').addEventListener('click', () => {
+        const body = document.getElementById('warning-body');
+        const btn = document.getElementById('warning-toggle-btn');
+        const isHidden = body.classList.toggle('hidden');
+        btn.textContent = isHidden ? 'Expand' : 'Collapse';
+      });
+
+      document.getElementById('warning-dismiss-btn').addEventListener('click', () => {
+        document.getElementById('warning-callout').classList.add('dismissed');
+      });
+
+      // Initiale Zustände laden
+      applyForkSelection('DexNom/VIctory');
+      applyBuildProfile('release');
+    });
+  </script>
+</body>
+</html>

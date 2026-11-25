@@ -254,12 +254,12 @@
           <div class="req-sub">Needs a Direct3D 12 GPU with Shader Model 6.6 and Mesh Shader support; your RTX 5090 clears this easily.</div>
         </div>
         <div class="req-card">
-          <div class="req-title">Git, Rustup &amp; VS C++ Build Tools</div>
-          <div class="req-sub">Keep Git and MSVC build tools installed; <code>rust-toolchain.toml</code> pulls the expected Rust toolchain automatically.</div>
+          <div class="req-title">Rustup &amp; VS C++ Build Tools</div>
+          <div class="req-sub">Keep MSVC build tools and Rust installed. DexNom's setup script will use them to compile locally.</div>
         </div>
         <div class="req-card">
           <div class="req-title">External Unpacked Xbox Series Build</div>
-          <div class="req-sub">Store your unpacked game build in a separate folder <strong>outside</strong> the cloned <code>VIctory</code> repository.</div>
+          <div class="req-sub">Store your unpacked game build in a separate folder <strong>outside</strong> the DexNom runtime folder.</div>
         </div>
       </div>
     </section>
@@ -272,8 +272,8 @@
         <div class="step-title-wrap">
           <span class="step-num">01</span>
           <div>
-            <div class="panel-title">Clone the Fork Repository</div>
-            <div class="panel-desc">Pick a fork tab or dropdown option to update the clone command below.</div>
+            <div class="panel-title">Download &amp; Extract the Repository</div>
+            <div class="panel-desc">Select the DexNom ZIP method. (The other forks use Git clone).</div>
           </div>
         </div>
       </div>
@@ -293,18 +293,19 @@
         </div>
       </div>
       <p id="fork-note" class="panel-desc">
-        Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation.
+        Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation (use ZIP download).
       </p>
       <div class="code-block">
         <div class="code-head">
-          <span>POWERSHELL</span>
+          <span>POWERSHELL / BROWSER</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-1">COPY</button>
         </div>
-        <pre id="cmd-step-1" class="code-pre"><span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git
-<span class="c-cmd">cd</span> VIctory</pre>
+        <pre id="cmd-step-1" class="code-pre"><span class="c-cmt"># DexNom: Download the ZIP from GitHub (Code -> Download ZIP)</span>
+<span class="c-cmt"># Extract it to a folder, e.g., D:\DexNom</span>
+<span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore for DexNom)</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The repository clones cleanly and <code>dir</code> inside the folder lists <code>Cargo.toml</code> and <code>victory.example.toml</code>.
+        <strong>CHECKPOINT:</strong> The ZIP is extracted and you can see <code>Setup.cmd</code> inside the folder.
       </div>
     </article>
 
@@ -314,20 +315,22 @@
         <div class="step-title-wrap">
           <span class="step-num">02</span>
           <div>
-            <div class="panel-title">Install Safety Commit Hook</div>
-            <div class="panel-desc">Enable <code>xtask</code> hooks so binaries or game assets are never accidentally staged in Git.</div>
+            <div class="panel-title">Run Setup.cmd (Auto-Compile)</div>
+            <div class="panel-desc">DexNom handles the hooks, configuration, and compilation automatically.</div>
           </div>
         </div>
       </div>
       <div class="code-block">
         <div class="code-head">
-          <span>POWERSHELL</span>
+          <span>WINDOWS EXPLORER</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-2">COPY</button>
         </div>
-        <pre id="cmd-step-2" class="code-pre"><span class="c-cmd">cargo</span> xtask install-hooks</pre>
+        <pre id="cmd-step-2" class="code-pre"><span class="c-cmt"># Double-click Setup.cmd in the extracted folder.</span>
+<span class="c-cmt"># When prompted, select your game executable on the F: drive.</span>
+<span class="c-cmd">.\Setup.cmd -GamePath "F:\gta\GTA VI\GTA6.Xbox.v1.0.2.1-CYBERLEEK\game_scarlett_master.exe"</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> Cargo finishes building <code>xtask</code> and installs the pre-commit hook cleanly.
+        <strong>CHECKPOINT:</strong> The setup script finishes and installs Start Menu shortcuts for "DexNom Runtime".
       </div>
     </article>
 
@@ -337,99 +340,41 @@
         <div class="step-title-wrap">
           <span class="step-num">03</span>
           <div>
-            <div class="panel-title">Create &amp; Configure <code>victory.toml</code></div>
-            <div class="panel-desc">Copy the example configuration and point it at your external unpacked game directory.</div>
+            <div class="panel-title">Launch from Start Menu</div>
+            <div class="panel-desc">No manual shader translation required—the launcher handles it.</div>
           </div>
         </div>
       </div>
       <div class="code-block">
         <div class="code-head">
-          <span>POWERSHELL</span>
+          <span>WINDOWS START MENU</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-3">COPY</button>
         </div>
-        <pre id="cmd-step-3" class="code-pre"><span class="c-cmd">copy</span> victory.example.toml victory.toml
-<span class="c-cmd">notepad</span> victory.toml
-<span class="c-cmt"># Save victory.toml with your external game folder path, then validate:</span>
-<span class="c-cmd">cargo</span> run -p victory -- config</pre>
+        <pre id="cmd-step-3" class="code-pre"><span class="c-cmt"># Open Start Menu and search for "DexNom Runtime"</span>
+<span class="c-cmt"># Click the shortcut to play.</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> <code>cargo run -p victory -- config</code> prints resolved paths with zero missing-directory errors. Keep game files outside the <code>VIctory</code> directory.
+        <strong>CHECKPOINT:</strong> The game boots, the menu appears, and first-time setup starts. (First world load will take ~1 minute and may run at 1 FPS).
       </div>
     </article>
 
-    <!-- STEP 4 -->
+    <!-- STEP 4 (Optional) -->
     <article class="panel-card">
       <div class="panel-head">
         <div class="step-title-wrap">
           <span class="step-num">04</span>
           <div>
-            <div class="panel-title">Run Workspace Unit Tests</div>
-            <div class="panel-desc">Confirm the Rust toolchain, shader translation crates, and loader modules compile before building.</div>
-          </div>
-        </div>
-      </div>
-      <div class="code-block">
-        <div class="code-head">
-          <span>POWERSHELL</span>
-          <button type="button" class="btn copy-btn" data-target="cmd-step-4">COPY</button>
-        </div>
-        <pre id="cmd-step-4" class="code-pre"><span class="c-cmd">cargo</span> test --workspace</pre>
-      </div>
-      <div class="verify-box">
-        <strong>CHECKPOINT:</strong> Workspace tests complete with <code>test result: ok</code> and no compilation failures.
-      </div>
-    </article>
-
-    <!-- STEP 5 -->
-    <article class="panel-card">
-      <div class="panel-head">
-        <div class="step-title-wrap">
-          <span class="step-num">05</span>
-          <div>
-            <div class="panel-title">Compile the Binary</div>
-            <div class="panel-desc">Build the standard release binary or switch to the diagnostics profile for crash telemetry.</div>
-          </div>
-        </div>
-      </div>
-      <div class="sub-bar">
-        <div>
-          <div class="req-title">Build Profile Mode</div>
-          <div class="panel-desc">Switch to Diagnostics if you want extra telemetry when troubleshooting GPU resets.</div>
-        </div>
-        <div class="btn-group">
-          <button type="button" id="btn-profile-release" data-profile="release" class="btn profile-btn active">--release (Default)</button>
-          <button type="button" id="btn-profile-diag" data-profile="diag" class="btn profile-btn">--profile diag (Crash Telemetry)</button>
-        </div>
-      </div>
-      <div class="code-block">
-        <div class="code-head">
-          <span id="label-step-5">POWERSHELL · RELEASE PROFILE</span>
-          <button type="button" class="btn copy-btn" data-target="cmd-step-5">COPY</button>
-        </div>
-        <pre id="cmd-step-5" class="code-pre"><span class="c-cmd">cargo</span> build --release -p victory</pre>
-      </div>
-      <div id="verify-step-5" class="verify-box">
-        <strong>CHECKPOINT:</strong> <code>target\release\victory.exe</code> is produced without linker errors.
-      </div>
-    </article>
-
-    <!-- STEP 6 -->
-    <article class="panel-card">
-      <div class="panel-head">
-        <div class="step-title-wrap">
-          <span class="step-num">06</span>
-          <div>
-            <div class="panel-title">Pre-Translate Shaders &amp; Launch</div>
-            <div class="panel-desc">Translate shaders first to warm up the cache, then start the runtime executable.</div>
+            <div class="panel-title">Optional: Manual Launch (Advanced)</div>
+            <div class="panel-desc">If you need to pass custom flags or run from the terminal.</div>
           </div>
         </div>
       </div>
 
       <div class="sub-bar" style="display:block;">
-        <div class="req-title">Optional Launch Flags &amp; Environment Variables</div>
+        <div class="req-title">Optional Launch Flags</div>
         
         <p class="panel-desc" style="margin-top: 8px; margin-bottom: 4px; color: var(--text);">
-          <strong>Explanation:</strong> The flags below are appended to <code>victory.exe</code>. By default, <code>victory.exe</code> looks for the game path in your <code>victory.toml</code> (from Step 3). If you haven't configured the <code>.toml</code> yet, or want to point to a different directory, enable the <code>--GamePath</code> flag and edit the path in the command below.
+          <strong>Explanation:</strong> These flags are appended to the runtime executable. The DexNom launcher sets the paths automatically, so you only need these if you are using PowerShell.
         </p>
 
         <div class="flags-grid">
@@ -454,11 +399,11 @@
               <div class="panel-desc">Open-world frame pacing</div>
             </div>
           </label>
-          <label class="flag-item" id="label-flag-gamepath">
-            <input type="checkbox" id="flag-gamepath" class="step6-option" />
+          <label class="flag-item" id="label-flag-rt">
+            <input type="checkbox" id="flag-rt" class="step6-option" />
             <div>
-              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--GamePath "D:\..."</div>
-              <div class="panel-desc">Bypass victory.toml (specify game path inline)</div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--rt</div>
+              <div class="panel-desc">Enable ray tracing (Experimental)</div>
             </div>
           </label>
         </div>
@@ -469,12 +414,11 @@
           <span>POWERSHELL</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-6">COPY</button>
         </div>
-        <pre id="cmd-step-6" class="code-pre"><span class="c-cmd">.\target\release\victory.exe</span> translate --cache --pipelines "D:\My Games\Series X\shaders.rpf" "D:\My Games\Series X\game_scarlett_master.exe" "D:\My Games\Series X\XboxBvhBuilder.dll" "D:\My Games\Series X\amd_fidelityfx_upscaler_xbox.dll"
-<span class="c-cmd">.\target\release\victory.exe</span> run --execute "D:\My Games\Series X\game_scarlett_master.exe"</pre>
+        <pre id="cmd-step-6" class="code-pre"><span class="c-cmd">& "$env:LOCALAPPDATA\DexNom Runtime\victory-play.exe"</span></pre>
       </div>
 
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The window opens, plays boot/intro videos around ~30 FPS, and reaches the start menu. Loading into the world takes about a minute; the intro cutscene plays, then the prologue starts. <em>(Note: The current build runs at about 1 FPS in the world, with some missing ray-traced shadows.)</em>
+        <strong>CHECKPOINT:</strong> The game launches directly from the terminal using your saved AppData configuration.
       </div>
     </article>
 
@@ -486,9 +430,9 @@
   <script>
     const FORKS = {
       'DexNom/VIctory': {
-        url: 'https://github.com/DexNom/VIctory.git',
+        url: 'ZIP Download (No Git)',
         activeClass: 'active',
-        note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation.'
+        note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Community fork under active experimentation (use ZIP download).'
       },
       'fxceless/victory-fork': {
         url: 'https://github.com/fxceless/victory-fork.git',
@@ -504,7 +448,6 @@
 
     const ALL_ACTIVE_CLASSES = ['active', 'active-cyan', 'active-purple', 'active-gold'];
     let currentFork = 'DexNom/VIctory';
-    let currentBuildProfile = 'release';
 
     function applyForkSelection(repo) {
       currentFork = FORKS[repo] ? repo : 'DexNom/VIctory';
@@ -530,58 +473,27 @@
 
       const cmd1 = document.getElementById('cmd-step-1');
       if (cmd1) {
-        cmd1.innerHTML = `<span class="c-cmd">git</span> clone ${info.url}
+        if (currentFork === 'DexNom/VIctory') {
+           cmd1.innerHTML = `<span class="c-cmt"># DexNom: Download the ZIP from GitHub (Code -> Download ZIP)</span>
+<span class="c-cmt"># Extract it to a folder, e.g., D:\\DexNom</span>
+<span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore for DexNom)</span>`;
+        } else {
+           cmd1.innerHTML = `<span class="c-cmd">git</span> clone ${info.url}
 <span class="c-cmd">cd</span> VIctory`;
+        }
       }
-    }
-
-    function applyBuildProfile(profile) {
-      currentBuildProfile = profile === 'diag' ? 'diag' : 'release';
-      const btnRel = document.getElementById('btn-profile-release');
-      const btnDiag = document.getElementById('btn-profile-diag');
-      const cmd5 = document.getElementById('cmd-step-5');
-      const label5 = document.getElementById('label-step-5');
-      const verify5 = document.getElementById('verify-step-5');
-
-      btnRel.classList.remove(...ALL_ACTIVE_CLASSES);
-      btnDiag.classList.remove(...ALL_ACTIVE_CLASSES);
-
-      if (currentBuildProfile === 'diag') {
-        btnDiag.classList.add('active-gold');
-        label5.textContent = 'POWERSHELL · DIAGNOSTICS PROFILE (CRASH TELEMETRY)';
-        cmd5.innerHTML = `<span class="c-cmd">cargo</span> build --profile diag -p victory --features diagnostics`;
-        verify5.innerHTML = `<strong>CHECKPOINT:</strong> <code>target\\diag\\victory.exe</code> is generated with crash telemetry hooks enabled.`;
-      } else {
-        btnRel.classList.add('active');
-        label5.textContent = 'POWERSHELL · RELEASE PROFILE';
-        cmd5.innerHTML = `<span class="c-cmd">cargo</span> build --release -p victory`;
-        verify5.innerHTML = `<strong>CHECKPOINT:</strong> <code>target\\release\\victory.exe</code> is generated on disk without linker errors.`;
-      }
-
-      updateStep6Command();
     }
 
     function updateStep6Command() {
       const useSeriesS = document.getElementById('flag-series-s').checked;
       const useTrace = document.getElementById('flag-trace-log').checked;
       const useRelay = document.getElementById('flag-relay').checked;
-      const useGamePath = document.getElementById('flag-gamepath').checked;
+      const useRT = document.getElementById('flag-rt').checked;
 
-      // UI-Highlight für die Options-Buttons umschalten
       document.getElementById('label-flag-series-s').classList.toggle('active-flag', useSeriesS);
       document.getElementById('label-flag-trace-log').classList.toggle('active-flag', useTrace);
       document.getElementById('label-flag-relay').classList.toggle('active-flag', useRelay);
-      document.getElementById('label-flag-gamepath').classList.toggle('active-flag', useGamePath);
-
-      // Pfad je nach Profil (diag oder release) anpassen
-      const exePath = currentBuildProfile === 'diag' ? '.\\target\\diag\\victory.exe' : '.\\target\\release\\victory.exe';
-
-      // Standard-Pfad für den Game-Ordner (aus Beispiel)
-      const gameDir = 'D:\\My Games\\Series X';
-      const shaderRpf = `${gameDir}\\shaders.rpf`;
-      const titleExe = `${gameDir}\\game_scarlett_master.exe`;
-      const bvhDll = `${gameDir}\\XboxBvhBuilder.dll`;
-      const fidelityDll = `${gameDir}\\amd_fidelityfx_upscaler_xbox.dll`;
+      document.getElementById('label-flag-rt').classList.toggle('active-flag', useRT);
 
       const lines = [];
       if (useTrace) {
@@ -591,27 +503,11 @@
         lines.push(`<span class="c-env">$env:VICTORY_RELAY</span>=<span class="c-val">"2"</span>`);
       }
 
-      // Build the flags string
-      let translateFlags = '';
-      if (useSeriesS) translateFlags += ' --console series-s';
-      
-      if (useGamePath) {
-        lines.push(`<span class="c-cmt"># IMPORTANT: Change the path below to your actual game directory!</span>`);
-      }
+      let runFlags = '';
+      if (useRT) runFlags += ' --rt';
+      if (useSeriesS) runFlags += ' --console series-s';
 
-      // Erstelle den translate-Befehl (mit oder ohne explizite Pfade)
-      if (useGamePath) {
-        lines.push(`<span class="c-cmd">${exePath}</span> translate --cache --pipelines "${shaderRpf}" "${titleExe}" "${bvhDll}" "${fidelityDll}"${translateFlags}`);
-      } else {
-        lines.push(`<span class="c-cmd">${exePath}</span> translate --cache --pipelines${translateFlags}`);
-      }
-
-      // Erstelle den run-Befehl
-      if (useGamePath) {
-        lines.push(`<span class="c-cmd">${exePath}</span> run "${titleExe}" --execute${translateFlags}`);
-      } else {
-        lines.push(`<span class="c-cmd">${exePath}</span> run --execute${translateFlags}`);
-      }
+      lines.push(`<span class="c-cmd">& "$env:LOCALAPPDATA\\DexNom Runtime\\victory-play.exe"</span>${runFlags}`);
 
       document.getElementById('cmd-step-6').innerHTML = lines.join('<br>');
     }
@@ -669,12 +565,6 @@
         });
       }
 
-      document.querySelectorAll('.profile-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          applyBuildProfile(btn.getAttribute('data-profile'));
-        });
-      });
-
       document.querySelectorAll('.step6-option').forEach(opt => {
         opt.addEventListener('change', updateStep6Command);
       });
@@ -696,9 +586,9 @@
         document.getElementById('warning-callout').classList.add('dismissed');
       });
 
-      // Initiale Zustände laden
+      // Initial state
       applyForkSelection('DexNom/VIctory');
-      applyBuildProfile('release');
+      updateStep6Command();
     });
   </script>
 </body>

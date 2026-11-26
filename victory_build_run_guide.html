@@ -19,6 +19,7 @@
     --gold: #f5c542;
     --cyan: #34d6d6;
     --purple: #b388ff;
+    --orange: #ff944d;
     --text: #a0b0c8;
     --text-bright: #d6efc1;
     --text-dim: #6a7a90;
@@ -108,6 +109,7 @@
   .tag-future { color: var(--gold); }
   .tag-danger { color: var(--red); }
   .tag-purple { color: var(--purple); }
+  .tag-orange { color: var(--orange); }
 
   .glow-box {
     width: 8px; height: 8px;
@@ -131,30 +133,32 @@
   }
   .section-label:first-child { margin-top: 0; }
 
-  .warning-box {
+  .collapsible-box {
     background: var(--bg);
-    border: 1px solid var(--gold);
+    border: 1px solid var(--border);
     padding: 0.75rem 0.9rem;
     margin-bottom: 0.85rem;
   }
-  .warning-box.dismissed { display: none; }
-  .warning-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
-  .warning-title { color: var(--gold); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.4px; }
-  .warning-body { margin-top: 0.55rem; padding-top: 0.55rem; border-top: 1px dashed var(--border); font-size: 0.74rem; color: var(--text); }
-  .warning-body.hidden { display: none; }
-  .warning-body p + p { margin-top: 0.4rem; }
-  .warning-body strong { color: var(--text-bright); }
+  .collapsible-box.dismissed { display: none; }
+  .collapsible-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+  .collapsible-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.4px; }
+  .collapsible-body { margin-top: 0.55rem; padding-top: 0.55rem; border-top: 1px dashed var(--border); font-size: 0.74rem; color: var(--text); }
+  .collapsible-body.hidden { display: none; }
+  .collapsible-body p + p { margin-top: 0.4rem; }
+  .collapsible-body strong { color: var(--text-bright); }
 
-  .findings-box {
-    background: var(--bg);
-    border: 1px solid var(--cyan);
-    padding: 0.75rem 0.9rem;
-    margin-bottom: 0.85rem;
-  }
-  .findings-title { color: var(--cyan); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 0.45rem; }
+  .findings-box { border-color: var(--cyan); }
+  .findings-title { color: var(--cyan); }
   .findings-list { padding-left: 1.15rem; font-size: 0.73rem; color: var(--text); }
   .findings-list li + li { margin-top: 0.35rem; }
   .findings-list strong { color: var(--text-bright); }
+
+  .workflow-box { border-color: var(--orange); }
+  .workflow-title { color: var(--orange); }
+  .workflow-list { padding-left: 1.15rem; font-size: 0.73rem; color: var(--text); }
+  .workflow-list li + li { margin-top: 0.4rem; }
+  .workflow-list strong { color: var(--text-bright); }
+  .workflow-list code { color: var(--cyan); }
 
   .tree-box {
     background: var(--bg);
@@ -170,6 +174,16 @@
   .tree-list li { padding: 2px 0; }
   .tree-list li strong { color: var(--text-bright); }
   .branch-tag { color: var(--text-dim); }
+
+  .rdna-box {
+    background: var(--bg);
+    border: 1px solid var(--orange);
+    padding: 0.85rem 0.95rem;
+    margin-bottom: 0.85rem;
+  }
+  .rdna-title { color: var(--orange); font-size: 0.86rem; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 0.3rem; }
+  .rdna-sub { color: var(--text); font-size: 0.73rem; margin-bottom: 0.65rem; }
+  .rdna-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; margin-top: 0.55rem; }
 
   .belobug-box {
     background: var(--bg);
@@ -194,6 +208,7 @@
   .issue-card { background: var(--card); border: 1px solid var(--border); padding: 0.65rem 0.8rem; }
   .issue-title { color: var(--gold); font-size: 0.76rem; font-weight: 700; margin-bottom: 0.25rem; }
   .issue-title-green { color: var(--green); font-size: 0.76rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .issue-title-orange { color: var(--orange); font-size: 0.76rem; font-weight: 700; margin-bottom: 0.25rem; }
   .issue-desc { color: var(--text); font-size: 0.71rem; }
   .issue-list { padding-left: 1.15rem; font-size: 0.72rem; color: var(--text); margin-top: 0.45rem; }
   .issue-list li + li { margin-top: 0.32rem; }
@@ -205,7 +220,7 @@
   table.layout-table td { padding: 0.42rem 0.65rem; border-bottom: 1px dashed var(--border); color: var(--text); vertical-align: top; }
   table.layout-table tr:nth-child(even) td { background: rgba(0, 16, 43, 0.55); }
   table.layout-table td:first-child { color: var(--text-bright); font-weight: 700; white-space: nowrap; }
-  table.layout-table td:nth-child(2) { color: var(--green); white-space: nowrap; }
+  table.layout-table td:nth-child(2) { color: var(--green); }
 
   .panel-card { background: var(--bg); border: 1px solid var(--border); padding: 0.78rem 0.9rem; margin-bottom: 0.7rem; }
   .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 0.5rem; border-bottom: 1px dashed var(--border); margin-bottom: 0.65rem; }
@@ -227,8 +242,9 @@
   .btn.active-cyan { border-color: var(--cyan); color: var(--cyan); background: rgba(52, 214, 214, 0.16); }
   .btn.active-purple { border-color: var(--purple); color: var(--purple); background: rgba(179, 136, 255, 0.16); }
   .btn.active-gold { border-color: var(--gold); color: var(--gold); background: rgba(245, 197, 66, 0.16); }
+  .btn.active-orange { border-color: var(--orange); color: var(--orange); background: rgba(255, 148, 77, 0.16); }
 
-  select.terminal-select { background: var(--bg); color: var(--text-bright); border: 1px solid var(--border); padding: 5px 9px; font-family: inherit; font-size: 0.68rem; cursor: pointer; }
+  select.terminal-select { background: var(--bg); color: var(--text-bright); border: 1px solid var(--border); padding: 5px 9px; font-family: inherit; font-size: 0.68rem; cursor: pointer; max-width: 100%; }
   select.terminal-select:focus { outline: none; border-color: var(--cyan); }
 
   .code-block { background: var(--bg); border: 1px solid var(--border); margin-top: 0.5rem; overflow: hidden; }
@@ -256,7 +272,7 @@
   .footer { text-align: center; font-size: 0.62rem; color: var(--text-dim); letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 0.5rem; margin-top: 0.9rem; text-transform: uppercase; }
 
   @media (max-width: 960px) { .flags-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 680px) { .prereq-grid, .belobug-grid, .leonida-grid, .tree-grid { grid-template-columns: 1fr; } .wrapper { padding: 0.7rem 0.75rem; } .header h1 { font-size: 1.05rem; } }
+  @media (max-width: 680px) { .prereq-grid, .belobug-grid, .leonida-grid, .rdna-grid, .tree-grid { grid-template-columns: 1fr; } .wrapper { padding: 0.7rem 0.75rem; } .header h1 { font-size: 1.05rem; } }
 </style>
 </head>
 <body>
@@ -264,9 +280,10 @@
     <header class="header">
       <div>
         <h1>UNOFFICIAL · CYBERLEEK · VICTORY &amp; LEONIDA GUIDE</h1>
-        <div class="sub">BUILD &amp; RUN REFERENCE · WINDOWS 10/11 · VERIFIED ON RYZEN 9 5900X + RTX 3060 12GB</div>
+        <div class="sub">BUILD &amp; RUN REFERENCE · WINDOWS 10/11 · VERIFIED ON RYZEN 9 5900X + RTX 3060 12GB + RX 7900 XTX NOTES</div>
         <div class="badge-row">
           <span class="card-tag tag-internal"><span class="glow-box" aria-hidden="true"></span>Runs on R9 5900X · RTX 3060 12GB</span>
+          <span class="card-tag tag-orange">RX 7900 XTX (RDNA 3) · codec_d / avatarmanz</span>
           <span class="card-tag tag-gold">~4 FPS · Crashes at 1st QTE</span>
           <span class="card-tag tag-external">VIctory Forks vs. Leonida</span>
         </div>
@@ -276,13 +293,39 @@
       </div>
     </header>
 
-    <section class="findings-box">
-      <div class="findings-title">◈ TEST UPDATE &amp; VERIFIED RIG SPECS (WORKS ON MY RIG)</div>
-      <ul class="findings-list">
-        <li><strong>Verified Rig:</strong> AMD Ryzen 9 5900X (12-Core / 24-Thread, 4.8 GHz) · MSI MPG X570 GAMING PLUS · NVIDIA GeForce RTX 3060 12GB · 32GB DDR4-3200 (2×16GB) · Samsung 970 EVO Plus 1TB NVMe + Samsung 850 EVO 1TB SATA.</li>
-        <li><strong>Test Result (DexNom Fork):</strong> Boots and runs on this rig at the ~4 FPS reported on PortWatch, then crashes right after reaching the first QTE—only the bare minimum loads, far from retail.</li>
-        <li><strong>Memory &amp; Warmup:</strong> Let shader warming (<code>LeonidaWarm.exe</code> / <code>victory-warm</code>) finish before entering the 3D world, and watch Task Manager <strong>Committed</strong> memory (~33 GB) so 32 GB RAM + page file does not hit error 1455.</li>
-      </ul>
+    <section id="findings-callout" class="collapsible-box findings-box">
+      <div class="collapsible-head">
+        <div class="collapsible-title">◈ TEST UPDATE &amp; VERIFIED RIG SPECS (WORKS ON MY RIG)</div>
+        <div class="btn-group">
+          <button type="button" class="btn" id="findings-toggle-btn">Collapse</button>
+        </div>
+      </div>
+      <div id="findings-body" class="collapsible-body findings-list">
+        <ul class="findings-list">
+          <li><strong>Verified Rig:</strong> AMD Ryzen 9 5900X (12-Core / 24-Thread, 4.8 GHz) · MSI MPG X570 GAMING PLUS · NVIDIA GeForce RTX 3060 12GB · 32GB DDR4-3200 (2×16GB) · Samsung 970 EVO Plus 1TB NVMe + Samsung 850 EVO 1TB SATA.</li>
+          <li><strong>Test Result (DexNom Fork):</strong> Boots and runs on this rig at the ~4 FPS reported on PortWatch, then crashes right after reaching the first QTE—only the bare minimum loads, far from retail.</li>
+          <li><strong>RX 7900 XTX (RDNA 3) Option:</strong> Use the <code>codec_d</code> Windows x64 ZIP launcher (<code>.\Play-VIctory.cmd pareto-residency</code> with <code>VICTORY_GAME_DIR</code>) or clone <code>avatarmanz/VIctory-7900XTX</code> and run <code>scripts\play.ps1 -Exe ...</code> (40–46 GB private memory; 64 GB RAM recommended).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="workflow-callout" class="collapsible-box workflow-box">
+      <div class="collapsible-head">
+        <div class="collapsible-title">◈ MY WORKFLOW · CLEAN, MIRRORED, REPEATABLE</div>
+        <div class="btn-group">
+          <button type="button" class="btn" id="workflow-toggle-btn">Collapse</button>
+        </div>
+      </div>
+      <div id="workflow-body" class="collapsible-body">
+        <p>This is how I personally set up and tear down VIctory-based forks. It keeps everything self-contained, so nothing lingers on the system and the next rebuild always starts from a clean pipeline.</p>
+        <ul class="workflow-list">
+          <li><strong>One script, all requirements:</strong> I wrote a small script that downloads and installs every prerequisite (Git, Rust, MSVC build tools, Windows SDK) in one go. I keep a mirror of what it installs, so the whole setup can be uninstalled cleanly afterward.</li>
+          <li><strong>Repos are similar by design:</strong> Most forks use VIctory as their base, so the build and launch steps are nearly identical across DexNom, Belobug, fxceless, and avatarmanz. One workflow covers them all.</li>
+          <li><strong>Cache lives inside the repo folder:</strong> I point the shader cache at a folder inside the checkout (<code>VICTORY_CACHE_DIR</code> → <code>.\cache</code>). When I delete the repo folder, the cache goes with it.</li>
+          <li><strong>Nuke and rebuild:</strong> Deleting the repo folder removes the source, the build output, and the cache in one step. Re-cloning gives me a clean pipeline, so the next build is never polluted by stale shaders or half-finished translations.</li>
+        </ul>
+        <p><strong>Why it works for me:</strong> Because the cache is local to the repo and the toolchain is mirrored, I can wipe everything and start over without touching the rest of my system. Each fork gets a fresh build with no cross-contamination.</p>
+      </div>
     </section>
 
     <section class="tree-box">
@@ -297,7 +340,8 @@
             <li><strong>Marvisak/VIctory</strong> <span class="branch-tag">— Upstream Base Repo</span></li>
             <li><span class="branch-tag">├─</span> <strong>DexNom/VIctory</strong> <span class="branch-tag">[Fork of VIctory · ZIP / Setup.cmd]</span></li>
             <li><span class="branch-tag">├─</span> <strong>Belobug/VIctory-Belobug-AMD</strong> <span class="branch-tag">[Fork of VIctory · AMD / Diag]</span></li>
-            <li><span class="branch-tag">└─</span> <strong>fxceless/victory-fork</strong> <span class="branch-tag">[Fork of VIctory · NVIDIA / Relay]</span></li>
+            <li><span class="branch-tag">├─</span> <strong>fxceless/victory-fork</strong> <span class="branch-tag">[Fork of VIctory · NVIDIA / Relay]</span></li>
+            <li><span class="branch-tag">└─</span> <strong>avatarmanz/VIctory-7900XTX</strong> <span class="branch-tag">[Fork of VIctory (via fxceless) · RDNA 3]</span></li>
           </ul>
         </div>
         <div class="tree-card">
@@ -313,23 +357,23 @@
       </div>
     </section>
 
-    <section id="warning-callout" class="warning-box">
-      <div class="warning-head">
-        <div class="warning-title">⚠ GPU DRIVER RESET (TDR), QTE CRASHES &amp; UNVERIFIED FORK RISK</div>
+    <section id="warning-callout" class="collapsible-box" style="border-color: var(--gold);">
+      <div class="collapsible-head">
+        <div class="collapsible-title" style="color: var(--gold);">⚠ GPU DRIVER RESET (TDR), QTE CRASHES &amp; UNVERIFIED FORK RISK</div>
         <div class="btn-group">
           <button type="button" class="btn" id="warning-toggle-btn">Collapse</button>
           <button type="button" class="btn" id="warning-dismiss-btn" title="Dismiss warning">✕</button>
         </div>
       </div>
-      <div id="warning-body" class="warning-body">
+      <div id="warning-body" class="collapsible-body">
         <p>
-          <strong>Early-Build Stability:</strong> Even when the game boots and runs in-world (~4 FPS on DexNom), expect crashes at early milestones (such as the first QTE) and occasional Windows <code>TDR</code> display driver resets. Only bare-minimum world assets load right now—nowhere near retail.
+          <strong>Early-Build Stability:</strong> Even when the game boots and runs in-world (~4 FPS on DexNom; ~6–22 FPS on RX 7900 XTX depending on scene), expect crashes at early milestones (such as the first QTE) or occasional Windows <code>TDR</code> display driver resets. Only bare-minimum world assets load right now—nowhere near retail.
         </p>
         <p>
           <strong>Inspect Before Building:</strong> Community forks move rapidly and contain experimental, unreviewed code. Always review the source code before compiling and <u>never run precompiled <code>.exe</code> binaries</u> from untrusted links. There is no official installer.
         </p>
         <p>
-          <strong>RAM &amp; VRAM:</strong> A run in the world takes about <b>33 GB of Windows commit</b> (RAM plus paging file) and ~8–10 GB VRAM (fits within 12 GB VRAM, though 32 GB system RAM relies on page file headroom). If <code>crashes.log</code> reports Windows error 1455, close other apps or increase the Windows paging file size.
+          <strong>RAM &amp; VRAM:</strong> DexNom/Belobug runs take about <b>33 GB of Windows commit</b> (~8–10 GB VRAM), while <code>avatarmanz/VIctory-7900XTX</code> uses <b>40–46 GB of private memory</b> (64 GB RAM recommended). If <code>crashes.log</code> reports Windows error 1455, close other apps or increase the Windows paging file size.
         </p>
       </div>
     </section>
@@ -345,20 +389,20 @@
       </div>
       <div class="prereq-grid">
         <div class="req-card">
-          <div class="req-title">Windows 10 / 11 (64-bit) + AVX2 CPU <span class="card-tag tag-internal">R9 5900X Tested</span></div>
-          <div class="req-sub">Requires 64-bit Windows with a current Direct3D 12 driver (Belobug notes Windows 11; Windows 10 may need a newer D3D12 runtime per issue #9 / PR #44).</div>
+          <div class="req-title">Windows 10 / 11 x64 + AVX2 CPU <span class="card-tag tag-internal">R9 5900X Tested</span></div>
+          <div class="req-sub">Requires 64-bit Windows with an AVX2 CPU and current Direct3D 12 driver (RX 7900 XTX notes tested on Windows 11; 64 GB RAM recommended for 40–46 GB private memory).</div>
         </div>
         <div class="req-card">
-          <div class="req-title">D3D12 SM 6.6 + Mesh Shaders <span class="card-tag tag-internal">RTX 3060 12GB Tested</span></div>
-          <div class="req-sub">Needs a Direct3D 12 GPU with Shader Model 6.6 and Mesh Shader support (verified working on RTX 3060 12GB).</div>
+          <div class="req-title">D3D12 SM 6.6 + Mesh Shaders <span class="card-tag tag-internal">RTX 3060 / 7900 XTX</span></div>
+          <div class="req-sub">Needs a Direct3D 12 GPU with Shader Model 6.6 and Mesh Shader support (verified on RTX 3060 12GB and Radeon RX 7900 XTX / RDNA 3).</div>
         </div>
         <div class="req-card">
-          <div class="req-title">Rust 1.98+ &amp; VS Build Tools (C++)</div>
-          <div class="req-sub">Leonida requires Rust 1.98 or newer plus Visual Studio Build Tools with Desktop development with C++ (x64 MSVC toolset and a Windows 10 or 11 SDK).</div>
+          <div class="req-title">Rust (1.98+ / Pinned) + MSVC Build Tools</div>
+          <div class="req-sub">Requires Rust (pinned toolchain for VIctory forks / <code>1.98+</code> for Leonida) and Visual Studio Build Tools with MSVC C++ build tools and a Windows 10 or 11 SDK.</div>
         </div>
         <div class="req-card">
-          <div class="req-title">External Unpacked Xbox Series Build</div>
-          <div class="req-sub">Store your unpacked game build in a separate folder <strong>outside</strong> the runtime folder. Game files, saves, and shader caches stay on your computer.</div>
+          <div class="req-title">External Unpacked Xbox Series Dump</div>
+          <div class="req-sub">Store your own complete unpacked Xbox Series game dump in a separate folder <strong>outside</strong> the runtime folder. No game files or assets are included in these repos.</div>
         </div>
       </div>
     </section>
@@ -371,14 +415,15 @@
         <div class="step-title-wrap">
           <span class="step-num">01</span>
           <div>
-            <div class="panel-title">Select Runtime or VIctory Fork &amp; Get Source</div>
-            <div class="panel-desc">Pick a VIctory fork (DexNom, Belobug, fxceless, upstream Marvisak) or standalone Leonida.</div>
+            <div class="panel-title">Select Runtime or VIctory Fork &amp; Get Source / ZIP</div>
+            <div class="panel-desc">Pick a VIctory fork (DexNom, RX 7900 XTX codec_d / avatarmanz, Belobug, fxceless, Marvisak) or standalone Leonida.</div>
           </div>
         </div>
       </div>
       <div class="sub-bar">
         <div class="btn-group" id="fork-tabs" role="tablist" aria-label="Fork selector">
           <button type="button" data-fork="DexNom/VIctory" class="btn fork-tab active">DexNom/VIctory [Fork]</button>
+          <button type="button" data-fork="avatarmanz/VIctory-7900XTX (codec_d)" class="btn fork-tab">RX 7900 XTX · codec_d / avatarmanz [Fork]</button>
           <button type="button" data-fork="Belobug/VIctory-Belobug-AMD" class="btn fork-tab">Belobug/VIctory-Belobug-AMD [Fork]</button>
           <button type="button" data-fork="fxceless/victory-fork" class="btn fork-tab">fxceless/victory-fork [Fork]</button>
           <button type="button" data-fork="Marvisak/VIctory" class="btn fork-tab">Marvisak/VIctory [Upstream]</button>
@@ -389,6 +434,7 @@
           <select id="fork-select" class="terminal-select">
             <optgroup label="VIctory Upstream &amp; Forks">
               <option value="DexNom/VIctory">DexNom/VIctory (Fork · Tested ~4 FPS to 1st QTE)</option>
+              <option value="avatarmanz/VIctory-7900XTX (codec_d)">RX 7900 XTX · codec_d ZIP &amp; avatarmanz/VIctory-7900XTX (Fork · RDNA 3)</option>
               <option value="Belobug/VIctory-Belobug-AMD">Belobug/VIctory-Belobug-AMD (Fork · AMD / Diag Build)</option>
               <option value="fxceless/victory-fork">fxceless/victory-fork (Fork · NVIDIA / Relay Fixes)</option>
               <option value="Marvisak/VIctory">Marvisak/VIctory (Upstream Base)</option>
@@ -400,7 +446,7 @@
         </div>
       </div>
       <p id="fork-note" class="panel-desc">
-        Selected: <span style="color:var(--green);">DexNom/VIctory</span> — Fork of VIctory (verified on R9 5900X + RTX 3060 12GB: ~4 FPS, crashes after 1st QTE).
+        Selected: <span style="color:var(--green);">DexNom/VIctory</span> — <strong>Fork of VIctory</strong> (tested on R9 5900X + RTX 3060 12GB: ~4 FPS, crashes after 1st QTE; use ZIP download &amp; Setup.cmd).
       </p>
       <div class="code-block">
         <div class="code-head">
@@ -412,7 +458,7 @@
 <span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore if using ZIP download)</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The repository is extracted or cloned cleanly and you can see <code>Setup.cmd</code> or <code>Cargo.toml</code> in the folder.
+        <strong>CHECKPOINT:</strong> The repository or x64 ZIP is extracted cleanly and you can see the launcher script (<code>Setup.cmd</code>, <code>Play-VIctory.cmd</code>, or <code>scripts\play.ps1</code>) or <code>Cargo.toml</code>.
       </div>
     </article>
 
@@ -422,8 +468,8 @@
         <div class="step-title-wrap">
           <span class="step-num">02</span>
           <div>
-            <div class="panel-title">Inspect &amp; Compile (Setup.cmd or Cargo Build)</div>
-            <div class="panel-desc">Run Setup.cmd with your unpacked game path or compile manually with Cargo.</div>
+            <div class="panel-title">Build or Prepare Launcher</div>
+            <div class="panel-desc">Use the extracted Windows x64 ZIP directly or compile with Cargo using the pinned/required Rust toolchain.</div>
           </div>
         </div>
       </div>
@@ -433,10 +479,10 @@
           <button type="button" class="btn copy-btn" data-target="cmd-step-2">COPY</button>
         </div>
         <pre id="cmd-step-2" class="code-pre"><span class="c-cmt"># Inspect Setup.cmd before running, then execute with your real game path:</span>
-<span class="c-cmd">.\Setup.cmd</span> -GamePath <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path	o\game_scarlett_master.exe"</span></pre>
+<span class="c-cmd">.\Setup.cmd</span> -GamePath <span class="c-val">"D:\Games\MyDump\game_scarlett_master.exe"</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> Compilation finishes without build errors and installs your binaries/shortcuts.
+        <strong>CHECKPOINT:</strong> Build or extraction succeeds with no missing toolchain or SDK errors.
       </div>
     </article>
 
@@ -446,8 +492,8 @@
         <div class="step-title-wrap">
           <span class="step-num">03</span>
           <div>
-            <div class="panel-title">Warm Shader Cache, Launch &amp; Watch Commit Memory</div>
-            <div class="panel-desc">Let shader warming/pipeline translation finish first, then launch and monitor Task Manager Commit (~33 GB).</div>
+            <div class="panel-title">Pre-Warm Shaders (If Applicable) &amp; Launch</div>
+            <div class="panel-desc">Pre-translate shaders / warm pipelines ahead of play where supported, then launch and watch memory.</div>
           </div>
         </div>
       </div>
@@ -460,7 +506,7 @@
 <span class="c-cmt"># Allow shader warming / pre-translation to finish before pushing into the 3D world</span></pre>
       </div>
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> Shader warming/translation completes without Windows error 1455 (expect ~4 FPS in-world and an early crash around the 1st QTE).
+        <strong>CHECKPOINT:</strong> First-run pipeline compilation completes without Windows error 1455 or watchdog/TDR interrupts.
       </div>
     </article>
 
@@ -470,8 +516,8 @@
         <div class="step-title-wrap">
           <span class="step-num">04</span>
           <div>
-            <div class="panel-title">Optional: Manual Launch &amp; Overrides (Advanced)</div>
-            <div class="panel-desc">Run binaries directly from terminal or apply environment overrides / experimental flags.</div>
+            <div class="panel-title">Optional: Safe Mode, Ray Tracing &amp; Path Overrides</div>
+            <div class="panel-desc">Test safer flags (<code>-Safe</code> on RX 7900 XTX), toggle <code>-RayTracing</code> / <code>--rt</code>, or set custom cache/game paths.</div>
           </div>
         </div>
       </div>
@@ -480,22 +526,22 @@
         <div class="req-title">Optional Launch Flags &amp; Overrides (Verify Against Your Build)</div>
         
         <p class="panel-desc" style="margin-top: 8px; margin-bottom: 4px; color: var(--text);">
-          <strong>Note:</strong> For VIctory forks, test plain launch first; flags like <code>--rt</code> or <code>VICTORY_RELAY</code> vary by fork. For Leonida, keep <code>Leonida.exe</code>, <code>LeonidaPlay.exe</code>, and <code>LeonidaWarm.exe</code> together outside the checkout or override paths via <code>LEONIDA_GAME_DIR</code>, <code>LEONIDA_CACHE_DIR</code>, and <code>LEONIDA_DATA_DIR</code>.
+          <strong>Note:</strong> On <code>avatarmanz/VIctory-7900XTX</code>, try <code>scripts\play.ps1 -Safe -Exe ...</code> first if something is wrong, or pass <code>-RayTracing</code> for ray-traced indirect light. On <code>codec_d</code>, <code>Play-VIctory.cmd pareto-residency</code> uses Series S + RTX-tested residency settings and caches under <code>%LOCALAPPDATA%\VIctory\cache-pareto</code> (override with <code>VICTORY_CACHE_DIR</code>).
         </p>
 
         <div class="flags-grid">
           <label class="flag-item" id="label-flag-series-s">
             <input type="checkbox" id="flag-series-s" class="step6-option" />
             <div>
-              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--console series-s</div>
-              <div class="panel-desc">VIctory Series S profile</div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">-Safe / --console series-s</div>
+              <div class="panel-desc">Safer mode / Series S profile</div>
             </div>
           </label>
           <label class="flag-item" id="label-flag-trace-log">
             <input type="checkbox" id="flag-trace-log" class="step6-option" />
             <div>
-              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">VICTORY_LOG=trace</div>
-              <div class="panel-desc">Verbose loader diagnostics</div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">VICTORY_CACHE_DIR</div>
+              <div class="panel-desc">External cache directory</div>
             </div>
           </label>
           <label class="flag-item" id="label-flag-relay">
@@ -508,8 +554,8 @@
           <label class="flag-item" id="label-flag-rt">
             <input type="checkbox" id="flag-rt" class="step6-option" />
             <div>
-              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">--rt / Exp. RT</div>
-              <div class="panel-desc">Experimental ray tracing</div>
+              <div style="font-size:0.72rem;color:var(--cyan);font-weight:700;">-RayTracing / --rt</div>
+              <div class="panel-desc">Ray-traced indirect light</div>
             </div>
           </label>
         </div>
@@ -520,13 +566,122 @@
           <span>POWERSHELL</span>
           <button type="button" class="btn copy-btn" data-target="cmd-step-6">COPY</button>
         </div>
-        <pre id="cmd-step-6" class="code-pre"><span class="c-cmd">&amp; "$env:LOCALAPPDATA\DexNom Runtimeictory-play.exe"</span></pre>
+        <pre id="cmd-step-6" class="code-pre"><span class="c-cmd">&amp; "$env:LOCALAPPDATA\DexNom Runtime\victory-play.exe"</span></pre>
       </div>
 
       <div class="verify-box">
-        <strong>CHECKPOINT:</strong> The game launches from PowerShell using your configuration without CLI argument errors.
+        <strong>CHECKPOINT:</strong> The launcher runs with your selected flags and game dump path without CLI argument errors.
       </div>
     </article>
+
+    <div class="section-label">VIctory Fork · RX 7900 XTX (RDNA 3) · codec_d &amp; avatarmanz/VIctory-7900XTX</div>
+    <section class="rdna-box">
+      <div class="rdna-title">◈ RX 7900 XTX (RDNA 3) · CODEC_D WINDOWS BUILD &amp; AVATARMANZ/VICTORY-7900XTX</div>
+      <div class="rdna-sub">
+        Fork of VIctory (from <code>fxceless/victory-fork</code>) focused on speed on AMD RDNA 3 (~30 FPS target in-world without giving up picture quality; still in progress). Includes the <code>codec_d</code> Windows x64 ZIP launcher and the <code>avatarmanz/VIctory-7900XTX</code> repository. No game files, code, or assets are included.
+      </div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>CODEC_D WINDOWS X64 ZIP LAUNCHER (POWERSHELL)</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-rdna-codecd">COPY</button>
+        </div>
+        <pre id="cmd-rdna-codecd" class="code-pre"><span class="c-cmt"># 1. Download and extract the Windows x64 ZIP from the private releases, then open PowerShell there</span>
+<span class="c-env">$env:VICTORY_GAME_DIR</span> = <span class="c-val">'D:\Games\MyDump'</span>
+<span class="c-cmd">.\Play-VIctory.cmd</span> pareto-residency
+<span class="c-cmt"># Selects Series S + RTX-tested residency settings; builds shader cache under %LOCALAPPDATA%\VIctory\cache-pareto</span>
+<span class="c-cmt"># Optional: set $env:VICTORY_CACHE_DIR = 'D:\VIctoryCache' to reuse an existing cache outside the checkout</span>
+<span class="c-cmt"># Optional manual release build (with pinned Rust + MSVC C++ build tools + Windows SDK):</span>
+<span class="c-cmd">cargo</span> build --release --locked -p victory   <span class="c-cmt"># Play-VIctory.cmd also finds target\release\victory.exe</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>AVATARMANZ/VICTORY-7900XTX · CLONE, PRE-WARM &amp; RUN (POWERSHELL)</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-rdna-avatarmanz">COPY</button>
+        </div>
+        <pre id="cmd-rdna-avatarmanz" class="code-pre"><span class="c-cmd">git</span> clone https://github.com/avatarmanz/VIctory-7900XTX
+<span class="c-cmd">cd</span> VIctory-7900XTX
+<span class="c-cmd">copy</span> victory.example.toml victory.toml      <span class="c-cmt"># then set your paths, outside this folder</span>
+<span class="c-cmd">cargo</span> build --locked --profile diag -p victory --features diagnostics
+
+<span class="c-cmt"># Ahead of the first run (both can be stopped and resumed later):</span>
+<span class="c-cmd">.\target\diag\victory.exe</span> shaders <span class="c-val">&lt;the shader archives&gt;</span>   <span class="c-cmt"># translates every shader, takes minutes</span>
+<span class="c-cmd">.\target\diag\victory.exe</span> warm --used                     <span class="c-cmt"># builds pipelines earlier runs drew with (new driver/build)</span>
+
+<span class="c-cmt"># Launch (add -Safe first when troubleshooting; add -RayTracing for ray-traced indirect light):</span>
+<span class="c-cmd">scripts\play.ps1</span> -Exe <span class="c-val">"&lt;path of your copy's executable&gt;"</span></pre>
+      </div>
+
+      <div class="layout-table-wrap">
+        <table class="layout-table">
+          <thead>
+            <tr>
+              <th>Scene / Metric (2026-11-25)</th>
+              <th>Measured Performance</th>
+              <th>Notes (Windows 11 · i9-12900K · 64 GB RAM · RX 7900 XTX · 1440p · Series X)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Menus, videos, loading screens</td>
+              <td>30 fps</td>
+              <td>Tested on one machine only; Series X profile</td>
+            </tr>
+            <tr>
+              <td>Prologue, indoors</td>
+              <td>50–75 ms (13–20 fps)</td>
+              <td>Started at 280 ms/frame in the same scenes two days earlier</td>
+            </tr>
+            <tr>
+              <td>First mission with the boat</td>
+              <td>46–53 ms (19–22 fps)</td>
+              <td>Shader read-back to title memory enabled by default</td>
+            </tr>
+            <tr>
+              <td>Street chase (many cars &amp; people)</td>
+              <td>100–165 ms (6–10 fps)</td>
+              <td>Single frames can be far longer in heavy traffic/crowds</td>
+            </tr>
+            <tr>
+              <td>Outdoors on foot, the camp</td>
+              <td>60–90 ms</td>
+              <td>Outdoor foliage/distant buildings can flicker in some spots</td>
+            </tr>
+            <tr>
+              <td>Flying</td>
+              <td>42–57 ms</td>
+              <td>Streaming textures may appear late when entering view</td>
+            </tr>
+            <tr>
+              <td>Longest session / Memory</td>
+              <td>41 min · 40–46 GB</td>
+              <td>41 minutes with no crash; 40–46 GB private memory (64 GB RAM recommended)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rdna-grid">
+        <div class="issue-card">
+          <div class="issue-title-orange">What Is Known to Be Wrong</div>
+          <ul class="issue-list" style="margin-top:0;">
+            <li>Trees, plants, and far buildings flicker outdoors in some places.</li>
+            <li>Rooms with little direct light are too dark without <code>-RayTracing</code>.</li>
+            <li>Textures of what just came into view appear late while the title streams.</li>
+            <li>First run with a new driver or build stutters while pipelines are built (<code>victory warm</code> makes them ahead).</li>
+            <li>Recording a frame in the world makes the title's own watchdog end it.</li>
+          </ul>
+        </div>
+        <div class="issue-card">
+          <div class="issue-title-orange">Key Architecture Changes &amp; Credits</div>
+          <ul class="issue-list" style="margin-top:0;">
+            <li><strong>Threading &amp; GPU:</strong> Deferred list translation on 8 threads (<code>VICTORY_THIN</code>); async submission prep &amp; join (<code>VICTORY_ASYNC_SUBMIT</code>, <code>VICTORY_JOIN_PARTS</code>); background dword write relay (<code>VICTORY_RELAY</code>, <code>VICTORY_LAND</code>); on-GPU buffer fills (<code>VICTORY_CARD_STEPS</code>); copy-queue texture uploads before slot visibility (stopped ~15-min device loss); shader-written/CPU-read texture read-back on by default.</li>
+            <li><strong>Docs &amp; Credits:</strong> See <code>docs/findings.md</code>, <code>docs/replay.md</code>, <code>docs/README-fxceless.md</code>, and <code>docs/asset-policy.md</code>. Builds on VIctory (Marvisak), <code>fxceless/victory-fork</code>, DexNom/VIctory, Belobug/VIctory-Belobug-AMD, FQY55kai/ZJOU-VICTORY, myokex/victory-amd, Geckomacabre, cxy0072019-sketch, and XCL behavior notes (GPL-3.0-or-later).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
     <div class="section-label">VIctory Fork · Belobug/VIctory-Belobug-AMD Notes &amp; Known Problems</div>
     <section class="belobug-box">
@@ -541,7 +696,7 @@
         <pre id="cmd-belobug-ref" class="code-pre"><span class="c-cmd">cargo</span> build --profile diag -p victory --features diagnostics
 <span class="c-env">$env:VICTORY_PRESENT_TARGET</span>=<span class="c-val">"1x1:1"</span>
 <span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>
-<span class="c-cmd">.	arget\diagictory.exe</span> run <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path	o\game_scarlett_master.exe"</span> --execute --console series-x</pre>
+<span class="c-cmd">.\target\diag\victory.exe</span> run <span class="c-val">"D:\Games\MyDump\game_scarlett_master.exe"</span> --execute --console series-x</pre>
       </div>
 
       <div class="belobug-grid">
@@ -611,7 +766,7 @@
         </div>
         <pre id="cmd-leonida-manual" class="code-pre"><span class="c-cmd">cargo</span> run --package leonida-tasks -- tables
 <span class="c-cmd">cargo</span> build --release --package leonida --features diagnostics --bins
-<span class="c-cmt"># Binaries land in targetelease. Keep all three together outside the checkout and pass the game executable to LeonidaPlay.exe.</span>
+<span class="c-cmt"># Binaries land in target\release. Keep all three together outside the checkout and pass the game executable to LeonidaPlay.exe.</span>
 <span class="c-cmt"># Copy LeonidaExample.toml to Leonida.toml to set custom game, cache and data directories.</span>
 <span class="c-cmt"># Environment overrides: LEONIDA_GAME_DIR, LEONIDA_CACHE_DIR, LEONIDA_DATA_DIR</span>
 <span class="c-cmd">cargo</span> run --package leonida-tasks -- policy</pre>
@@ -693,7 +848,7 @@
       </ul>
     </section>
 
-    <div class="footer">provided by n0ne · tested on r9 5900x + rtx 3060 12gb</div>
+    <div class="footer">provided by n0ne · r9 5900x + rtx 3060 12gb · rx 7900 xtx codec_d / avatarmanz</div>
   </div>
 
   <div id="copy-toast" class="toast">✓ Copied command to clipboard</div>
@@ -704,6 +859,11 @@
         url: 'ZIP Download (No Git)',
         activeClass: 'active',
         note: 'Selected: <span style="color:var(--green);">DexNom/VIctory</span> — <strong>Fork of VIctory</strong> (tested on R9 5900X + RTX 3060 12GB: ~4 FPS, crashes after 1st QTE; use ZIP download &amp; Setup.cmd).'
+      },
+      'avatarmanz/VIctory-7900XTX (codec_d)': {
+        url: 'https://github.com/avatarmanz/VIctory-7900XTX.git',
+        activeClass: 'active-orange',
+        note: 'Selected: <span style="color:var(--orange);">RX 7900 XTX · codec_d / avatarmanz/VIctory-7900XTX</span> — <strong>Fork of VIctory</strong> for RDNA 3 (<code>Play-VIctory.cmd pareto-residency</code> / <code>scripts\\play.ps1</code>; 40–46 GB private memory).'
       },
       'Belobug/VIctory-Belobug-AMD': {
         url: 'https://github.com/Belobug/VIctory-Belobug-AMD.git',
@@ -723,11 +883,11 @@
       'Leonida': {
         url: 'Local / Setup.cmd',
         activeClass: 'active',
-        note: 'Selected: <span style="color:var(--green);">Leonida</span> — <strong>Standalone runtime</strong> (not a VIctory fork); Setup.cmd installs <code>Leonida.exe</code>, <code>LeonidaPlay.exe</code> &amp; <code>LeonidaWarm.exe</code> to <code>%LOCALAPPDATA%\Leonida</code>.'
+        note: 'Selected: <span style="color:var(--green);">Leonida</span> — <strong>Standalone runtime</strong> (not a VIctory fork); Setup.cmd installs <code>Leonida.exe</code>, <code>LeonidaPlay.exe</code> &amp; <code>LeonidaWarm.exe</code> to <code>%LOCALAPPDATA%\\Leonida</code>.'
       }
     };
 
-    const ALL_ACTIVE_CLASSES = ['active', 'active-cyan', 'active-purple', 'active-gold'];
+    const ALL_ACTIVE_CLASSES = ['active', 'active-cyan', 'active-purple', 'active-gold', 'active-orange'];
     let currentFork = 'DexNom/VIctory';
 
     function applyForkSelection(repo) {
@@ -760,12 +920,18 @@
 
       if (cmd1) {
         if (currentFork === 'Leonida') {
-          cmd1.innerHTML = `<span class="c-cmt"># Leonida (Standalone): Extract or clone the Leonida repository to a local folder (e.g., D:\Leonida)</span>
+          cmd1.innerHTML = `<span class="c-cmt"># Leonida (Standalone): Extract or clone the Leonida repository to a local folder (e.g., D:\\Leonida)</span>
 <span class="c-cmt"># Verify Setup.cmd, Docs/Architecture.md, and Docs/AssetPolicy.md are present.</span>`;
         } else if (currentFork === 'DexNom/VIctory') {
           cmd1.innerHTML = `<span class="c-cmt"># DexNom (VIctory Fork): Download the ZIP from GitHub (Code -&gt; Download ZIP)</span>
-<span class="c-cmt"># Extract it to a folder without spaces, e.g., D:\DexNom</span>
+<span class="c-cmt"># Extract it to a folder without spaces, e.g., D:\\DexNom</span>
 <span class="c-cmd">git</span> clone https://github.com/DexNom/VIctory.git <span class="c-cmt"># (Ignore if using ZIP download)</span>`;
+        } else if (currentFork === 'avatarmanz/VIctory-7900XTX (codec_d)') {
+          cmd1.innerHTML = `<span class="c-cmt"># Option A (codec_d ZIP): Extract Windows x64 ZIP from private releases and open PowerShell there</span>
+<span class="c-cmt"># Option B (avatarmanz/VIctory-7900XTX source):</span>
+<span class="c-cmd">git</span> clone https://github.com/avatarmanz/VIctory-7900XTX
+<span class="c-cmd">cd</span> VIctory-7900XTX
+<span class="c-cmd">copy</span> victory.example.toml victory.toml`;
         } else {
           cmd1.innerHTML = `<span class="c-cmd">git</span> clone ${info.url}
 <span class="c-cmd">cd</span> ${currentFork.split('/')[1]}`;
@@ -776,14 +942,21 @@
         if (currentFork === 'Leonida') {
           cmd2Head.textContent = 'POWERSHELL / WINDOWS EXPLORER · LEONIDA SETUP';
           cmd2.innerHTML = `<span class="c-cmt"># Double-click Setup.cmd and select your Series X executable, or pass --game-path:</span>
-<span class="c-cmd">.\Setup.cmd</span> --game-path <span class="c-val">"D:\Games\SeriesX\game.exe"</span>`;
+<span class="c-cmd">.\\Setup.cmd</span> --game-path <span class="c-val">"D:\\Games\\SeriesX\\game.exe"</span>`;
+        } else if (currentFork === 'avatarmanz/VIctory-7900XTX (codec_d)') {
+          cmd2Head.textContent = 'POWERSHELL · CODEC_D ZIP OR AVATARMANZ BUILD';
+          cmd2.innerHTML = `<span class="c-cmt"># codec_d ZIP: Ready to run via .\\Play-VIctory.cmd pareto-residency</span>
+<span class="c-cmt"># Or build from source with pinned Rust + MSVC C++ build tools + Windows SDK:</span>
+<span class="c-cmd">cargo</span> build --release --locked -p victory
+<span class="c-cmt"># Or diagnostics profile:</span>
+<span class="c-cmd">cargo</span> build --locked --profile diag -p victory --features diagnostics`;
         } else if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
           cmd2Head.textContent = 'POWERSHELL · BELOBUG (VICTORY FORK) DIAGNOSTICS BUILD';
           cmd2.innerHTML = `<span class="c-cmd">cargo</span> build --profile diag -p victory --features diagnostics`;
         } else {
           cmd2Head.textContent = 'POWERSHELL / WINDOWS EXPLORER · SETUP';
           cmd2.innerHTML = `<span class="c-cmt"># Inspect Setup.cmd before running, then execute with your real game path:</span>
-<span class="c-cmd">.\Setup.cmd</span> -GamePath <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path\to\game_scarlett_master.exe"</span>`;
+<span class="c-cmd">.\\Setup.cmd</span> -GamePath <span class="c-val">"D:\\Games\\MyDump\\game_scarlett_master.exe"</span>`;
         }
       }
 
@@ -791,13 +964,23 @@
         if (currentFork === 'Leonida') {
           cmd3Head.textContent = 'POWERSHELL / START MENU · LEONIDA WARM & PLAY';
           cmd3.innerHTML = `<span class="c-cmt"># Warm the shader cache ahead of play:</span>
-<span class="c-cmd">&amp; "$env:LOCALAPPDATA\Leonida\LeonidaWarm.exe"</span>
+<span class="c-cmd">&amp; "$env:LOCALAPPDATA\\Leonida\\LeonidaWarm.exe"</span>
 <span class="c-cmt"># Then launch "Leonida" or "Leonida (Experimental RT)" from the Start menu</span>`;
+        } else if (currentFork === 'avatarmanz/VIctory-7900XTX (codec_d)') {
+          cmd3Head.textContent = 'POWERSHELL · CODEC_D LAUNCHER & SHADER PRE-WARM';
+          cmd3.innerHTML = `<span class="c-cmt"># codec_d Windows x64 ZIP launcher (Series S + RTX-tested residency):</span>
+<span class="c-env">$env:VICTORY_GAME_DIR</span> = <span class="c-val">'D:\\Games\\MyDump'</span>
+<span class="c-cmd">.\\Play-VIctory.cmd</span> pareto-residency
+
+<span class="c-cmt"># Or avatarmanz/VIctory-7900XTX pre-warm &amp; play.ps1:</span>
+<span class="c-cmd">.\\target\\diag\\victory.exe</span> shaders <span class="c-val">&lt;the shader archives&gt;</span>
+<span class="c-cmd">.\\target\\diag\\victory.exe</span> warm --used
+<span class="c-cmd">scripts\\play.ps1</span> -Exe <span class="c-val">"&lt;path of your copy's executable&gt;"</span>`;
         } else if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
           cmd3Head.textContent = 'POWERSHELL · BELOBUG RUN (~2,500 PIPELINES ON FIRST LAUNCH)';
           cmd3.innerHTML = `<span class="c-env">$env:VICTORY_PRESENT_TARGET</span>=<span class="c-val">"1x1:1"</span>
 <span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>
-<span class="c-cmd">.\target\diag\victory.exe</span> run <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path\to\game_scarlett_master.exe"</span> --execute --console series-x`;
+<span class="c-cmd">.\\target\\diag\\victory.exe</span> run <span class="c-val">"D:\\Games\\MyDump\\game_scarlett_master.exe"</span> --execute --console series-x`;
         } else {
           cmd3Head.textContent = 'WINDOWS START MENU / WARMUP';
           cmd3.innerHTML = `<span class="c-cmt"># Open Start Menu and launch "DexNom Runtime"</span>
@@ -822,8 +1005,24 @@
       const lines = [];
       if (currentFork === 'Leonida') {
         lines.push(`<span class="c-cmt"># Optional directory overrides (if not using Leonida.toml):</span>`);
-        lines.push(`<span class="c-cmt"># $env:LEONIDA_GAME_DIR="D:\Games\SeriesX"; $env:LEONIDA_CACHE_DIR="D:\LeonidaCache"; $env:LEONIDA_DATA_DIR="D:\LeonidaData"</span>`);
-        lines.push(`<span class="c-cmd">&amp; "$env:LOCALAPPDATA\Leonida\LeonidaPlay.exe"</span> <span class="c-val">"D:\Games\SeriesX\game.exe"</span>`);
+        lines.push(`<span class="c-cmt"># $env:LEONIDA_GAME_DIR="D:\\Games\\SeriesX"; $env:LEONIDA_CACHE_DIR="D:\\LeonidaCache"; $env:LEONIDA_DATA_DIR="D:\\LeonidaData"</span>`);
+        lines.push(`<span class="c-cmd">&amp; "$env:LOCALAPPDATA\\Leonida\\LeonidaPlay.exe"</span> <span class="c-val">"D:\\Games\\SeriesX\\game.exe"</span>`);
+        document.getElementById('cmd-step-6').innerHTML = lines.join('<br>');
+        return;
+      }
+
+      if (currentFork === 'avatarmanz/VIctory-7900XTX (codec_d)') {
+        if (useTrace) {
+          lines.push(`<span class="c-env">$env:VICTORY_CACHE_DIR</span> = <span class="c-val">'D:\\VIctoryCache'</span>`);
+        }
+        if (useRelay) {
+          lines.push(`<span class="c-env">$env:VICTORY_RELAY</span> = <span class="c-val">"2"</span>`);
+        }
+        const psFlags = [];
+        if (useSeriesS) psFlags.push('-Safe');
+        if (useRT) psFlags.push('-RayTracing');
+        psFlags.push(`-Exe <span class="c-val">"&lt;path of your copy's executable&gt;"</span>`);
+        lines.push(`<span class="c-cmd">scripts\\play.ps1</span> ${psFlags.join(' ')}`);
         document.getElementById('cmd-step-6').innerHTML = lines.join('<br>');
         return;
       }
@@ -833,7 +1032,7 @@
         lines.push(`<span class="c-env">$env:VICTORY_HAIR</span>=<span class="c-val">"1"</span>`);
       }
       if (useTrace) {
-        lines.push(`<span class="c-env">$env:VICTORY_LOG</span>=<span class="c-val">"victory_loader=trace,info"</span>`);
+        lines.push(`<span class="c-env">$env:VICTORY_CACHE_DIR</span>=<span class="c-val">"D:\\VIctoryCache"</span>`);
       }
       if (useRelay) {
         lines.push(`<span class="c-env">$env:VICTORY_RELAY</span>=<span class="c-val">"2"</span>`);
@@ -845,9 +1044,9 @@
 
       if (currentFork === 'Belobug/VIctory-Belobug-AMD') {
         const consoleFlag = useSeriesS ? '--console series-s' : '--console series-x';
-        lines.push(`<span class="c-cmd">.\target\diag\victory.exe</span> run <span class="c-val">"&lt;YOUR_DRIVE&gt;:\path\to\game_scarlett_master.exe"</span> --execute ${consoleFlag}${useRT ? ' --rt' : ''}`);
+        lines.push(`<span class="c-cmd">.\\target\\diag\\victory.exe</span> run <span class="c-val">"D:\\Games\\MyDump\\game_scarlett_master.exe"</span> --execute ${consoleFlag}${useRT ? ' --rt' : ''}`);
       } else {
-        lines.push(`<span class="c-cmd">&amp; "$env:LOCALAPPDATA\DexNom Runtime\victory-play.exe"</span>${runFlags}`);
+        lines.push(`<span class="c-cmd">&amp; "$env:LOCALAPPDATA\\DexNom Runtime\\victory-play.exe"</span>${runFlags}`);
       }
 
       document.getElementById('cmd-step-6').innerHTML = lines.join('<br>');
@@ -914,6 +1113,20 @@
         btn.addEventListener('click', () => {
           copyCode(btn.getAttribute('data-target'), btn);
         });
+      });
+
+      document.getElementById('findings-toggle-btn').addEventListener('click', () => {
+        const body = document.getElementById('findings-body');
+        const btn = document.getElementById('findings-toggle-btn');
+        const isHidden = body.classList.toggle('hidden');
+        btn.textContent = isHidden ? 'Expand' : 'Collapse';
+      });
+
+      document.getElementById('workflow-toggle-btn').addEventListener('click', () => {
+        const body = document.getElementById('workflow-body');
+        const btn = document.getElementById('workflow-toggle-btn');
+        const isHidden = body.classList.toggle('hidden');
+        btn.textContent = isHidden ? 'Expand' : 'Collapse';
       });
 
       document.getElementById('warning-toggle-btn').addEventListener('click', () => {

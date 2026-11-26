@@ -87,18 +87,24 @@
     margin-top: 2px;
   }
 
+  .trackers-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: stretch;
+  }
+
   .pw-box {
     background: var(--bg);
     border: 1px solid var(--border);
-    padding: 0.4rem 0.65rem 0.5rem;
-    width: 250px;
+    padding: 0.45rem 0.7rem;
+    width: 245px;
     max-width: 100%;
-    cursor: pointer;
     user-select: none;
-    position: relative;
     text-decoration: none;
     color: inherit;
     display: block;
+    position: relative;
     transition: border-color 0.15s, background 0.15s;
   }
 
@@ -109,58 +115,64 @@
     outline: none;
   }
 
-  .pw-tip {
+  .pw-hover-note {
     display: none;
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
-    width: 290px;
+    width: 280px;
     max-width: calc(100vw - 1.5rem);
     background: var(--card);
     border: 1px solid var(--neon);
-    padding: 0.55rem 0.7rem;
-    font-size: 0.68rem;
-    line-height: 1.45;
-    letter-spacing: 0.2px;
-    text-transform: none;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.66rem;
+    line-height: 1.4;
     color: var(--text);
-    box-shadow: 0 6px 20px rgba(0, 5, 13, 0.85);
-    z-index: 100;
-    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 5, 13, 0.9);
+    z-index: 200;
+    pointer-events: none;
   }
 
-  .pw-tip b { color: var(--text-bright); }
+  .pw-hover-note b {
+    color: var(--text-bright);
+  }
 
-  .pw-box:hover .pw-tip,
-  .pw-box:focus .pw-tip,
-  .pw-box:focus-within .pw-tip { display: block; }
+  .pw-box:hover .pw-hover-note,
+  .pw-box:focus-visible .pw-hover-note {
+    display: block;
+  }
 
   .pw-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.3rem;
   }
 
   .pw-label {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    font-size: 0.62rem;
+    font-size: 0.64rem;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 1.3px;
     text-transform: uppercase;
-    color: var(--text-dim);
+    color: var(--text-bright);
   }
 
   .pw-dot {
     width: 8px;
     height: 8px;
-    background: var(--green);
-    box-shadow: 0 0 8px rgba(96, 195, 58, 0.8);
-    animation: pwBlink 2.6s ease-in-out infinite;
+    background: var(--red);
+    box-shadow: 0 0 8px rgba(255, 51, 85, 0.85);
+    animation: pwBlink 1.2s ease-in-out infinite;
     flex-shrink: 0;
+  }
+
+  .pw-dot.is-finished {
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(96, 195, 58, 0.85);
   }
 
   @keyframes pwBlink {
@@ -168,49 +180,42 @@
     50%      { opacity: 0.15; }
   }
 
-  .pw-pct {
-    font-size: 0.95rem;
+  .pw-status {
+    font-size: 0.64rem;
     font-weight: 700;
-    color: var(--text-bright);
-    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
     line-height: 1;
   }
 
-  .pw-track {
-    height: 6px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    overflow: hidden;
+  .pw-status.is-finished {
+    color: var(--green);
   }
 
-  .pw-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--neon) 0%, var(--green) 100%);
-    transition: width 0.35s ease;
+  .pw-status.is-not-finished {
+    color: var(--red);
   }
 
-  .pw-timer-row {
+  .pw-leader-row {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 8px;
-    margin-top: 0.4rem;
-    padding-top: 0.3rem;
+    margin-top: 0.22rem;
+    padding-top: 0.25rem;
     border-top: 1px dashed var(--border);
-    font-size: 0.62rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    font-size: 0.63rem;
     color: var(--text-dim);
   }
 
-  .pw-timer {
-    font-size: 0.74rem;
+  .pw-leader {
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
     color: var(--text-bright);
-    font-variant-numeric: tabular-nums;
-    text-transform: none;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .footer {
@@ -444,6 +449,7 @@
       word-break: break-word;
     }
 
+    .trackers-wrap,
     .pw-box {
       width: 100%;
     }
@@ -458,38 +464,63 @@
         <div class="sub">LANDING PAGE · TIMELINE · MARKET ANALYZER · GALLERY &amp; GATEWAYS</div>
       </div>
 
-      <a
-        class="pw-box"
-        id="portwatch-widget"
-        href="https://portwatch-vi.xyz/"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Open PortWatch VI"
-        data-tracker-url="https://portwatch-vi.xyz/data/tracker.json"
-        data-release-iso="2026-11-23T14:36:00Z"
-        data-poll-ms="180000"
-      >
-        <div class="pw-top">
-          <span class="pw-label">
-            <span class="pw-dot" aria-hidden="true"></span>
-            <span>PortWatch VI</span>
-          </span>
-          <span class="pw-pct" id="pw-pct">--%</span>
-        </div>
+      <div class="trackers-wrap">
+        <a
+          class="pw-box"
+          id="portwatch-widget"
+          href="https://portwatch-vi.xyz/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open PortWatch VI"
+          data-tracker-url="https://portwatch-vi.xyz/data/tracker.json"
+          data-poll-ms="180000"
+        >
+          <div class="pw-top">
+            <span class="pw-label">
+              <span class="pw-dot" id="pw-dot" aria-hidden="true"></span>
+              <span>PortWatch VI</span>
+            </span>
+            <span class="pw-status is-not-finished" id="pw-status">not finished</span>
+          </div>
 
-        <div class="pw-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="pw-bar">
-          <div class="pw-fill" id="pw-fill"></div>
-        </div>
+          <div class="pw-leader-row">
+            <span>Lead</span>
+            <span class="pw-leader" id="pw-leader">CGBJ</span>
+          </div>
 
-        <div class="pw-timer-row">
-          <span>CL EXE TIMER</span>
-          <span class="pw-timer" id="pw-timer">00d 00h 00m 00s</span>
-        </div>
+          <div class="pw-hover-note" id="pw-hover-note">
+            <b>PortWatch VI:</b> Shows who is currently leading (<span id="pw-note-leader">CGBJ</span>) and whether the effort is marked finished. Click anywhere to open PortWatch.
+          </div>
+        </a>
 
-        <div class="pw-tip" id="pw-tip" role="tooltip">
-          This is the <b>PortWatch</b> progress bar: see how close we are to playing GTA VI on our PCs. Click anywhere on this box to open PortWatch.
-        </div>
-      </a>
+        <a
+          class="pw-box"
+          id="other-tracker-widget"
+          href="https://vuyp.github.io/gta6-pc-race/#standings"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Race Tracker"
+          data-tracker-url="https://vuyp.github.io/gta6-pc-race/"
+          data-poll-ms="180000"
+        >
+          <div class="pw-top">
+            <span class="pw-label">
+              <span class="pw-dot" id="ot-dot" aria-hidden="true"></span>
+              <span>Race Tracker</span>
+            </span>
+            <span class="pw-status is-not-finished" id="ot-status">not finished</span>
+          </div>
+
+          <div class="pw-leader-row">
+            <span>Lead</span>
+            <span class="pw-leader" id="ot-leader">Vice-Tay</span>
+          </div>
+
+          <div class="pw-hover-note">
+            <b>Race Tracker:</b> Quick view of who is generally leading (<span id="ot-note-leader">Vice-Tay</span>) and whether it is considered finished (stage 7 of 7 = playable). Click anywhere to open the Race Tracker.
+          </div>
+        </a>
+      </div>
     </header>
 
     <div class="section-label">Core Modules</div>
@@ -703,126 +734,124 @@ function mountHub() {
   }
 }
 
-/* ───── PortWatch VI widget ───── */
+/* ───── PortWatch VI & Race Tracker widgets ───── */
 function mountPortwatch() {
   const widget = document.getElementById("portwatch-widget");
   if (!widget) return;
 
-  const pctEl = document.getElementById("pw-pct");
-  const barEl = document.getElementById("pw-bar");
-  const fillEl = document.getElementById("pw-fill");
-  const timerEl = document.getElementById("pw-timer");
+  const dotEl = document.getElementById("pw-dot");
+  const statusEl = document.getElementById("pw-status");
+  const leaderEl = document.getElementById("pw-leader");
+  const noteLeaderEl = document.getElementById("pw-note-leader");
 
-  let releaseMs = Date.parse(widget.dataset.releaseIso || "2026-11-23T14:36:00Z");
+  const otDotEl = document.getElementById("ot-dot");
+  const otStatusEl = document.getElementById("ot-status");
+  const otLeaderEl = document.getElementById("ot-leader");
+  const otNoteLeaderEl = document.getElementById("ot-note-leader");
 
-  function updateTimer() {
-    if (!Number.isFinite(releaseMs)) return;
-    const diffSec = Math.max(0, Math.floor((Date.now() - releaseMs) / 1000));
-    const d = Math.floor(diffSec / 86400);
-    const h = Math.floor((diffSec % 86400) / 3600);
-    const m = Math.floor((diffSec % 3600) / 60);
-    const s = diffSec % 60;
-    const pad = (n) => String(n).padStart(2, "0");
-    timerEl.textContent = `${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+  function toNumberOrNaN(v) {
+    if (typeof v === "number") return Number.isFinite(v) ? v : NaN;
+    if (typeof v === "string") {
+      const cleaned = v.replace("%", "").trim();
+      if (!cleaned) return NaN;
+      const n = Number(cleaned);
+      return Number.isFinite(n) ? n : NaN;
+    }
+    return NaN;
   }
 
-function computePortwatchScore(e) {
-  if (!e || typeof e !== "object") return 0;
+  /* PortWatch: use the numbers PortWatch itself publishes in tracker.json instead of
+     re-computing a score. history[last] = { date, leader (score in %), leaderId, ... }.
+     100 % = the whole game finished, so "finished" only when the leader's score reaches 100. */
+  function resolvePortwatch(data) {
+    const history = Array.isArray(data.history) ? data.history : [];
+    const efforts = Array.isArray(data.efforts) ? data.efforts : [];
+    if (!history.length) return null;
 
-  const directCandidates = [
-    e.manualScore,
-    e.score,
-    e.progress,
-    e.percent,
-    e.total,
-  ];
-  for (const val of directCandidates) {
-    const num = Number(val);
-    if (Number.isFinite(num)) return num;
+    // newest entry by date (fall back to array order)
+    const latest = history.reduce((best, h) =>
+      !best || String(h.date || "") >= String(best.date || "") ? h : best, null);
+    if (!latest) return null;
+
+    const ref = String(latest.leaderId || latest.leaderName || "").trim().toLowerCase();
+    if (!ref) return null;
+
+    const effort = efforts.find((e) => e && [e.id, e.name].some(
+      (f) => typeof f === "string" && f.trim().toLowerCase() === ref
+    ));
+    const leader = (effort && effort.name) || String(latest.leaderId || latest.leaderName);
+
+    const pct = toNumberOrNaN(latest.leader);
+    const finished =
+      data.finished === true ||
+      (Number.isFinite(pct) && pct >= 100) ||
+      (effort && effort.finished === true);
+
+    return { leader, finished: !!finished };
   }
 
-  const clamp01 = (v) => Math.max(0, Math.min(1, Number(v) || 0));
-  const st = e.stages || e.progress || e.gta || {};
-
-  let base = 0;
-  if (clamp01(st.playable) >= 1) base = 50;
-  else if (clamp01(st.inWorld ?? st.world ?? st.ingame) > 0) base = 40;
-  else if (clamp01(st.menu) > 0) base = 30;
-  else if (clamp01(st.firstFrame ?? st.boots) > 0) base = 20;
-  else if (clamp01(st.exeRuns ?? st.loads) > 0) base = 10;
-  else base = clamp01(st.groundwork) * 10;
-
-  const story = clamp01(st.story ?? e.story) * 35;
-  const rendering = clamp01(st.rendering ?? st.render ?? e.rendering ?? e.render) * 25;
-  const fpsScore = Math.min(1, (Number(st.fps ?? e.fps) || 0) / 30) * 20;
-  const stability = clamp01(st.stability ?? e.stability) * 20;
-
-  return base + (base >= 50 ? story + rendering + fpsScore + stability : 0);
-}
-
-function applyData(data) {
-  const exeIso = data && data.exe && (data.exe.releasedAt || data.exe.released_at);
-  if (exeIso) {
-    const parsed = Date.parse(exeIso);
-    if (Number.isFinite(parsed)) releaseMs = parsed;
+  function setSingleCardUI(dot, statusEl, leaderEl, noteLeaderEl, state) {
+    const statusText = state.finished ? "finished" : "not finished";
+    if (leaderEl) leaderEl.textContent = state.leader;
+    if (noteLeaderEl) noteLeaderEl.textContent = state.leader;
+    if (statusEl) {
+      statusEl.textContent = statusText;
+      statusEl.classList.toggle("is-finished", state.finished);
+      statusEl.classList.toggle("is-not-finished", !state.finished);
+    }
+    if (dot) dot.classList.toggle("is-finished", state.finished);
   }
 
-  const efforts = Array.isArray(data && data.efforts) ? data.efforts : [];
-  const history = Array.isArray(data && data.history) ? data.history : [];
-  const latestHist = history.length ? history[history.length - 1] : null;
+  function applyData(data) {
+    if (!data || typeof data !== "object") return;
+    const pwState = resolvePortwatch(data);
+    if (pwState) setSingleCardUI(dotEl, statusEl, leaderEl, noteLeaderEl, pwState);
+  }
 
-  let bestEffort = null;
-  let bestEffortScore = -Infinity;
-  for (const e of efforts) {
-    const s = computePortwatchScore(e);
-    if (s > bestEffortScore) {
-      bestEffortScore = s;
-      bestEffort = e;
+  // Start in known state before fetch completes
+  setSingleCardUI(dotEl, statusEl, leaderEl, noteLeaderEl, { leader: "…", finished: false });
+  setSingleCardUI(otDotEl, otStatusEl, otLeaderEl, otNoteLeaderEl, { leader: "Vice-Tay", finished: false });
+
+  /* Race Tracker (vuyp.github.io/gta6-pc-race): read the leader (first row of the
+     standings) and the stage ("Stage N of 7"; 7 = playable = finished) from the page itself */
+  const raceWidget = document.getElementById("other-tracker-widget");
+  function parseRacePage(html) {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const scope = doc.querySelector("#standings") || doc;
+    let row = null;
+    for (const li of scope.querySelectorAll("ol > li")) {
+      if (li.querySelector("h3")) { row = li; break; }
+    }
+    let leader = "";
+    let stage = NaN;
+    if (row) {
+      leader = (row.querySelector("h3")?.textContent || "").trim();
+      const m = row.textContent.match(/Stage\s+(\d+)\s+of\s+(\d+)/i);
+      if (m) stage = Number(m[1]) / Number(m[2]);
+    }
+    const text = doc.body ? doc.body.textContent : "";
+    if (!leader) {
+      const m = text.match(/Playable:\s*(?:yes|no)\.\s*([^,]+?),/i);
+      if (m) leader = m[1].trim();
+    }
+    const finished =
+      /Playable:\s*yes/i.test(text) ||
+      (Number.isFinite(stage) && stage >= 1);
+    return leader ? { leader, finished } : null;
+  }
+
+  async function syncRace() {
+    const url = raceWidget && raceWidget.dataset.trackerUrl;
+    if (!url) return;
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) return;
+      const state = parseRacePage(await res.text());
+      if (state) setSingleCardUI(otDotEl, otStatusEl, otLeaderEl, otNoteLeaderEl, state);
+    } catch {
+      /* keep current state if offline or blocked */
     }
   }
-
-  const histLeader = latestHist
-    ? Number(latestHist.leader ?? latestHist.max ?? latestHist.score)
-    : NaN;
-
-  const score = Number.isFinite(histLeader)
-    ? histLeader
-    : Number.isFinite(bestEffortScore) && bestEffortScore > -Infinity
-    ? bestEffortScore
-    : null;
-
-  if (score !== null && Number.isFinite(score)) {
-    const clamped = Math.max(0, Math.min(100, score));
-    const textVal = Number.isInteger(clamped) ? String(clamped) : clamped.toFixed(1);
-    pctEl.textContent = `${textVal}%`;
-    fillEl.style.width = `${clamped}%`;
-    barEl.setAttribute("aria-valuenow", String(clamped));
-  }
-
-  let topEffort = bestEffort;
-  if (latestHist && latestHist.leaderId) {
-    const matched = efforts.find(
-      (item) =>
-        item.id === latestHist.leaderId ||
-        item.slug === latestHist.leaderId ||
-        item.name === latestHist.leaderId
-    );
-    if (matched) topEffort = matched;
-  }
-
-  const tipEl = document.getElementById("pw-tip");
-  if (tipEl && topEffort) {
-    const leaderName = topEffort.name || (latestHist && latestHist.leaderId) || "Unknown";
-    const st = topEffort.stages || topEffort.progress || topEffort.gta || {};
-    const milestone =
-      st.playable >= 1 ? "Playable" :
-      (st.inWorld ?? st.world ?? st.ingame) > 0 ? "In the world" :
-      st.menu > 0 ? "Main menu" :
-      (st.firstFrame ?? st.boots) > 0 ? "First frame" :
-      (st.exeRuns ?? st.loads) > 0 ? "Exe runs" : "Groundwork";
-    tipEl.innerHTML = `Leader: <b>${leaderName}</b> — Has reached “<b>${milestone}</b>”. Click anywhere on this box to open PortWatch.`;
-  }
-}
 
   async function syncTracker() {
     const url = widget.dataset.trackerUrl;
@@ -836,10 +865,10 @@ function applyData(data) {
     }
   }
 
-  updateTimer();
-  setInterval(updateTimer, 1000);
   syncTracker();
   setInterval(syncTracker, Number(widget.dataset.pollMs) || 180000);
+  syncRace();
+  setInterval(syncRace, Number(raceWidget && raceWidget.dataset.pollMs) || 180000);
 }
 
 window.addEventListener("DOMContentLoaded", () => {

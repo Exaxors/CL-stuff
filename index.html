@@ -175,6 +175,13 @@
     box-shadow: 0 0 8px rgba(96, 195, 58, 0.85);
   }
 
+  .pw-dot.is-stale {
+    background: var(--gold);
+    box-shadow: 0 0 8px rgba(245, 197, 66, 0.85);
+    animation: none;
+    opacity: 0.7;
+  }
+
   @keyframes pwBlink {
     0%, 100% { opacity: 1; }
     50%      { opacity: 0.15; }
@@ -194,6 +201,10 @@
 
   .pw-status.is-not-finished {
     color: var(--red);
+  }
+
+  .pw-status.is-stale {
+    color: var(--gold);
   }
 
   .pw-leader-row {
@@ -216,6 +227,20 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .pw-meta {
+    margin-top: 0.22rem;
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .pw-meta .pw-updated.is-stale {
+    color: var(--gold);
   }
 
   .footer {
@@ -480,16 +505,20 @@
               <span class="pw-dot" id="pw-dot" aria-hidden="true"></span>
               <span>PortWatch VI</span>
             </span>
-            <span class="pw-status is-not-finished" id="pw-status">not finished</span>
+            <span class="pw-status is-not-finished" id="pw-status">loading…</span>
           </div>
 
           <div class="pw-leader-row">
             <span>Lead</span>
-            <span class="pw-leader" id="pw-leader">CGBJ</span>
+            <span class="pw-leader" id="pw-leader">…</span>
+          </div>
+
+          <div class="pw-meta">
+            <span class="pw-updated" id="pw-updated">waiting for data</span>
           </div>
 
           <div class="pw-hover-note" id="pw-hover-note">
-            <b>PortWatch VI:</b> Shows who is currently leading (<span id="pw-note-leader">CGBJ</span>) and whether the effort is marked finished. Click anywhere to open PortWatch.
+            <b>PortWatch VI:</b> Shows who is currently leading (<span id="pw-note-leader">…</span>) and whether the effort is marked finished. Click anywhere to open PortWatch.
           </div>
         </a>
 
@@ -508,16 +537,20 @@
               <span class="pw-dot" id="ot-dot" aria-hidden="true"></span>
               <span>Race Tracker</span>
             </span>
-            <span class="pw-status is-not-finished" id="ot-status">not finished</span>
+            <span class="pw-status is-not-finished" id="ot-status">loading…</span>
           </div>
 
           <div class="pw-leader-row">
             <span>Lead</span>
-            <span class="pw-leader" id="ot-leader">Vice-Tay</span>
+            <span class="pw-leader" id="ot-leader">…</span>
+          </div>
+
+          <div class="pw-meta">
+            <span class="pw-updated" id="ot-updated">waiting for data</span>
           </div>
 
           <div class="pw-hover-note">
-            <b>Race Tracker:</b> Quick view of who is generally leading (<span id="ot-note-leader">Vice-Tay</span>) and whether it is considered finished (stage 7 of 7 = playable). Click anywhere to open the Race Tracker.
+            <b>Race Tracker:</b> Quick view of who is generally leading (<span id="ot-note-leader">…</span>) and whether it is considered finished (stage 7 of 7 = playable). Click anywhere to open the Race Tracker.
           </div>
         </a>
       </div>
@@ -736,19 +769,63 @@ function mountHub() {
 
 /* ───── PortWatch VI & Race Tracker widgets ───── */
 function mountPortwatch() {
-  const widget = document.getElementById("portwatch-widget");
-  if (!widget) return;
+  const pwWidget = document.getElementById("portwatch-widget");
+  const raceWidget = document.getElementById("other-tracker-widget");
+  if (!pwWidget && !raceWidget) return;
 
-  const dotEl = document.getElementById("pw-dot");
-  const statusEl = document.getElementById("pw-status");
-  const leaderEl = document.getElementById("pw-leader");
-  const noteLeaderEl = document.getElementById("pw-note-leader");
+  // ── PortWatch elements ──
+  const pwDot = document.getElementById("pw-dot");
+  const pwStatus = document.getElementById("pw-status");
+  const pwLeader = document.getElementById("pw-leader");
+  const pwNoteLeader = document.getElementById("pw-note-leader");
+  const pwUpdated = document.getElementById("pw-updated");
 
-  const otDotEl = document.getElementById("ot-dot");
-  const otStatusEl = document.getElementById("ot-status");
-  const otLeaderEl = document.getElementById("ot-leader");
-  const otNoteLeaderEl = document.getElementById("ot-note-leader");
+  // ── Race Tracker elements ──
+  const otDot = document.getElementById("ot-dot");
+  const otStatus = document.getElementById("ot-status");
+  const otLeader = document.getElementById("ot-leader");
+  const otNoteLeader = document.getElementById("ot-note-leader");
+  const otUpdated = document.getElementById("ot-updated");
 
+  // Shared UI helpers ──
+  function setStatus(el, dot, updatedEl, state) {
+    if (!state) {
+      // no data yet / unreachable — mark stale but keep last known values
+      if (dot) dot.classList.add("is-stale");
+      if (dot) dot.classList.remove("is-finished");
+      if (el) {
+        el.textContent = "unreachable";
+        el.classList.remove("is-finished");
+        el.classList.add("is-not-finished");
+      }
+      if (updatedEl) {
+        updatedEl.textContent = "last poll failed";
+        updatedEl.classList.add("is-stale");
+      }
+      return;
+    }
+    if (dot) {
+      dot.classList.remove("is-stale");
+      dot.classList.toggle("is-finished", !!state.finished);
+    }
+    if (el) {
+      el.textContent = state.finished ? "finished" : "not finished";
+      el.classList.toggle("is-finished", !!state.finished);
+      el.classList.toggle("is-not-finished", !state.finished);
+    }
+    if (updatedEl) {
+      updatedEl.classList.remove("is-stale");
+      updatedEl.textContent = "updated " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+  }
+
+  function setLeader(el, noteEl, leader) {
+    if (!leader) return;
+    if (el) el.textContent = leader;
+    if (noteEl) noteEl.textContent = leader;
+  }
+
+  // ── PortWatch: use the numbers PortWatch publishes in tracker.json ──
   function toNumberOrNaN(v) {
     if (typeof v === "number") return Number.isFinite(v) ? v : NaN;
     if (typeof v === "string") {
@@ -760,9 +837,6 @@ function mountPortwatch() {
     return NaN;
   }
 
-  /* PortWatch: use the numbers PortWatch itself publishes in tracker.json instead of
-     re-computing a score. history[last] = { date, leader (score in %), leaderId, ... }.
-     100 % = the whole game finished, so "finished" only when the leader's score reaches 100. */
   function resolvePortwatch(data) {
     const history = Array.isArray(data.history) ? data.history : [];
     const efforts = Array.isArray(data.efforts) ? data.efforts : [];
@@ -790,53 +864,66 @@ function mountPortwatch() {
     return { leader, finished: !!finished };
   }
 
-  function setSingleCardUI(dot, statusEl, leaderEl, noteLeaderEl, state) {
-    const statusText = state.finished ? "finished" : "not finished";
-    if (leaderEl) leaderEl.textContent = state.leader;
-    if (noteLeaderEl) noteLeaderEl.textContent = state.leader;
-    if (statusEl) {
-      statusEl.textContent = statusText;
-      statusEl.classList.toggle("is-finished", state.finished);
-      statusEl.classList.toggle("is-not-finished", !state.finished);
+  async function syncPortwatch() {
+    const url = pwWidget && pwWidget.dataset.trackerUrl;
+    if (!url) return;
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      const state = resolvePortwatch(data);
+      if (state) {
+        setLeader(pwLeader, pwNoteLeader, state.leader);
+        setStatus(pwStatus, pwDot, pwUpdated, state);
+      } else {
+        setStatus(pwStatus, pwDot, pwUpdated, null);
+      }
+    } catch (err) {
+      setStatus(pwStatus, pwDot, pwUpdated, null);
     }
-    if (dot) dot.classList.toggle("is-finished", state.finished);
   }
 
-  function applyData(data) {
-    if (!data || typeof data !== "object") return;
-    const pwState = resolvePortwatch(data);
-    if (pwState) setSingleCardUI(dotEl, statusEl, leaderEl, noteLeaderEl, pwState);
-  }
-
-  // Start in known state before fetch completes
-  setSingleCardUI(dotEl, statusEl, leaderEl, noteLeaderEl, { leader: "…", finished: false });
-  setSingleCardUI(otDotEl, otStatusEl, otLeaderEl, otNoteLeaderEl, { leader: "Vice-Tay", finished: false });
-
-  /* Race Tracker (vuyp.github.io/gta6-pc-race): read the leader (first row of the
-     standings) and the stage ("Stage N of 7"; 7 = playable = finished) from the page itself */
-  const raceWidget = document.getElementById("other-tracker-widget");
+  // ── Race Tracker: parse the standings page ──
+  //    Leader: first <li> under #standings that contains an <h3>, using the
+  //    h3 text. Fallback: look for "Playable: yes/no. NAME," but only as a
+  //    last resort — the h3 is the authoritative source.
+  //    Finished: "Stage N of M" where N === M, or explicit "Playable: yes".
   function parseRacePage(html) {
     const doc = new DOMParser().parseFromString(html, "text/html");
     const scope = doc.querySelector("#standings") || doc;
-    let row = null;
-    for (const li of scope.querySelectorAll("ol > li")) {
-      if (li.querySelector("h3")) { row = li; break; }
-    }
+
+    // Leader: first list item with an h3
     let leader = "";
-    let stage = NaN;
-    if (row) {
-      leader = (row.querySelector("h3")?.textContent || "").trim();
-      const m = row.textContent.match(/Stage\s+(\d+)\s+of\s+(\d+)/i);
-      if (m) stage = Number(m[1]) / Number(m[2]);
+    for (const li of scope.querySelectorAll("ol > li, ul > li")) {
+      const h3 = li.querySelector("h3");
+      if (h3 && h3.textContent.trim()) {
+        leader = h3.textContent.trim();
+        break;
+      }
     }
-    const text = doc.body ? doc.body.textContent : "";
+    // Last-resort fallback: "Playable: yes. NAME," pattern
     if (!leader) {
-      const m = text.match(/Playable:\s*(?:yes|no)\.\s*([^,]+?),/i);
+      const text = doc.body ? doc.body.textContent : "";
+      const m = text.match(/Playable:\s*(?:yes|no)\.\s*([A-Za-z0-9 _.-]{2,40}?)[,.]/i);
       if (m) leader = m[1].trim();
     }
-    const finished =
-      /Playable:\s*yes/i.test(text) ||
-      (Number.isFinite(stage) && stage >= 1);
+
+    // Finished: explicit "Playable: yes" OR "Stage N of N"
+    const bodyText = doc.body ? doc.body.textContent : "";
+    const playableYes = /Playable:\s*yes/i.test(bodyText);
+    let stageDone = false;
+    for (const m of bodyText.matchAll(/Stage\s+(\d+)\s+of\s+(\d+)/gi)) {
+      const n = Number(m[1]);
+      const total = Number(m[2]);
+      if (Number.isFinite(n) && Number.isFinite(total) && total > 0 && n === total) {
+        stageDone = true;
+        break;
+      }
+    }
+    const finished = playableYes || stageDone;
+
+    // Only return a state if we actually found a leader; otherwise null
+    // (so the UI shows "unreachable" instead of a stale "Vice-Tay").
     return leader ? { leader, finished } : null;
   }
 
@@ -845,30 +932,30 @@ function mountPortwatch() {
     if (!url) return;
     try {
       const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) return;
+      if (!res.ok) throw new Error("HTTP " + res.status);
       const state = parseRacePage(await res.text());
-      if (state) setSingleCardUI(otDotEl, otStatusEl, otLeaderEl, otNoteLeaderEl, state);
-    } catch {
-      /* keep current state if offline or blocked */
+      if (state) {
+        setLeader(otLeader, otNoteLeader, state.leader);
+        setStatus(otStatus, otDot, otUpdated, state);
+      } else {
+        setStatus(otStatus, otDot, otUpdated, null);
+      }
+    } catch (err) {
+      setStatus(otStatus, otDot, otUpdated, null);
     }
   }
 
-  async function syncTracker() {
-    const url = widget.dataset.trackerUrl;
-    if (!url) return;
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) return;
-      applyData(await res.json());
-    } catch {
-      /* keep current state if offline or CORS-restricted */
-    }
-  }
+  // Initial state: show "loading…" (not a hardcoded leader)
+  if (pwStatus) pwStatus.textContent = "loading…";
+  if (otStatus) otStatus.textContent = "loading…";
+  if (pwUpdated) pwUpdated.textContent = "fetching…";
+  if (otUpdated) otUpdated.textContent = "fetching…";
 
-  syncTracker();
-  setInterval(syncTracker, Number(widget.dataset.pollMs) || 180000);
+  // Kick off both; poll on their own intervals.
+  syncPortwatch();
   syncRace();
-  setInterval(syncRace, Number(raceWidget && raceWidget.dataset.pollMs) || 180000);
+  if (pwWidget) setInterval(syncPortwatch, Number(pwWidget.dataset.pollMs) || 180000);
+  if (raceWidget) setInterval(syncRace, Number(raceWidget.dataset.pollMs) || 180000);
 }
 
 window.addEventListener("DOMContentLoaded", () => {

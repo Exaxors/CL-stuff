@@ -550,7 +550,7 @@
           </div>
 
           <div class="pw-hover-note">
-            <b>Race Tracker:</b> Quick view of who is generally leading (<span id="ot-note-leader">…</span>) and whether it is considered finished (stage 7 of 7 = playable). Click anywhere to open the Race Tracker.
+            <b>Race Tracker:</b> Quick view of who is generally leading (<span id="ot-note-leader">…</span>) and whether it is considered finished (stage 7 of 7 = playable, with no next goal left). Click anywhere to open the Race Tracker.
           </div>
         </a>
       </div>
@@ -887,17 +887,20 @@ function mountPortwatch() {
   //    Leader: first <li> under #standings that contains an <h3>, using the
   //    h3 text. Fallback: look for "Playable: yes/no. NAME," but only as a
   //    last resort — the h3 is the authoritative source.
-  //    Finished: "Stage N of M" where N === M, or explicit "Playable: yes".
+  //    Finished: "Stage N of M" where N === M, or explicit "Playable: yes" -- but only
+  //    while the leader's card does not say it is still short of the next goal.
   function parseRacePage(html) {
     const doc = new DOMParser().parseFromString(html, "text/html");
     const scope = doc.querySelector("#standings") || doc;
 
     // Leader: first list item with an h3
     let leader = "";
+    let leaderItem = null;
     for (const li of scope.querySelectorAll("ol > li, ul > li")) {
       const h3 = li.querySelector("h3");
       if (h3 && h3.textContent.trim()) {
         leader = h3.textContent.trim();
+        leaderItem = li;
         break;
       }
     }
@@ -920,7 +923,11 @@ function mountPortwatch() {
         break;
       }
     }
-    const finished = playableYes || stageDone;
+    // "Playable" (stage 7 of 7) is reached before the effort is really done: while the
+    // leader's card still says "N step(s) short of the next goal", it is NOT finished.
+    const goalScope = leaderItem ? leaderItem.textContent : bodyText;
+    const shortOfGoal = /short\s+of\s+the\s+next\s+goal/i.test(goalScope);
+    const finished = (playableYes || stageDone) && !shortOfGoal;
 
     // Only return a state if we actually found a leader; otherwise null
     // (so the UI shows "unreachable" instead of a stale "Vice-Tay").

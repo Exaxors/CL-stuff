@@ -616,12 +616,12 @@ const CORE_MODULES = [
     external: false
   },
   {
-    id: "victory-guide",
-    badge: "Guide",
+    id: "mandy-guide",
+    badge: "Mandyhub Guide",
     badgeClass: "tag-internal",
-    title: "VIctory Build & Run Guide",
-    description: "Step-by-step guide to build & run the VIctory PC runtime. No files are hosted here; this is a source-build reference only.",
-    href: "./victory_build_run_guide.html",
+    title: "Mandy Run & Shader Guide",
+    description: "Build, pre-warm shaders, and launch via Mandyhub, plus tips for managing repos and app.ron.",
+    href: "./mandy_run_guide.html",
     external: false
   }
 ];
@@ -637,7 +637,7 @@ let gatewayAttemptCount = 0;
 
 function renderModuleButton(item) {
   const targetAttrs = item.external ? ' target="_blank" rel="noopener noreferrer"' : "";
-  const hasGlowBox = item.id === "timeline" || item.id === "market" || item.id === "victory-guide";
+  const hasGlowBox = item.id === "timeline" || item.id === "market" || item.id === "mandy-guide";
   const glowHtml = hasGlowBox ? '<span class="glow-box" aria-hidden="true"></span>' : "";
   return `
     <a class="module-btn-card" href="${item.href}"${targetAttrs} data-link-id="${item.id}">

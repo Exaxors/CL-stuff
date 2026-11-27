@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="./icon.ico" type="image/ico" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>n0ne's CYBERLEEK · Mandy Run &amp; Shader Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #00050d;
+    --card: #00102b;
+    --card-2: #00173d;
+    --border: #003299;
+    --neon: #0064ec;
+    --green: #60c33a;
+    --red: #ff3355;
+    --gold: #f5c542;
+    --cyan: #34d6d6;
+    --purple: #b388ff;
+    --orange: #ff944d;
+    --text: #a0b0c8;
+    --text-bright: #d6efc1;
+    --text-dim: #6a7a90;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Courier New", "Lucida Console", monospace;
+    min-height: 100vh;
+    padding: 0.75rem;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0,0,0,0.04) 4px, rgba(0,0,0,0.04) 8px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .wrapper {
+    max-width: 1120px;
+    margin: 0 auto;
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 0.95rem 1.15rem;
+    box-shadow: 0 0 40px rgba(0, 100, 236, 0.08);
+  }
+
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.65rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .header h1 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--neon);
+    text-shadow: 0 0 30px rgba(0, 100, 236, 0.25);
+  }
+
+  .header .sub {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 0.45rem;
+  }
+
+  .card-tag {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-internal { color: var(--green); }
+  .tag-external { color: var(--cyan); }
+  .tag-future { color: var(--gold); }
+  .tag-orange { color: var(--orange); }
+
+  .glow-box {
+    width: 8px; height: 8px;
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(96, 195, 58, 0.8);
+    animation: pwBlink 2.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pwBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
+
+  .section-label {
+    font-size: 0.66rem;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 3px;
+    margin-bottom: 0.65rem;
+    margin-top: 1rem;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  .box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.78rem 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .box-cyan { border-color: var(--cyan); }
+  .box-gold { border-color: var(--gold); }
+
+  .box-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: var(--text-bright);
+  }
+  .box-cyan .box-title { color: var(--cyan); }
+  .box-gold .box-title { color: var(--gold); }
+
+  .info-list {
+    padding-left: 1.15rem;
+    font-size: 0.74rem;
+    color: var(--text);
+  }
+  .info-list li + li { margin-top: 0.35rem; }
+  .info-list strong { color: var(--text-bright); }
+
+  .panel-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.78rem 0.9rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px dashed var(--border);
+    margin-bottom: 0.55rem;
+  }
+
+  .step-num {
+    width: 28px; height: 28px;
+    border: 1px solid var(--neon);
+    background: var(--card);
+    color: var(--cyan);
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .panel-title { color: var(--text-bright); font-size: 0.9rem; font-weight: 700; }
+  .panel-desc { color: var(--text-dim); font-size: 0.72rem; margin-top: 2px; }
+
+  .repo-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+    margin-top: 0.45rem;
+  }
+
+  .repo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 0.65rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+
+  .repo-name { color: var(--text-bright); font-size: 0.78rem; font-weight: 700; }
+  .repo-url {
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    padding: 0.35rem 0.5rem;
+    font-size: 0.7rem;
+    color: var(--cyan);
+    word-break: break-all;
+  }
+  .repo-note { font-size: 0.71rem; color: var(--text); }
+
+  .btn {
+    background: var(--card-2);
+    color: var(--text-bright);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    font-family: inherit;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .btn:hover { border-color: var(--cyan); color: var(--cyan); background: #001f54; }
+  .btn.active { border-color: var(--green); color: var(--text-bright); background: rgba(96, 195, 58, 0.18); }
+  .btn.btn-mandy { border-color: var(--orange); color: var(--orange); }
+
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    margin-top: 0.45rem;
+    overflow: hidden;
+  }
+
+  .code-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 0.35rem 0.65rem;
+    background: var(--card);
+    border-bottom: 1px dashed var(--border);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    font-weight: 700;
+  }
+
+  pre.code-pre {
+    padding: 0.68rem 0.78rem;
+    font-family: inherit;
+    font-size: 0.76rem;
+    color: var(--text-bright);
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+
+  .verify-box {
+    margin-top: 0.5rem;
+    padding: 0.48rem 0.7rem;
+    background: var(--card);
+    border-left: 3px solid var(--green);
+    font-size: 0.72rem;
+    color: var(--text);
+  }
+  .verify-box strong { color: var(--green); }
+
+  code { color: var(--cyan); font-family: inherit; }
+  a.inline-link { color: var(--cyan); text-decoration: none; border-bottom: 1px dashed var(--cyan); }
+  a.inline-link:hover { color: var(--text-bright); border-bottom-color: var(--text-bright); }
+  .c-cmd { color: var(--cyan); font-weight: 700; }
+  .c-val { color: var(--green); }
+  .c-cmt { color: var(--text-dim); }
+
+  .toast {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: var(--card);
+    border: 1px solid var(--green);
+    color: var(--text-bright);
+    padding: 0.5rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .footer {
+    text-align: center;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    border-top: 1px solid var(--border);
+    padding-top: 0.5rem;
+    margin-top: 0.9rem;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 720px) {
+    .repo-list { grid-template-columns: 1fr; }
+    .wrapper { padding: 0.7rem 0.75rem; }
+    .header h1 { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="header">
+      <div>
+        <h1>n0ne's CYBERLEEK · MANDY RUN &amp; SHADER GUIDE</h1>
+        <div class="sub">EASY MANDYHUB SETUP · CUSTOM REPOS · SHADER WARMING · RYZEN 9 5900X + RTX 3060 12GB</div>
+        <div class="badge-row">
+          <span class="card-tag tag-internal"><span class="glow-box" aria-hidden="true"></span>Mandyhub</span>
+          <span class="card-tag tag-orange">%LOCALAPPDATA%\Mandyhub</span>
+          <span class="card-tag tag-external">Windows 10/11</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <a href="https://github.com/Z-rox/mandyhub" target="_blank" rel="noopener noreferrer" class="btn btn-mandy">◈ MANDYHUB GITHUB ↗</a>
+        <a href="./index.html" class="btn">← BACK TO HUB</a>
+      </div>
+    </header>
+
+    <section class="box box-cyan">
+      <div class="box-title">◈ MY RIG &amp; CURRENT UPDATE</div>
+      <ul class="info-list">
+        <li><strong>Rig:</strong> AMD Ryzen 9 5900X · MSI MPG X570 GAMING PLUS · NVIDIA GeForce RTX 3060 12GB · 32GB DDR4-3200 · Samsung 970 EVO Plus 1TB NVMe + Samsung 850 EVO 1TB SATA.</li>
+        <li><strong>Current Update:</strong> Managed to get <strong>7fps max ("stable 3fps")</strong> — <strong>didn't crash, but waiting for improvements currently</strong>.</li>
+        <li><strong>Keep Game Files Separate:</strong> Keep your unpacked game dump in its own folder outside <code>%LOCALAPPDATA%\Mandyhub</code>, then pick that folder in Mandyhub.</li>
+      </ul>
+    </section>
+
+    <section class="box box-gold">
+      <div class="box-title">⚠ QUICK HEADS-UP</div>
+      <ul class="info-list">
+        <li>Early builds are still rough — expect low FPS, heavy RAM use, and occasional driver/game hiccups while work continues.</li>
+        <li>Only use repos you trust and never run random prebuilt <code>.exe</code> files from untrusted places.</li>
+      </ul>
+    </section>
+
+    <div class="section-label">Simple Steps</div>
+
+    <!-- STEP 1 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <span class="step-num">1</span>
+        <div>
+          <div class="panel-title">Install &amp; Open Mandyhub</div>
+          <div class="panel-desc">Get <a href="https://github.com/Z-rox/mandyhub" target="_blank" rel="noopener noreferrer" class="inline-link">Mandyhub</a> so it sets up the build tools and projects for you.</div>
+        </div>
+      </div>
+      <p class="panel-desc" style="color: var(--text);">
+        Download and run Mandyhub from <a href="https://github.com/Z-rox/mandyhub" target="_blank" rel="noopener noreferrer" class="inline-link">github.com/Z-rox/mandyhub</a>, and select your unpacked game folder at the bottom so Play can be used.
+      </p>
+      <div class="verify-box">
+        <strong>Check:</strong> Mandyhub opens cleanly and shows <code>Status: Ready</code> with your game folder path shown at the bottom.
+      </div>
+    </article>
+
+    <!-- STEP 2 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <span class="step-num">2</span>
+        <div>
+          <div class="panel-title">Add Custom Repos in Mandyhub</div>
+          <div class="panel-desc">Copy <code>github.com/xxx/xxx</code> below, paste it into <strong>Custom repo link (any git site)</strong> in Mandyhub, and click <strong>+ Add</strong>.</div>
+        </div>
+      </div>
+
+      <div class="repo-list">
+        <div class="repo-card">
+          <div class="repo-name">VIctory-NVIDIA-RT (Current NVIDIA Lead)</div>
+          <div class="repo-url">github.com/Kemerd/VIctory-NVIDIA-RT</div>
+          <div class="repo-note">Paste <code>github.com/Kemerd/VIctory-NVIDIA-RT</code> into Mandyhub's custom repo box and click <strong>+ Add</strong>.</div>
+        </div>
+
+        <div class="repo-card">
+          <div class="repo-name">cool_fox (NVIDIA — Ran "Fine" in Tests)</div>
+          <div class="repo-url">github.com/DoubleGhosty/cool_fox</div>
+          <div class="repo-note">Paste <code>github.com/DoubleGhosty/cool_fox</code> into Mandyhub's custom repo box and click <strong>+ Add</strong>. NVIDIA also ran "fine" in my tests.</div>
+        </div>
+      </div>
+
+      <div class="verify-box">
+        <strong>Check:</strong> Both repos appear in Mandyhub's project list, and you can click <strong>Install</strong> on the one you want to build.
+      </div>
+    </article>
+
+    <!-- STEP 3 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <span class="step-num">3</span>
+        <div>
+          <div class="panel-title">Warm Shaders First (PowerShell)</div>
+          <div class="panel-desc">Open a PowerShell window inside your built folder (<code>%LOCALAPPDATA%\Mandyhub\target\&lt;RepoFolder&gt;\diag</code>) and run this command:</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-head">
+          <span>POWERSHELL WINDOW · SHADER WARMING COMMAND</span>
+          <button type="button" class="btn copy-btn" data-target="cmd-shaders">COPY</button>
+        </div>
+        <pre id="cmd-shaders" class="code-pre"><span class="c-cmd">.\victory.exe</span> shaders <span class="c-val">"C:\Path\To\Your\Game\shaders.rpf"</span></pre>
+      </div>
+
+      <p class="panel-desc" style="margin-top: 0.45rem; color: var(--text);">
+        <em>Tip:</em> If your PowerShell window is one folder up in <code>...\&lt;RepoFolder&gt;</code>, use <code>.\target\diag\victory.exe shaders "C:\Path\To\Your\Game\shaders.rpf"</code>. Replace <code>C:\Path\To\Your\Game\shaders.rpf</code> with your actual game's <code>shaders.rpf</code> path.
+      </p>
+
+      <div class="verify-box">
+        <strong>Check:</strong> PowerShell runs the shader command without a path/file error and starts building/caching shaders.
+      </div>
+    </article>
+
+    <!-- STEP 4 -->
+    <article class="panel-card">
+      <div class="panel-head">
+        <span class="step-num">4</span>
+        <div>
+          <div class="panel-title">Play via Mandyhub</div>
+          <div class="panel-desc">Once installed and shaders are warmed, select the project in Mandyhub and click <strong>Play</strong>.</div>
+        </div>
+      </div>
+      <p class="panel-desc" style="color: var(--text);">
+        If you ever add a custom link that duplicates a project already in the list and causes a duplicate card/widget warning, close Mandyhub and set <code>custom:[]</code> under <code>"app"</code> in <code>%LOCALAPPDATA%\Mandyhub\app.ron</code>.
+      </p>
+      <div class="verify-box">
+        <strong>Check:</strong> The game window opens from Mandyhub; on my R9 5900X + RTX 3060 12GB setup it hit 7fps max ("stable 3fps") without crashing.
+      </div>
+    </article>
+
+    <div class="footer">provided by n0ne · r9 5900x + rtx 3060 12gb · <a href="https://github.com/Z-rox/mandyhub" target="_blank" rel="noopener noreferrer" class="inline-link">github.com/Z-rox/mandyhub</a></div>
+  </div>
+
+  <div id="copy-toast" class="toast">✓ Copied to clipboard</div>
+
+  <script>
+    function copyText(text, btnEl) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        const toast = document.getElementById('copy-toast');
+        toast.classList.add('show');
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+        if (btnEl) {
+          const orig = btnEl.textContent;
+          btnEl.textContent = 'COPIED!';
+          btnEl.classList.add('active');
+          setTimeout(() => {
+            btnEl.textContent = orig;
+            btnEl.classList.remove('active');
+          }, 1400);
+        }
+      } catch (err) {
+        console.error('Copy failed:', err);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = document.getElementById(btn.getAttribute('data-target'));
+          if (target) copyText(target.innerText.trim(), btn);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
